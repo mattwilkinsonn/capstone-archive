@@ -41,7 +41,7 @@ type GQLSchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
 async fn main() -> Result<(), sqlx::Error> {
     println!("Hello, world!");
 
-    let schema = Schema::new(QueryRoot, EmptyMutation, EmptySubscription);
+    let schema: GQLSchema = Schema::new(QueryRoot, EmptyMutation, EmptySubscription);
 
     let cfg = config::build_config();
 
@@ -61,10 +61,9 @@ async fn main() -> Result<(), sqlx::Error> {
     println!("{}", user[0].name);
 
     let graphql = graphql(schema).and_then(
-        |(schema, request): (
-            Schema<QueryRoot, EmptyMutation, EmptySubscription>,
-            async_graphql::Request,
-        )| async move { Ok::<_, Infallible>(Response::from(schema.execute(request).await)) },
+        |(schema, request): (GQLSchema, async_graphql::Request)| async move {
+            Ok::<_, Infallible>(Response::from(schema.execute(request).await))
+        },
     );
 
     let playground = warp::path::end().and(warp::get()).map(|| {
