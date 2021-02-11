@@ -1,0 +1,62 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Todo {
+  id: ID!
+  text: String!
+  done: Boolean!
+  user: User!
+}
+
+type User {
+  id: ID!
+  username: String!
+  email: String!
+}
+
+input Register {
+  username: String!
+  email: String!
+  password: String!
+}
+
+type Capstone {
+  id: ID!
+  title: String!
+  description: String!
+  author: String!
+}
+
+type Query {
+  capstones: [Capstone!]!
+  users: [User!]!
+  me: User
+}
+
+input NewCapstone {
+  title: String!
+  description: String!
+  author: String!
+}
+
+input Login {
+  usernameOrEmail: String!
+  password: String!
+}
+
+type UserError {
+  field: String!
+  message: String!
+}
+
+type UserResponse {
+  user: User
+  error: UserError
+}
+
+type Mutation {
+  createCapstone(input: NewCapstone!): Capstone!
+  register(input: Register!): UserResponse!
+  login(input: Login!): UserResponse!
+}
