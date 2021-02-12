@@ -7,6 +7,8 @@ type Capstone struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Author      string `json:"author"`
+	CreatedAt   string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
 }
 
 type Login struct {
@@ -34,9 +36,11 @@ type Todo struct {
 }
 
 type User struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 type UserError struct {

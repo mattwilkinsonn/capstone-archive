@@ -6,13 +6,24 @@ package graph
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
+
+	"github.com/Zireael13/capstone-archive/server/internal/db"
 
 	"github.com/Zireael13/capstone-archive/server/internal/graph/generated"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 )
 
 func (r *mutationResolver) CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.Capstone, error) {
-	panic(fmt.Errorf("not implemented"))
+	capstone := db.Capstone{Title: input.Title, Description: input.Description, Author: input.Author}
+
+	r.DB.Create(&capstone)
+
+	graphCapstone := model.Capstone{ID: strconv.FormatUint(uint64(capstone.ID), 10), Title: capstone.Title, Description: capstone.Description, Author: capstone.Author, CreatedAt: capstone.CreatedAt.Format(time.UnixDate), UpdatedAt: capstone.UpdatedAt.Format(time.UnixDate)}
+
+	return &graphCapstone, nil
+
 }
 
 func (r *mutationResolver) Register(ctx context.Context, input model.Register) (*model.UserResponse, error) {
