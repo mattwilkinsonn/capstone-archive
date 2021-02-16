@@ -4,14 +4,14 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Username string
-	Email    string
-	Password string
+	Username string `gorm:"unique;not null;"`
+	Email    string `gorm:"unique;not null;"`
+	Password string `gorm:"not null;"`
 }
 
 type Capstone struct {
 	gorm.Model
-	Title       string
-	Description string
-	Author      string
+	Title       string `gorm:"not null;"`
+	Description string `gorm:"not null;"`
+	Author      string `gorm:"not null;"`
 }
