@@ -26,6 +26,7 @@ func HashPassword(argon *argon2.Config, password string) string {
 }
 
 func VerifyPassword(password string, hashed string) bool {
+
 	ok, err := argon2.VerifyEncoded([]byte(password), []byte(hashed))
 
 	if err != nil {
@@ -36,29 +37,25 @@ func VerifyPassword(password string, hashed string) bool {
 }
 
 func ValidateRegister(input model.Register) (bool, *model.UserResponse) {
-	var field, message string
+	var err *model.UserError
 	var ok bool
 
 	switch {
 	case !strings.Contains(input.Email, "@"):
 		ok = false
-		field = "Email"
-		message = "Invalid Email"
-	case len(input.Username) < 4:
+		err = CreateUserErr("Email", "Invalid Email")
+	case len(input.Username) <= 4:
 		ok = false
-		field = "Username"
-		message = "Username must be longer than 4 characters"
-	case len(input.Password) < 6:
+		err = CreateUserErr("Username", "Username must be longer than 4 characters")
+	case len(input.Password) <= 6:
 		ok = false
-		field = "Password"
-		message = "Password must be longer than 6 characters"
+		err = CreateUserErr("Password", "Password must be longer than 6 characters")
 	default:
 		ok = true
-		field = "none"
-		message = "none"
+		err = CreateUserErr("none", "none")
 	}
 
-	res := CreateUserResponseErr(CreateUserErr(field, message))
+	res := CreateUserResponseErr(err)
 
 	return ok, res
 }

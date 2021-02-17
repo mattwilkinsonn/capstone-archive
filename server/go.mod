@@ -4,9 +4,11 @@ go 1.15
 
 require (
 	github.com/99designs/gqlgen v0.13.0
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/alecthomas/units v0.0.0-20210208195552-ff826a37aa15 // indirect
 	github.com/dave/dst v0.26.2 // indirect
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-playground/assert/v2 v2.0.1
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/joho/godotenv v1.3.0
@@ -21,6 +23,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/segmentio/golines v0.0.0-20210203060441-5ab3cbbd1be7 // indirect
 	github.com/sirupsen/logrus v1.7.1 // indirect
+	github.com/stretchr/testify v1.6.1
 	github.com/ugorji/go v1.2.4 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect

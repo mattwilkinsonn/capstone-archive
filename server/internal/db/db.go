@@ -7,21 +7,35 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateDatabaseClient() *gorm.DB {
-	dsn := "host=localhost user=postgres password=postgres dbname=capstone-archive port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func InitalizeDatabase(orm *gorm.DB) {
+	err := orm.AutoMigrate(&User{}, &Capstone{})
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
+}
+
+func CreateDatabaseDialector() gorm.Dialector {
+	dsn := "host=localhost user=postgres password=postgres dbname=capstone-archive port=5432 sslmode=disable"
+	return postgres.Open(dsn)
+}
+
+func CreateDatabaseClient(dialector gorm.Dialector) *gorm.DB {
+	db, err := gorm.Open(dialector, &gorm.Config{})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	// TODO: remove in prod
 	db.Debug()
 
-	err = db.AutoMigrate(&User{}, &Capstone{})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	return db
+}
+
+func CreateDefaultDatabaseClient() *gorm.DB {
+	dia := CreateDatabaseDialector()
+	orm := CreateDatabaseClient(dia)
+	InitalizeDatabase(orm)
+	return orm
 }

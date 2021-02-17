@@ -3,7 +3,10 @@ package serve
 import (
 	"os"
 
+	"github.com/Zireael13/capstone-archive/server/internal/router"
 	"github.com/gin-gonic/gin"
+	"github.com/matthewhartstonge/argon2"
+	"gorm.io/gorm"
 )
 
 const defaultPort = "4000"
@@ -15,6 +18,23 @@ func GetPort() (port string) {
 	}
 
 	return
+}
+
+func CreateArgon() *argon2.Config {
+	argon := argon2.DefaultConfig()
+	return &argon
+}
+
+func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
+	g := gin.Default()
+
+	gqlHandler := router.GraphQLHandler(orm, argon)
+	playHandler := router.PlaygroundHandler()
+
+	router.AttachRoutes(g, gqlHandler, playHandler)
+
+	return g
+
 }
 
 func RunServer(g *gin.Engine, port string) {
