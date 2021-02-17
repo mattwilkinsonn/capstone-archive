@@ -6,11 +6,8 @@ package graph
 import (
 	"context"
 	"fmt"
-	"strings"
-	"time"
 
-	"github.com/Zireael13/capstone-archive/server/internal/db"
-	"github.com/Zireael13/capstone-archive/server/internal/helpers"
+	"github.com/Zireael13/capstone-archive/server/internal/resolve"
 
 	"github.com/Zireael13/capstone-archive/server/internal/graph/generated"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
@@ -20,24 +17,17 @@ func (r *mutationResolver) CreateCapstone(
 	ctx context.Context,
 	input model.NewCapstone,
 ) (*model.Capstone, error) {
-	capstone := db.Capstone{
-		Title:       input.Title,
-		Description: input.Description,
-		Author:      input.Author,
+
+	// TODO: input validation on capstone adds?
+
+	capstone, err := resolve.CreateCapstoneInDB(r.DB, input.Title, input.Description, input.Author)
+	if err != nil {
+		resolve.HandleCreateCapstoneErr(err)
 	}
 
-	r.DB.Create(&capstone)
+	graphCapstone := resolve.CreateGraphCapstone(capstone)
 
-	graphCapstone := model.Capstone{
-		ID:          helpers.UIntToString(capstone.ID),
-		Title:       capstone.Title,
-		Description: capstone.Description,
-		Author:      capstone.Author,
-		CreatedAt:   capstone.CreatedAt.Format(time.UnixDate),
-		UpdatedAt:   capstone.UpdatedAt.Format(time.UnixDate),
-	}
-
-	return &graphCapstone, nil
+	return graphCapstone, nil
 
 }
 
@@ -46,43 +36,20 @@ func (r *mutationResolver) Register(
 	input model.Register,
 ) (*model.UserResponse, error) {
 
-	ok, userErr := helpers.ValidateRegister(input)
+	ok, res := resolve.ValidateRegister(input)
 	if !ok {
-		return &model.UserResponse{Error: userErr}, nil
+		return res, nil
 	}
 
-	hashed := helpers.HashPassword(r.Argon, input.Password)
+	hashed := resolve.HashPassword(r.Argon, input.Password)
 
-	user := db.User{Username: input.Username, Email: input.Email, Password: hashed}
+	user, err := resolve.CreateUserInDB(r.DB, input.Username, input.Email, hashed)
 
-	result := r.DB.Create(&user)
-
-	if result.Error != nil {
-
-		// TODO: split email and username errors
-		if strings.Contains(result.Error.Error(), "23505") {
-			return &model.UserResponse{
-				Error: &model.UserError{
-					Field:   "Email/Username",
-					Message: "Email/Username already taken",
-				},
-			}, nil
-		}
-
-		panic(result.Error)
+	if err != nil {
+		return resolve.HandleCreateUserErr(err), nil
 	}
 
-	userResponse := model.UserResponse{
-		User: &model.User{
-			ID:        helpers.UIntToString(user.ID),
-			Username:  user.Username,
-			Email:     user.Email,
-			CreatedAt: user.CreatedAt.Format(time.UnixDate),
-			UpdatedAt: user.UpdatedAt.Format(time.UnixDate),
-		},
-	}
-
-	return &userResponse, nil
+	return resolve.CreateUserResponse(user), nil
 
 }
 
@@ -90,7 +57,22 @@ func (r *mutationResolver) Login(
 	ctx context.Context,
 	input model.Login,
 ) (*model.UserResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+
+	user, err := resolve.GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
+	if err != nil {
+		return resolve.HandleInvalidLogin(), nil
+	}
+
+	ok := resolve.VerifyPassword(input.Password, user.Password)
+	if !ok {
+		return resolve.HandleInvalidLogin(), nil
+	}
+
+	userResponse := resolve.CreateUserResponse(&user)
+
+	// TODO: implement jwt tokens
+	return userResponse, nil
+
 }
 
 func (r *queryResolver) Capstones(ctx context.Context) ([]*model.Capstone, error) {

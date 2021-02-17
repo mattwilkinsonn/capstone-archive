@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/Zireael13/capstone-archive/server/internal/db"
-	"github.com/Zireael13/capstone-archive/server/internal/helpers"
 	"github.com/Zireael13/capstone-archive/server/internal/routes"
+	"github.com/Zireael13/capstone-archive/server/internal/serve"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/matthewhartstonge/argon2"
@@ -12,7 +12,7 @@ import (
 func main() {
 	_ = godotenv.Load(".env")
 
-	port := helpers.GetPort()
+	port := serve.GetPort()
 
 	orm := db.CreateDatabaseClient()
 	argon := argon2.DefaultConfig()
@@ -21,5 +21,5 @@ func main() {
 
 	routes.AttachRoutes(g, orm, &argon)
 
-	helpers.RunServer(g, port)
+	serve.RunServer(g, port)
 }
