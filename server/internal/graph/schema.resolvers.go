@@ -41,12 +41,19 @@ func (r *mutationResolver) Register(
 		return res, nil
 	}
 
-	hashed := resolve.HashPassword(r.Argon, input.Password)
+	hashed, err := resolve.HashPassword(r.Argon, input.Password)
+	if err != nil {
+		panic(err)
+	}
 
 	user, err := resolve.CreateUserInDB(r.DB, input.Username, input.Email, hashed)
 
 	if err != nil {
-		return resolve.HandleCreateUserErr(err), nil
+		res, unhandledErr := resolve.HandleCreateUserErr(err)
+		if unhandledErr != nil {
+			panic(unhandledErr)
+		}
+		return res, nil
 	}
 
 	return resolve.CreateUserResponse(user), nil
@@ -63,7 +70,11 @@ func (r *mutationResolver) Login(
 		return resolve.HandleInvalidLogin(), nil
 	}
 
-	ok := resolve.VerifyPassword(input.Password, user.Password)
+	ok, err := resolve.VerifyPassword(input.Password, user.Password)
+	if err != nil {
+		panic(err)
+	}
+
 	if !ok {
 		return resolve.HandleInvalidLogin(), nil
 	}

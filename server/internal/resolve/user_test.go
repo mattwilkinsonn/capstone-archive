@@ -2,16 +2,19 @@ package resolve_test
 
 import (
 	"database/sql/driver"
+	"errors"
+	"regexp"
 	"testing"
 	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/db/dbtest"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
 	"github.com/Zireael13/capstone-archive/server/internal/serve"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 func TestUIntToString(t *testing.T) {
@@ -29,9 +32,13 @@ func TestHashAndVerifyPassword(t *testing.T) {
 	t.Run("correct password hash and dehash", func(t *testing.T) {
 		pass := "hunter2"
 
-		hashed := HashPassword(argon, pass)
+		hashed, err := HashPassword(argon, pass)
 
-		got := VerifyPassword(pass, hashed)
+		require.Nil(t, err)
+
+		got, err := VerifyPassword(pass, hashed)
+
+		require.Nil(t, err)
 
 		assert.True(t, got, "Verification should be true")
 
@@ -40,11 +47,15 @@ func TestHashAndVerifyPassword(t *testing.T) {
 	t.Run("incorrect password is incorrect", func(t *testing.T) {
 		originalPass := "hunter2"
 
-		hashed := HashPassword(argon, originalPass)
+		hashed, err := HashPassword(argon, originalPass)
+
+		require.Nil(t, err)
 
 		wrongPass := "hunter1"
 
-		got := VerifyPassword(wrongPass, hashed)
+		got, err := VerifyPassword(wrongPass, hashed)
+
+		require.Nil(t, err)
 
 		assert.False(t, got, "Verification should be false")
 
@@ -172,7 +183,7 @@ func (a AnyTime) Match(v driver.Value) bool {
 	_, ok := v.(time.Time)
 	return ok
 }
-// TODO: Switch database mocking to https://github.com/Selvatico/go-mocket or just get rid of the orm lol
+
 func TestGetUserFromUsernameOrEmail(t *testing.T) {
 	orm, mock := dbtest.CreateMockDBClient(t)
 
@@ -180,15 +191,30 @@ func TestGetUserFromUsernameOrEmail(t *testing.T) {
 
 	mock.ExpectQuery(
 		"INSERT INTO \"users\"",
-	).WillReturnRows(
-		sqlmock.NewRows()
 	).WithArgs(
 		AnyTime{}, AnyTime{}, nil, user.Username, user.Email, user.Password,
-	)
+	).WillReturnRows(mock.NewRows([]string{"id"}))
 	orm.Create(&user)
 
 	t.Run("Email", func(t *testing.T) {
-		mock.ExpectExec("INSERT \"users\"").WillReturnResult(sqlmock.NewResult(1, 1))
+		mock.ExpectQuery(
+			regexp.QuoteMeta(`SELECT * FROM "users" WHERE email = $1`),
+		).WithArgs(
+			user.Email,
+		).WillReturnRows(mock.NewRows([]string{"id",
+			"username",
+			"email",
+			"created_at",
+			"updated_at",
+			"deleted_at",
+			"password"}).AddRow(user.ID,
+			user.Username,
+			user.Email,
+			user.CreatedAt,
+			user.UpdatedAt,
+			user.DeletedAt,
+			user.Password))
+
 		input := "matt@matt.com"
 		returned, err := GetUserFromUsernameOrEmail(input, orm)
 
@@ -196,4 +222,135 @@ func TestGetUserFromUsernameOrEmail(t *testing.T) {
 
 		assert.Equal(t, user, returned, "returned user shoud match user")
 	})
+
+	t.Run("Username", func(t *testing.T) {
+		mock.ExpectQuery(
+			regexp.QuoteMeta(`SELECT * FROM "users" WHERE username = $1`),
+		).WithArgs(
+			user.Username,
+		).WillReturnRows(mock.NewRows([]string{"id",
+			"username",
+			"email",
+			"created_at",
+			"updated_at",
+			"deleted_at",
+			"password"}).AddRow(user.ID,
+			user.Username,
+			user.Email,
+			user.CreatedAt,
+			user.UpdatedAt,
+			user.DeletedAt,
+			user.Password))
+
+		input := user.Username
+		returned, err := GetUserFromUsernameOrEmail(input, orm)
+
+		assert.Nil(t, err, "err should be nil")
+
+		assert.Equal(t, user, returned, "returned user shoud match user")
+
+	})
+
+	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
+}
+
+func TestCreateUserResponse(t *testing.T) {
+
+	now := time.Now()
+	formattedNow := now.Format(time.UnixDate)
+	user := &db.User{
+		Model:    gorm.Model{ID: 1, CreatedAt: now, UpdatedAt: now},
+		Username: "zireael",
+		Email:    "zir@gmail.com",
+		Password: "hunter2",
+	}
+
+	want := &model.UserResponse{
+		User: &model.User{
+			ID:        "1",
+			Username:  "zireael",
+			Email:     "zir@gmail.com",
+			CreatedAt: formattedNow,
+			UpdatedAt: formattedNow,
+		},
+	}
+
+	got := CreateUserResponse(user)
+
+	assert.Equal(t, want, got, "Returned user response should mirror wanted one")
+}
+
+func TestCreateUserInDB(t *testing.T) {
+	orm, mock := dbtest.CreateMockDBClient(t)
+	username := "Zireael"
+	email := "zir@gmail.com"
+	password := "hunter2"
+
+	mock.ExpectQuery(
+		regexp.QuoteMeta(`INSERT INTO "users"`),
+	).WithArgs(
+		AnyTime{},
+		AnyTime{},
+		nil,
+		username,
+		email,
+		password,
+	).WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1))
+
+	got, err := CreateUserInDB(orm, username, email, password)
+
+	assert.Nil(t, err, "should be no err")
+
+	assert.Equal(t, email, got.Email, "returned user email should be wanted user email")
+
+	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
+}
+
+func TestHandleCreateUserErr(t *testing.T) {
+
+	t.Run("Duplicate Username", func(t *testing.T) {
+		err := errors.New(
+			`ERROR: duplicate key value violates unique constraint "users_username_key" (SQLSTATE 23505)`,
+		)
+
+		want := CreateUserResponseErr(CreateUserErr("Username", "Username already taken"))
+
+		got, returnedErr := HandleCreateUserErr(err)
+
+		assert.Equal(t, want, got, "Duplicate Username Response")
+		assert.Nil(t, returnedErr)
+	})
+
+	t.Run("Duplicate Email", func(t *testing.T) {
+		err := errors.New(
+			`ERROR: duplicate key value violates unique constraint "users_email_key" (SQLSTATE 23505)`,
+		)
+
+		want := CreateUserResponseErr(CreateUserErr("Email", "Email already taken"))
+
+		got, returnedErr := HandleCreateUserErr(err)
+
+		assert.Equal(t, want, got, "Duplicate Email Response")
+		assert.Nil(t, returnedErr)
+	})
+
+	t.Run("Unhandled Error", func(t *testing.T) {
+		err := errors.New(`ERROR: datetime_field_overflow "users_created_at" (SQLSTATE 22008)`)
+
+		want := &model.UserResponse{}
+
+		got, returnedErr := HandleCreateUserErr(err)
+
+		assert.Equal(t, want, got, "Response should be blank")
+		assert.Error(t, returnedErr, "Unhandled Err should be returned")
+
+	})
+}
+
+func TestHandleInvalidLogin(t *testing.T) {
+	want := &model.UserResponse{Error: &model.UserError{Field: "None", Message: "Invalid Login"}}
+
+	got := HandleInvalidLogin()
+
+	assert.Equal(t, want, got)
 }

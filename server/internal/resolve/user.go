@@ -11,31 +11,27 @@ import (
 	"gorm.io/gorm"
 )
 
+// Converts UInt type to String
 func UIntToString(id uint) string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 
-func HashPassword(argon *argon2.Config, password string) string {
+// Hash password
+func HashPassword(argon *argon2.Config, password string) (string, error) {
 	hashed, err := argon.HashEncoded([]byte(password))
 
-	if err != nil {
-		panic(err)
-	}
-
-	return string(hashed)
+	return string(hashed), err
 }
 
-func VerifyPassword(password string, hashed string) bool {
+// Dehash password and check it against hashed
+func VerifyPassword(password string, hashed string) (bool, error) {
 
 	ok, err := argon2.VerifyEncoded([]byte(password), []byte(hashed))
 
-	if err != nil {
-		panic(err)
-	}
-
-	return ok
+	return ok, err
 }
 
+// Input validation on Register
 func ValidateRegister(input model.Register) (bool, *model.UserResponse) {
 	var err *model.UserError
 	var ok bool
@@ -60,18 +56,22 @@ func ValidateRegister(input model.Register) (bool, *model.UserResponse) {
 	return ok, res
 }
 
+// Wrapper for creating GQL UserErrors
 func CreateUserErr(field, message string) *model.UserError {
 	return &model.UserError{Field: field, Message: message}
 }
 
+// Wrapper for creating GQL UserResponses with an error
 func CreateUserResponseErr(userError *model.UserError) *model.UserResponse {
 	return &model.UserResponse{Error: userError}
 }
 
+// Checks if string is an email.
 func IsEmail(usernameOrEmail string) bool {
 	return strings.Contains(usernameOrEmail, "@")
 }
 
+// Queries DB for User on an ambigious username or email param.
 func GetUserFromUsernameOrEmail(usernameOrEmail string, DB *gorm.DB) (db.User, error) {
 	var res *gorm.DB
 	user := db.User{}
@@ -85,6 +85,7 @@ func GetUserFromUsernameOrEmail(usernameOrEmail string, DB *gorm.DB) (db.User, e
 	return user, res.Error
 }
 
+// Transforms DB/ORM User to GraphQL UserResponse
 func CreateUserResponse(user *db.User) *model.UserResponse {
 	return &model.UserResponse{
 		User: &model.User{
@@ -96,6 +97,7 @@ func CreateUserResponse(user *db.User) *model.UserResponse {
 		}}
 }
 
+// takes User inputs and creates User in DB, returns User object and error if failed
 func CreateUserInDB(DB *gorm.DB, username, email, password string) (*db.User, error) {
 	user := db.User{Username: username, Email: email, Password: password}
 
@@ -104,22 +106,23 @@ func CreateUserInDB(DB *gorm.DB, username, email, password string) (*db.User, er
 	return &user, res.Error
 }
 
-func HandleCreateUserErr(err error) *model.UserResponse {
-	// TODO: split email and username errors
-	if strings.Contains(err.Error(), "23505") {
-		return &model.UserResponse{
-			Error: &model.UserError{
-				Field:   "Email/Username",
-				Message: "Email/Username already taken",
-			},
-		}
-	}
+const DuplicateUsernameErr = `ERROR: duplicate key value violates unique constraint "users_username_key" (SQLSTATE 23505)`
 
-	panic(err)
+const DuplicateEmailErr = `ERROR: duplicate key value violates unique constraint "users_email_key" (SQLSTATE 23505)`
+
+// Handles errors from creating User in DB
+func HandleCreateUserErr(err error) (*model.UserResponse, error) {
+	switch err.Error() {
+	case DuplicateUsernameErr:
+		return CreateUserResponseErr(CreateUserErr("Username", "Username already taken")), nil
+	case DuplicateEmailErr:
+		return CreateUserResponseErr(CreateUserErr("Email", "Email already taken")), nil
+	default:
+		return &model.UserResponse{}, err
+	}
 }
 
+// Returns invalid login response
 func HandleInvalidLogin() *model.UserResponse {
-	return &model.UserResponse{
-		Error: &model.UserError{Field: "None", Message: "Invalid Login"},
-	}
+	return CreateUserResponseErr(CreateUserErr("None", "Invalid Login"))
 }

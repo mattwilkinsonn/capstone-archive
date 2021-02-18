@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Transforms DB/ORM Capstone schema into GraphQL schema
 func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 	return &model.Capstone{
 		ID:          UIntToString(capstone.ID),
@@ -19,6 +20,7 @@ func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 	}
 }
 
+// Takes Capstone inputs and creates object in Database
 func CreateCapstoneInDB(DB *gorm.DB, title, description, author string) (*db.Capstone, error) {
 	capstone := db.Capstone{
 		Title:       title,
@@ -31,6 +33,7 @@ func CreateCapstoneInDB(DB *gorm.DB, title, description, author string) (*db.Cap
 	return &capstone, res.Error
 }
 
-func HandleCreateCapstoneErr(err error) {
-	panic(err)
+// very dumb function right now. Need to add a way to return errors in capstone graphql schema
+func HandleCreateCapstoneErr(err error) error {
+	return err
 }
