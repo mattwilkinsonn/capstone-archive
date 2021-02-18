@@ -9,62 +9,72 @@ import (
 
 	"github.com/Zireael13/capstone-archive/server/internal/graph/generated"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
-	"github.com/Zireael13/capstone-archive/server/internal/resolve"
+	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
 )
 
-func (r *mutationResolver) CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.Capstone, error) {
+func (r *mutationResolver) CreateCapstone(
+	ctx context.Context,
+	input model.NewCapstone,
+) (*model.Capstone, error) {
 	// TODO: input validation on capstone adds?
 
-	capstone, err := resolve.CreateCapstoneInDB(r.DB, input.Title, input.Description, input.Author)
+	capstone, err := CreateCapstoneInDB(r.DB, input.Title, input.Description, input.Author)
 	if err != nil {
-		resolve.HandleCreateCapstoneErr(err)
+		err = HandleCreateCapstoneErr(err)
+		panic(err)
 	}
 
-	graphCapstone := resolve.CreateGraphCapstone(capstone)
+	graphCapstone := CreateGraphCapstone(capstone)
 
 	return graphCapstone, nil
 }
 
-func (r *mutationResolver) Register(ctx context.Context, input model.Register) (*model.UserResponse, error) {
-	ok, res := resolve.ValidateRegister(input)
+func (r *mutationResolver) Register(
+	ctx context.Context,
+	input model.Register,
+) (*model.UserResponse, error) {
+	ok, res := ValidateRegister(input)
 	if !ok {
 		return res, nil
 	}
 
-	hashed, err := resolve.HashPassword(r.Argon, input.Password)
+	hashed, err := HashPassword(r.Argon, input.Password)
 	if err != nil {
 		panic(err)
 	}
 
-	user, err := resolve.CreateUserInDB(r.DB, input.Username, input.Email, hashed)
+	user, err := CreateUserInDB(r.DB, input.Username, input.Email, hashed)
 
 	if err != nil {
-		res, unhandledErr := resolve.HandleCreateUserErr(err)
+		res, unhandledErr := HandleCreateUserErr(err)
 		if unhandledErr != nil {
 			panic(unhandledErr)
 		}
 		return res, nil
 	}
 
-	return resolve.CreateUserResponse(user), nil
+	return CreateUserResponse(user), nil
 }
 
-func (r *mutationResolver) Login(ctx context.Context, input model.Login) (*model.UserResponse, error) {
-	user, err := resolve.GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
+func (r *mutationResolver) Login(
+	ctx context.Context,
+	input model.Login,
+) (*model.UserResponse, error) {
+	user, err := GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
 	if err != nil {
-		return resolve.HandleInvalidLogin(), nil
+		return HandleInvalidLogin(), nil
 	}
 
-	ok, err := resolve.VerifyPassword(input.Password, user.Password)
+	ok, err := VerifyPassword(input.Password, user.Password)
 	if err != nil {
 		panic(err)
 	}
 
 	if !ok {
-		return resolve.HandleInvalidLogin(), nil
+		return HandleInvalidLogin(), nil
 	}
 
-	userResponse := resolve.CreateUserResponse(&user)
+	userResponse := CreateUserResponse(&user)
 
 	// TODO: implement jwt tokens
 	return userResponse, nil
