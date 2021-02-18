@@ -7,17 +7,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Zireael13/capstone-archive/server/internal/resolve"
-
 	"github.com/Zireael13/capstone-archive/server/internal/graph/generated"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
+	"github.com/Zireael13/capstone-archive/server/internal/resolve"
 )
 
-func (r *mutationResolver) CreateCapstone(
-	ctx context.Context,
-	input model.NewCapstone,
-) (*model.Capstone, error) {
-
+func (r *mutationResolver) CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.Capstone, error) {
 	// TODO: input validation on capstone adds?
 
 	capstone, err := resolve.CreateCapstoneInDB(r.DB, input.Title, input.Description, input.Author)
@@ -28,14 +23,9 @@ func (r *mutationResolver) CreateCapstone(
 	graphCapstone := resolve.CreateGraphCapstone(capstone)
 
 	return graphCapstone, nil
-
 }
 
-func (r *mutationResolver) Register(
-	ctx context.Context,
-	input model.Register,
-) (*model.UserResponse, error) {
-
+func (r *mutationResolver) Register(ctx context.Context, input model.Register) (*model.UserResponse, error) {
 	ok, res := resolve.ValidateRegister(input)
 	if !ok {
 		return res, nil
@@ -57,14 +47,9 @@ func (r *mutationResolver) Register(
 	}
 
 	return resolve.CreateUserResponse(user), nil
-
 }
 
-func (r *mutationResolver) Login(
-	ctx context.Context,
-	input model.Login,
-) (*model.UserResponse, error) {
-
+func (r *mutationResolver) Login(ctx context.Context, input model.Login) (*model.UserResponse, error) {
 	user, err := resolve.GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
 	if err != nil {
 		return resolve.HandleInvalidLogin(), nil
@@ -83,7 +68,6 @@ func (r *mutationResolver) Login(
 
 	// TODO: implement jwt tokens
 	return userResponse, nil
-
 }
 
 func (r *queryResolver) Capstones(ctx context.Context) ([]*model.Capstone, error) {

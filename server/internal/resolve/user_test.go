@@ -267,7 +267,7 @@ func TestCreateUserResponse(t *testing.T) {
 
 	want := &model.UserResponse{
 		User: &model.User{
-			ID:        "1",
+			ID:        1,
 			Username:  "zireael",
 			Email:     "zir@gmail.com",
 			CreatedAt: formattedNow,

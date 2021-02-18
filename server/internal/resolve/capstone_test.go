@@ -30,7 +30,7 @@ func TestCreateGraphCapstone(t *testing.T) {
 	}
 
 	want := &model.Capstone{
-		ID:          "24",
+		ID:          24,
 		Title:       title,
 		Description: desc,
 		Author:      author,

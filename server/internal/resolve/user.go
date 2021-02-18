@@ -89,7 +89,7 @@ func GetUserFromUsernameOrEmail(usernameOrEmail string, DB *gorm.DB) (db.User, e
 func CreateUserResponse(user *db.User) *model.UserResponse {
 	return &model.UserResponse{
 		User: &model.User{
-			ID:        UIntToString(user.ID),
+			ID:        int(user.ID),
 			Username:  user.Username,
 			Email:     user.Email,
 			CreatedAt: user.CreatedAt.Format(time.UnixDate),
