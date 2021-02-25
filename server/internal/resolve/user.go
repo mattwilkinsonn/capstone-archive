@@ -37,10 +37,7 @@ func ValidateRegister(input model.Register) (bool, *model.UserResponse) {
 	var ok bool
 
 	switch {
-	case !strings.Contains(input.Email, "@"):
-		ok = false
-		err = CreateUserErr("Email", "Invalid Email")
-	case len(input.Email) <= 7:
+	case !strings.Contains(input.Email, "@"), len(input.Email) <= 7:
 		ok = false
 		err = CreateUserErr("Email", "Invalid Email")
 	case len(input.Username) <= 4:

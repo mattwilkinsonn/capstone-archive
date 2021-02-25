@@ -96,10 +96,20 @@ func TestValidateRegister(t *testing.T) {
 			response: CreateUserResponseErr(CreateUserErr("none", "none")),
 		},
 		{
-			name: "Invalid Email",
+			name: "Invalid Email - No @",
 			input: model.Register{
 				Username: "matt12",
 				Email:    "mattmatt.com",
+				Password: "hunter2",
+			},
+			valid:    false,
+			response: CreateUserResponseErr(CreateUserErr("Email", "Invalid Email")),
+		},
+		{
+			name: "Invalid Email - Too Short",
+			input: model.Register{
+				Username: "matt12",
+				Email:    "mat@",
 				Password: "hunter2",
 			},
 			valid:    false,
