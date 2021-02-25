@@ -40,6 +40,9 @@ func ValidateRegister(input model.Register) (bool, *model.UserResponse) {
 	case !strings.Contains(input.Email, "@"):
 		ok = false
 		err = CreateUserErr("Email", "Invalid Email")
+	case len(input.Email) <= 7:
+		ok = false
+		err = CreateUserErr("Email", "Invalid Email")
 	case len(input.Username) <= 4:
 		ok = false
 		err = CreateUserErr("Username", "Username must be longer than 4 characters")
