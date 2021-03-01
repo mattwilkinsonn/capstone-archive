@@ -72,7 +72,7 @@ func IsEmail(usernameOrEmail string) bool {
 }
 
 // Queries DB for User on an ambigious username or email param.
-func GetUserFromUsernameOrEmail(usernameOrEmail string, DB *gorm.DB) (db.User, error) {
+func GetUserFromUsernameOrEmail(usernameOrEmail string, DB *gorm.DB) (*db.User, error) {
 	var res *gorm.DB
 	user := db.User{}
 
@@ -82,19 +82,23 @@ func GetUserFromUsernameOrEmail(usernameOrEmail string, DB *gorm.DB) (db.User, e
 		res = DB.Where("username = ?", usernameOrEmail).First(&user)
 	}
 
-	return user, res.Error
+	return &user, res.Error
 }
 
 // Transforms DB/ORM User to GraphQL UserResponse
 func CreateUserResponse(user *db.User) *model.UserResponse {
 	return &model.UserResponse{
-		User: &model.User{
-			ID:        int(user.ID),
-			Username:  user.Username,
-			Email:     user.Email,
-			CreatedAt: user.CreatedAt.Format(time.UnixDate),
-			UpdatedAt: user.UpdatedAt.Format(time.UnixDate),
-		}}
+		User: DBToGQLUser(user)}
+}
+
+func DBToGQLUser(user *db.User) *model.User {
+	return &model.User{
+		ID:        int(user.ID),
+		Username:  user.Username,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt.Format(time.UnixDate),
+		UpdatedAt: user.UpdatedAt.Format(time.UnixDate),
+	}
 }
 
 // takes User inputs and creates User in DB, returns User object and error if failed
@@ -125,4 +129,12 @@ func HandleCreateUserErr(err error) (*model.UserResponse, error) {
 // Returns invalid login response
 func HandleInvalidLogin() *model.UserResponse {
 	return CreateUserResponseErr(CreateUserErr("None", "Invalid Login"))
+}
+
+func GetUserFromID(DB *gorm.DB, id uint) (*db.User, error) {
+	user := db.User{}
+
+	res := DB.Where("id = ?", id).First(&user)
+
+	return &user, res.Error
 }

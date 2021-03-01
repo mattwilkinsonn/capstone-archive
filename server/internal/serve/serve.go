@@ -3,6 +3,7 @@ package serve
 import (
 	"os"
 
+	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/router"
 	"github.com/gin-gonic/gin"
 	"github.com/matthewhartstonge/argon2"
@@ -27,6 +28,10 @@ func CreateArgon() *argon2.Config {
 
 func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 	g := gin.Default()
+
+	g.Use(auth.GinContextToContextMiddleware())
+
+	g.Use(auth.CreateDefaultSessionMiddleware())
 
 	gqlHandler := router.GraphQLHandler(orm, argon)
 	playHandler := router.PlaygroundHandler()

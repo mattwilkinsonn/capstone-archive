@@ -197,7 +197,7 @@ func (a AnyTime) Match(v driver.Value) bool {
 func TestGetUserFromUsernameOrEmail(t *testing.T) {
 	orm, mock := dbtest.CreateMockDBClient(t)
 
-	user := db.User{Username: "matt123", Email: "matt@matt.com", Password: "hunter2"}
+	user := &db.User{Username: "matt123", Email: "matt@matt.com", Password: "hunter2"}
 
 	mock.ExpectQuery(
 		"INSERT INTO \"users\"",

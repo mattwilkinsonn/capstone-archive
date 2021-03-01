@@ -55,6 +55,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateCapstone func(childComplexity int, input model.NewCapstone) int
 		Login          func(childComplexity int, input model.Login) int
+		Logout         func(childComplexity int) int
 		Register       func(childComplexity int, input model.Register) int
 	}
 
@@ -94,6 +95,7 @@ type MutationResolver interface {
 	CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.Capstone, error)
 	Register(ctx context.Context, input model.Register) (*model.UserResponse, error)
 	Login(ctx context.Context, input model.Login) (*model.UserResponse, error)
+	Logout(ctx context.Context) (bool, error)
 }
 type QueryResolver interface {
 	Capstones(ctx context.Context) ([]*model.Capstone, error)
@@ -181,6 +183,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.Login)), true
+
+	case "Mutation.logout":
+		if e.complexity.Mutation.Logout == nil {
+			break
+		}
+
+		return e.complexity.Mutation.Logout(childComplexity), true
 
 	case "Mutation.register":
 		if e.complexity.Mutation.Register == nil {
@@ -435,6 +444,7 @@ type Mutation {
   createCapstone(input: NewCapstone!): Capstone!
   register(input: Register!): UserResponse!
   login(input: Login!): UserResponse!
+  logout: Boolean!
 }
 `, BuiltIn: false},
 }
@@ -876,6 +886,41 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 	res := resTmp.(*model.UserResponse)
 	fc.Result = res
 	return ec.marshalNUserResponse2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐUserResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Logout(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_capstones(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2774,6 +2819,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "login":
 			out.Values[i] = ec._Mutation_login(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "logout":
+			out.Values[i] = ec._Mutation_logout(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

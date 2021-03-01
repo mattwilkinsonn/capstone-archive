@@ -63,4 +63,5 @@ type Mutation {
   createCapstone(input: NewCapstone!): Capstone!
   register(input: Register!): UserResponse!
   login(input: Login!): UserResponse!
+  logout: Boolean!
 }
