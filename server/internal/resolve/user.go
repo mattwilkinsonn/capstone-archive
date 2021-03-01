@@ -131,6 +131,7 @@ func HandleInvalidLogin() *model.UserResponse {
 	return CreateUserResponseErr(CreateUserErr("None", "Invalid Login"))
 }
 
+// Wraps GORM to get the user from their ID
 func GetUserFromID(DB *gorm.DB, id uint) (*db.User, error) {
 	user := db.User{}
 

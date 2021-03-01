@@ -364,3 +364,26 @@ func TestHandleInvalidLogin(t *testing.T) {
 
 	assert.Equal(t, want, got)
 }
+
+func TestDBToGQLUser(t *testing.T) {
+	now := time.Now()
+	formattedNow := now.Format(time.UnixDate)
+	user := &db.User{
+		Model:    gorm.Model{ID: 1, CreatedAt: now, UpdatedAt: now},
+		Username: "zireael",
+		Email:    "zir@gmail.com",
+		Password: "hunter2",
+	}
+
+	want := &model.User{
+		ID:        1,
+		Username:  "zireael",
+		Email:     "zir@gmail.com",
+		CreatedAt: formattedNow,
+		UpdatedAt: formattedNow,
+	}
+
+	got := DBToGQLUser(user)
+
+	assert.Equal(t, want, got)
+}

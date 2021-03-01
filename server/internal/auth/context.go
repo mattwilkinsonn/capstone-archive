@@ -9,6 +9,7 @@ import (
 
 type GinContextKey string
 
+// Packs the Gin Context into the regular context.
 func GinContextToContextMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -19,17 +20,18 @@ func GinContextToContextMiddleware() gin.HandlerFunc {
 	}
 }
 
-func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
+// Extracts the Gin context from the packed Gqlgen context.
+func GinContextFromContext(ctx context.Context) *gin.Context {
 	ginContext := ctx.Value(GinContextKey("gin"))
 	if ginContext == nil {
 		err := fmt.Errorf("could not retrieve gin.Context")
-		return nil, err
+		panic(err)
 	}
 
 	gc, ok := ginContext.(*gin.Context)
 	if !ok {
 		err := fmt.Errorf("gin.Context has wrong type")
-		return nil, err
+		panic(err)
 	}
-	return gc, nil
+	return gc
 }

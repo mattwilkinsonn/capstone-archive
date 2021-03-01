@@ -31,7 +31,7 @@ func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 
 	g.Use(auth.GinContextToContextMiddleware())
 
-	g.Use(auth.CreateDefaultSessionMiddleware())
+	g.Use(auth.CreateSessionMiddleware())
 
 	gqlHandler := router.GraphQLHandler(orm, argon)
 	playHandler := router.PlaygroundHandler()

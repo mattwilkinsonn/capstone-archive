@@ -11,7 +11,6 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/graph/generated"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
-	"github.com/gin-contrib/sessions"
 )
 
 func (r *mutationResolver) CreateCapstone(
@@ -62,10 +61,6 @@ func (r *mutationResolver) Login(
 	ctx context.Context,
 	input model.Login,
 ) (*model.UserResponse, error) {
-	ginCtx, err := auth.GinContextFromContext(ctx)
-	if err != nil {
-		panic("gin context not attached??")
-	}
 
 	user, err := GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
 	if err != nil {
@@ -73,6 +68,7 @@ func (r *mutationResolver) Login(
 	}
 
 	ok, err := VerifyPassword(input.Password, user.Password)
+	// leaving here because might want to handle this error later
 	if err != nil {
 		panic(err)
 	}
@@ -83,26 +79,13 @@ func (r *mutationResolver) Login(
 
 	userResponse := CreateUserResponse(user)
 
-	// TODO: implement jwt tokens
-	session := sessions.Default(ginCtx)
-	session.Set("userId", user.ID)
-	session.Save()
+	auth.CreateSessionFromUser(ctx, user)
 
 	return userResponse, nil
 }
 
 func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
-	ginCtx, err := auth.GinContextFromContext(ctx)
-	if err != nil {
-		panic("gin context not attached??")
-	}
-
-	session := sessions.Default(ginCtx)
-	session.Clear()
-	err = session.Save()
-	if err != nil {
-		return false, err
-	}
+	auth.ClearSession(ctx)
 	return true, nil
 }
 
@@ -115,18 +98,12 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
-	ginCtx, err := auth.GinContextFromContext(ctx)
-	if err != nil {
-		panic("gin context not attached??")
-	}
-
-	session := sessions.Default(ginCtx)
-	userId := session.Get("userId")
-	if userId == nil {
+	id, ok := auth.GetUserIDFromSession(ctx)
+	if !ok {
 		return nil, nil
 	}
 
-	user, err := GetUserFromID(r.DB, userId.(uint))
+	user, err := GetUserFromID(r.DB, id)
 	if err != nil {
 		return nil, nil
 	}
