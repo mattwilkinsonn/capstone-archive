@@ -3,7 +3,6 @@ package resolve
 import (
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
@@ -96,8 +95,8 @@ func DBToGQLUser(user *db.User) *model.User {
 		ID:        int(user.ID),
 		Username:  user.Username,
 		Email:     user.Email,
-		CreatedAt: user.CreatedAt.Format(time.UnixDate),
-		UpdatedAt: user.UpdatedAt.Format(time.UnixDate),
+		CreatedAt: int(user.CreatedAt.Unix()),
+		UpdatedAt: int(user.UpdatedAt.Unix()),
 	}
 }
 

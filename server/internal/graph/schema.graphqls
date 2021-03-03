@@ -13,8 +13,8 @@ type User {
   id: ID!
   username: String!
   email: String!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: Int!
+  updatedAt: Int!
 }
 
 input Register {
@@ -28,14 +28,19 @@ type Capstone {
   title: String!
   description: String!
   author: String!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: Int!
+  updatedAt: Int!
 }
 
 type Query {
-  capstones: [Capstone!]!
+  capstones(limit: Int!, cursor: Int): PaginatedCapstones!
   users: [PublicUser!]!
   me: User
+}
+
+type PaginatedCapstones {
+  capstones: [Capstone]!
+  hasMore: Boolean!
 }
 
 input NewCapstone {

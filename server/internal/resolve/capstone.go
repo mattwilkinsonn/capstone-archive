@@ -15,8 +15,8 @@ func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 		Title:       capstone.Title,
 		Description: capstone.Description,
 		Author:      capstone.Author,
-		CreatedAt:   capstone.CreatedAt.Format(time.UnixDate),
-		UpdatedAt:   capstone.UpdatedAt.Format(time.UnixDate),
+		CreatedAt:   int(capstone.CreatedAt.Unix()),
+		UpdatedAt:   int(capstone.UpdatedAt.Unix()),
 	}
 }
 
@@ -36,4 +36,33 @@ func CreateCapstoneInDB(DB *gorm.DB, title, description, author string) (*db.Cap
 // very dumb function right now. Need to add a way to return errors in capstone graphql schema
 func HandleCreateCapstoneErr(err error) error {
 	return err
+}
+
+func GetCapstones(DB *gorm.DB, number int, cursor *int) (capstones []*db.Capstone, err error) {
+	var res *gorm.DB
+
+	if cursor != nil {
+		res = DB.Where(
+			"created_at < ?",
+			time.Unix(int64(*cursor), 0),
+		).Order(
+			"created_at DESC",
+		).Limit(
+			number,
+		).Find(
+			&capstones,
+		)
+	} else {
+		res = DB.Limit(number).Order("created_at DESC").Find(&capstones)
+	}
+
+	return capstones, res.Error
+}
+
+func CreateGraphCapstoneSlice(capstones []*db.Capstone) (gqlCapstones []*model.Capstone) {
+	for _, capstone := range capstones {
+		gqlCapstones = append(gqlCapstones, CreateGraphCapstone(capstone))
+	}
+
+	return gqlCapstones
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/graph/generated"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
+	"github.com/adam-lavrik/go-imath/ix"
 )
 
 func (r *mutationResolver) CreateCapstone(
@@ -61,7 +62,6 @@ func (r *mutationResolver) Login(
 	ctx context.Context,
 	input model.Login,
 ) (*model.UserResponse, error) {
-
 	user, err := GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
 	if err != nil {
 		return HandleInvalidLogin(), nil
@@ -89,11 +89,36 @@ func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
-func (r *queryResolver) Capstones(ctx context.Context) ([]*model.Capstone, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Capstones(
+	ctx context.Context,
+	limit int,
+	cursor *int,
+) (*model.PaginatedCapstones, error) {
+	realLimit := ix.Min(limit, 50)
+
+	capstones, err := GetCapstones(r.DB, realLimit+1, cursor)
+	if err != nil {
+		panic(err)
+	}
+
+	hasMore := false
+	if len(capstones) == realLimit+1 {
+		hasMore = true
+	} else if len(capstones) < realLimit {
+		realLimit = len(capstones)
+	}
+
+	gqlCapstones := CreateGraphCapstoneSlice(capstones[0:realLimit])
+
+	paginated := &model.PaginatedCapstones{
+		Capstones: gqlCapstones,
+		HasMore:   hasMore,
+	}
+
+	return paginated, nil
 }
 
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+func (r *queryResolver) Users(ctx context.Context) ([]*model.PublicUser, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

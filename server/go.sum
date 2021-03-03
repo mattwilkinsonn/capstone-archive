@@ -9,6 +9,8 @@ github.com/Zireael13/capstone-archive v0.0.0-20210211232237-2105c58d7734 h1:JwNS
 github.com/Zireael13/capstone-archive v0.0.0-20210212204837-cb1285efae5d h1:hLcAdjoJAKmaFX48xaxFHyylJPDWO4elgAHU5L5daJA=
 github.com/Zireael13/capstone-archive v0.0.0-20210217200026-e374148d6f7d h1:jaSwKhOAlWBnwYUl8d5i6uhkWrqwPxk/5TWpe+K1jn0=
 github.com/Zireael13/capstone-archive v0.0.0-20210217234043-dd368001f40b h1:2zKd04io+z6ZPc80Y/fbO8d56bZF8Qt6r4rZXM/L3AE=
+github.com/adam-lavrik/go-imath v0.0.0-20200104135348-19d2b923d06c h1:msbxYZZrXgKCMiV4QvBLMtSZ/YGqRnVtXuWMv7Vjvhw=
+github.com/adam-lavrik/go-imath v0.0.0-20200104135348-19d2b923d06c/go.mod h1:XjvqMUpGd3Xn9Jtzk/4GEBCSoBX0eB2RyriXgne0IdM=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/agnivade/levenshtein v1.0.3 h1:M5ZnqLOoZR8ygVq0FfkXsNOKzMCk0xRiow0R5+5VkQ0=
 github.com/agnivade/levenshtein v1.0.3/go.mod h1:4SFRZbbXWLF4MU1T9Qg0pGgH3Pjs+t6ie5efyrwRJXs=

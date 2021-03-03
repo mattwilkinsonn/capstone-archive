@@ -16,7 +16,7 @@ import (
 
 func TestCreateGraphCapstone(t *testing.T) {
 	now := time.Now()
-	formattedNow := now.Format(time.UnixDate)
+	formattedNow := int(now.Unix())
 
 	title := "Capstone Archive"
 	desc := "Archive for capstone projects"

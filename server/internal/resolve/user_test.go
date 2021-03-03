@@ -267,7 +267,7 @@ func TestGetUserFromUsernameOrEmail(t *testing.T) {
 func TestCreateUserResponse(t *testing.T) {
 
 	now := time.Now()
-	formattedNow := now.Format(time.UnixDate)
+	formattedNow := int(now.Unix())
 	user := &db.User{
 		Model:    gorm.Model{ID: 1, CreatedAt: now, UpdatedAt: now},
 		Username: "zireael",
@@ -367,7 +367,7 @@ func TestHandleInvalidLogin(t *testing.T) {
 
 func TestDBToGQLUser(t *testing.T) {
 	now := time.Now()
-	formattedNow := now.Format(time.UnixDate)
+	formattedNow := int(now.Unix())
 	user := &db.User{
 		Model:    gorm.Model{ID: 1, CreatedAt: now, UpdatedAt: now},
 		Username: "zireael",

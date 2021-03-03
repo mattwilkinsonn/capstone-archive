@@ -7,8 +7,8 @@ type Capstone struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Author      string `json:"author"`
-	CreatedAt   string `json:"createdAt"`
-	UpdatedAt   string `json:"updatedAt"`
+	CreatedAt   int    `json:"createdAt"`
+	UpdatedAt   int    `json:"updatedAt"`
 }
 
 type Login struct {
@@ -20,6 +20,15 @@ type NewCapstone struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Author      string `json:"author"`
+}
+
+type PaginatedCapstones struct {
+	Capstones []*Capstone `json:"capstones"`
+	HasMore   bool        `json:"hasMore"`
+}
+
+type PublicUser struct {
+	Username string `json:"username"`
 }
 
 type Register struct {
@@ -39,8 +48,8 @@ type User struct {
 	ID        int    `json:"id"`
 	Username  string `json:"username"`
 	Email     string `json:"email"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
+	CreatedAt int    `json:"createdAt"`
+	UpdatedAt int    `json:"updatedAt"`
 }
 
 type UserError struct {
