@@ -9,6 +9,7 @@ type Capstone struct {
 	Author      string `json:"author"`
 	CreatedAt   int    `json:"createdAt"`
 	UpdatedAt   int    `json:"updatedAt"`
+	Semester    string `json:"semester"`
 }
 
 type Login struct {

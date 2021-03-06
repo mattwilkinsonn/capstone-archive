@@ -17,6 +17,7 @@ func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 		Author:      capstone.Author,
 		CreatedAt:   int(capstone.CreatedAt.Unix()),
 		UpdatedAt:   int(capstone.UpdatedAt.Unix()),
+		Semester:    capstone.Semester,
 	}
 }
 
@@ -54,6 +55,25 @@ func GetCapstones(DB *gorm.DB, number int, cursor *int) (capstones []*db.Capston
 		)
 	} else {
 		res = DB.Limit(number).Order("created_at DESC").Find(&capstones)
+	}
+
+	return capstones, res.Error
+}
+
+func SearchCapstones(
+	DB *gorm.DB,
+	query string,
+	number int,
+	offset *int,
+) (capstones []*db.Capstone, err error) {
+	var res *gorm.DB
+
+	if offset != nil {
+		sql := "SELECT * FROM (SELECT to_tsvector(c.Title) || to_tsvector(c.Description) || to_tsvector(c.Author) || to_tsvector(c.Semester) as document, * FROM capstones c) capstone WHERE capstone.document @@ to_tsquery('english', ?) LIMIT ? OFFSET ?;"
+		res = DB.Raw(sql, query, number, offset).Scan(&capstones)
+	} else {
+		sql := "SELECT * FROM (SELECT to_tsvector(c.Title) || to_tsvector(c.Description) || to_tsvector(c.Author) || to_tsvector(c.Semester) as document, * FROM capstones c) capstone WHERE capstone.document @@ to_tsquery('english', ?) LIMIT ?"
+		res = DB.Raw(sql, query, number).Scan(&capstones)
 	}
 
 	return capstones, res.Error
