@@ -39,6 +39,7 @@ func HandleCreateCapstoneErr(err error) error {
 	return err
 }
 
+// Gets list of most recent capstones using cursor pagination.
 func GetCapstones(DB *gorm.DB, number int, cursor *int) (capstones []*db.Capstone, err error) {
 	var res *gorm.DB
 
@@ -60,6 +61,7 @@ func GetCapstones(DB *gorm.DB, number int, cursor *int) (capstones []*db.Capston
 	return capstones, res.Error
 }
 
+// Searches capstones with Postgres' full text search. Uses LIMIT/OFFSET pagination. Doing LIMIT/OFFSET is probably slow but good enough for use case
 func SearchCapstones(
 	DB *gorm.DB,
 	query string,
@@ -79,6 +81,7 @@ func SearchCapstones(
 	return capstones, res.Error
 }
 
+// Iterates over a slice of DB capstones and creates GQL ones.
 func CreateGraphCapstoneSlice(capstones []*db.Capstone) (gqlCapstones []*model.Capstone) {
 	for _, capstone := range capstones {
 		gqlCapstones = append(gqlCapstones, CreateGraphCapstone(capstone))
