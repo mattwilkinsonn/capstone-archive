@@ -1,6 +1,7 @@
 package resolve
 
 import (
+	"regexp"
 	"time"
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
@@ -69,6 +70,10 @@ func SearchCapstones(
 	offset *int,
 ) (capstones []*db.Capstone, err error) {
 	var res *gorm.DB
+
+	whitespace := regexp.MustCompile(`\s+`)
+
+	query = whitespace.ReplaceAllString(query, "&")
 
 	if offset != nil {
 		sql := "SELECT * FROM (SELECT to_tsvector(c.Title) || to_tsvector(c.Description) || to_tsvector(c.Author) || to_tsvector(c.Semester) as document, * FROM capstones c) capstone WHERE capstone.document @@ to_tsquery('english', ?) LIMIT ? OFFSET ?;"
