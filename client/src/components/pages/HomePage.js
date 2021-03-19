@@ -1,23 +1,24 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { fade, makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import NavBar from '../NavBar';
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
+import React from "react";
+import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { fade, makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import NavBar from "../NavBar";
+import SearchIcon from "@material-ui/icons/Search";
+import InputBase from "@material-ui/core/InputBase";
+import { useCapstonesQuery } from "../../generated/graphql";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
     marginRight: theme.spacing(2),
   },
   heroContent: {
-    backgroundColor: fade(theme.palette.primary.light, .1),
+    backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(8, 0, 6),
   },
   heroButtons: {
@@ -28,48 +29,48 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(8),
   },
   card: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
   },
   cardMedia: {
-    paddingTop: '56.25%', // 16:9
+    paddingTop: "56.25%", // 16:9
   },
   cardContent: {
     flexGrow: 1,
   },
   footer: {
-    backgroundColor: fade(theme.palette.primary.light, .1),
+    backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(6),
   },
   search: {
-    position: 'relative',
+    position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.primary.main, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.primary.main, 0.20),
+    "&:hover": {
+      backgroundColor: fade(theme.palette.primary.main, 0.2),
     },
     marginTop: theme.spacing(4),
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    width: '50%',
+    marginRight: "auto",
+    marginLeft: "auto",
+    width: "50%",
   },
   searchIcon: {
     padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   inputRoot: {
-    color: 'inherit',
+    color: "inherit",
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    },
+  },
   divide: {
     marginBottom: theme.spacing(8),
   },
@@ -82,14 +83,25 @@ export default function Homepage() {
 
   return (
     <React.Fragment>
-        <NavBar></NavBar>
+      <NavBar></NavBar>
       <main>
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
-            <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-               Capstone Projects
+            <Typography
+              component="h1"
+              variant="h2"
+              align="center"
+              color="textPrimary"
+              gutterBottom
+            >
+              Capstone Projects
             </Typography>
-            <Typography variant="h5" align="center" color="textSecondary" paragraph>
+            <Typography
+              variant="h5"
+              align="center"
+              color="textSecondary"
+              paragraph
+            >
               Past projects can be seen here.
             </Typography>
             <div className={classes.search}>
@@ -102,9 +114,9 @@ export default function Homepage() {
                   root: classes.inputRoot,
                   input: classes.inputInput,
                 }}
-                inputProps={{ 'aria-label': 'search' }}
+                inputProps={{ "aria-label": "search" }}
               />
-          </div>
+            </div>
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
@@ -121,9 +133,7 @@ export default function Homepage() {
                     <Typography gutterBottom variant="h5" component="h2">
                       Project
                     </Typography>
-                    <Typography>
-                      Project Description
-                    </Typography>
+                    <Typography>Project Description</Typography>
                   </CardContent>
                   <CardActions>
                     <Button size="small" color="primary">
@@ -141,7 +151,12 @@ export default function Homepage() {
         <Typography variant="h6" align="center" gutterBottom>
           American University CS Capstone Project
         </Typography>
-        <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
+        <Typography
+          variant="subtitle1"
+          align="center"
+          color="textSecondary"
+          component="p"
+        >
           By Ashlyn Levinson and Matthew Wilkinson
         </Typography>
       </footer>
