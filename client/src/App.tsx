@@ -5,7 +5,7 @@ import HomePage from './components/pages/HomePage'
 import MoreviewPage from './components/pages/MoreviewPage'
 import { QueryClientProvider, QueryClient } from 'react-query'
 
-function App() {
+function App(): JSX.Element {
   const queryClient = new QueryClient()
 
   return (

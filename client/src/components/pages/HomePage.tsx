@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-export default function Homepage() {
+export default function Homepage(): JSX.Element {
   const classes = useStyles()
   const rqClient = createClient()
   const { data } = useCapstonesQuery(rqClient, { limit: 20 })

@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function Homepage() {
+export default function Homepage(): JSX.Element {
   const classes = useStyles()
 
   return (

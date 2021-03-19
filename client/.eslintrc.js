@@ -6,7 +6,13 @@ module.exports = {
     es6: true,
   },
   parserOptions: { ecmaVersion: 8 }, // to enable features such as async/await
-  ignorePatterns: ['node_modules/*', '.next/*', '.out/*', '!.prettierrc.js'], // We don't want to lint generated files nor node_modules, but we want to lint .prettierrc.js (ignored by default by eslint)
+  ignorePatterns: [
+    'node_modules/*',
+    '.next/*',
+    '.out/*',
+    '!.prettierrc.js',
+    'src/generated/*.ts',
+  ], // We don't want to lint generated files nor node_modules, but we want to lint .prettierrc.js (ignored by default by eslint)
   extends: ['eslint:recommended'],
   overrides: [
     // This configuration will apply only to TypeScript files
@@ -29,11 +35,11 @@ module.exports = {
         'plugin:prettier/recommended', // Prettier recommended rules
       ],
       rules: {
-        'prettier/prettier': ['error', {}, { usePrettierrc: true }], // Includes .prettierrc.js rules
+        'prettier/prettier': ['warn', {}, { usePrettierrc: true }], // Includes .prettierrc.js rules
         'react/prop-types': 'off', // We will use TypeScript's types for component props instead
         'react/react-in-jsx-scope': 'off', // No need to import React when using Next.js
         'jsx-a11y/anchor-is-valid': 'off', // This rule is not compatible with Next.js's <Link /> components
-        '@typescript-eslint/no-unused-vars': ['error'], // Why would you want unused vars?
+        '@typescript-eslint/no-unused-vars': ['warn'], // Why would you want unused vars?
         '@typescript-eslint/explicit-function-return-type': [
           // I suggest this setting for requiring return types on functions only where usefull
           'warn',

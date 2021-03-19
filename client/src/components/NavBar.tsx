@@ -6,7 +6,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 
-const NavBar = () => {
+const NavBar = (): JSX.Element => {
   return (
     <div>
       <AppBar position="static">
@@ -16,7 +16,7 @@ const NavBar = () => {
               Capstone Archive
             </Typography>
           </Box>
-          <Button edge="end" color="white">
+          <Button>
             <AccountCircleIcon></AccountCircleIcon>
           </Button>
         </Toolbar>
