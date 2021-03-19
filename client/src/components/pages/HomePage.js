@@ -11,7 +11,6 @@ import Container from "@material-ui/core/Container";
 import NavBar from "../NavBar";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
-import { useCapstonesQuery } from "../../generated/graphql";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
