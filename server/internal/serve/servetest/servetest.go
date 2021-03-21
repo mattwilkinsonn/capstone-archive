@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/db/dbtest"
 	"github.com/Zireael13/capstone-archive/server/internal/serve"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func BuildMockServer(t *testing.T) (*gin.Engine, sqlmock.Sqlmock) {
 
 	db, mock := dbtest.CreateMockDBClient(t)
 
-	argon := serve.CreateArgon()
+	argon := auth.CreateArgon()
 
 	return serve.CreateServer(db, argon), mock
 }

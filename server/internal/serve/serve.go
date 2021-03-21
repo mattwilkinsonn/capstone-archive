@@ -21,13 +21,10 @@ func GetPort() (port string) {
 	return
 }
 
-func CreateArgon() *argon2.Config {
-	argon := argon2.DefaultConfig()
-	return &argon
-}
-
 func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 	g := gin.Default()
+
+	g.Use(auth.CreateCorsMiddleware())
 
 	g.Use(auth.GinContextToContextMiddleware())
 
@@ -42,6 +39,7 @@ func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 
 }
 
+// TODO: hardcoded to localhost will need to fix in future
 func RunServer(g *gin.Engine, port string) {
 	err := g.Run("localhost:" + port)
 	if err != nil {

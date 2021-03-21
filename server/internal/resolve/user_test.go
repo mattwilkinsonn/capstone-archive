@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/db/dbtest"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
-	"github.com/Zireael13/capstone-archive/server/internal/serve"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -28,7 +28,7 @@ func TestUIntToString(t *testing.T) {
 }
 
 func TestHashAndVerifyPassword(t *testing.T) {
-	argon := serve.CreateArgon()
+	argon := auth.CreateArgon()
 	t.Run("correct password hash and dehash", func(t *testing.T) {
 		pass := "hunter2"
 
