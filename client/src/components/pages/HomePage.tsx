@@ -83,8 +83,7 @@ export default function Homepage(): JSX.Element {
   const classes = useStyles()
   const rqClient = createClient()
   const { data } = useCapstonesQuery(rqClient, { limit: 20 })
-
-  console.log(data)
+  console.log(data?.capstones.capstones)
 
   return (
     <React.Fragment>
