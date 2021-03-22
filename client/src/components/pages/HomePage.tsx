@@ -81,8 +81,14 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 export default function Homepage(): JSX.Element {
   const classes = useStyles()
+
+  // creates the client needed to query data.
   const rqClient = createClient()
+
+  // run the Capstones query, get the data back from that.
   const { data } = useCapstonesQuery(rqClient, { limit: 20 })
+
+  // Log the array of capstones to the console
   console.log(data?.capstones.capstones)
 
   return (
