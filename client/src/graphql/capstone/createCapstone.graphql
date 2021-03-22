@@ -1,0 +1,11 @@
+mutation createCapstone($input: NewCapstone!) {
+  createCapstone(input: $input) {
+    id
+    title
+    description
+    createdAt
+    author
+    updatedAt
+    semester
+  }
+}
