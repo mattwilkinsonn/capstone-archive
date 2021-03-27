@@ -13,6 +13,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
 import { useCapstonesQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -82,6 +83,10 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 export default function Homepage(): JSX.Element {
   const classes = useStyles()
 
+  const title = 'Project Title'
+  const desc = 'Project Description'
+  const img = 'https://source.unsplash.com/random'
+
   // creates the client needed to query data.
   const rqClient = createClient()
 
@@ -136,18 +141,29 @@ export default function Homepage(): JSX.Element {
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
-                    image="https://source.unsplash.com/random"
+                    image={img}
                     title="Image title"
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Project
+                      {title}
                     </Typography>
-                    <Typography>Project Description</Typography>
+                    <Typography>{desc}</Typography>
                   </CardContent>
                   <CardActions>
                     <Button size="small" color="primary">
-                      View
+                      <Link
+                        to={{
+                          pathname: '/View',
+                          state: {
+                            name: title,
+                            description: desc,
+                            image: img,
+                          },
+                        }}
+                      >
+                        View
+                      </Link>
                     </Button>
                   </CardActions>
                 </Card>

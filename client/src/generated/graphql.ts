@@ -17,31 +17,15 @@ export type Scalars = {
   Float: number;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  searchCapstones: PaginatedCapstones;
-  capstones: PaginatedCapstones;
-  users: Array<PublicUser>;
-  me?: Maybe<User>;
-};
-
-
-export type QuerySearchCapstonesArgs = {
-  query: Scalars['String'];
-  limit: Scalars['Int'];
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryCapstonesArgs = {
-  limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['Int']>;
-};
-
-export type PaginatedCapstones = {
-  __typename?: 'PaginatedCapstones';
-  capstones: Array<Maybe<Capstone>>;
-  hasMore: Scalars['Boolean'];
+export type Capstone = {
+  __typename?: 'Capstone';
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  author: Scalars['String'];
+  createdAt: Scalars['Int'];
+  updatedAt: Scalars['Int'];
+  semester: Scalars['String'];
 };
 
 export type NewCapstone = {
@@ -79,30 +63,6 @@ export type MutationLoginArgs = {
   input: Login;
 };
 
-export type Todo = {
-  __typename?: 'Todo';
-  id: Scalars['ID'];
-  text: Scalars['String'];
-  done: Scalars['Boolean'];
-  user: User;
-};
-
-export type Capstone = {
-  __typename?: 'Capstone';
-  id: Scalars['ID'];
-  title: Scalars['String'];
-  description: Scalars['String'];
-  author: Scalars['String'];
-  createdAt: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-  semester: Scalars['String'];
-};
-
-export type PublicUser = {
-  __typename?: 'PublicUser';
-  username: Scalars['String'];
-};
-
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -112,10 +72,10 @@ export type User = {
   updatedAt: Scalars['Int'];
 };
 
-export type Register = {
-  username: Scalars['String'];
-  email: Scalars['String'];
-  password: Scalars['String'];
+export type PaginatedCapstones = {
+  __typename?: 'PaginatedCapstones';
+  capstones: Array<Maybe<Capstone>>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Login = {
@@ -123,10 +83,50 @@ export type Login = {
   password: Scalars['String'];
 };
 
+export type Todo = {
+  __typename?: 'Todo';
+  id: Scalars['ID'];
+  text: Scalars['String'];
+  done: Scalars['Boolean'];
+  user: User;
+};
+
+export type Register = {
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  searchCapstones: PaginatedCapstones;
+  capstones: PaginatedCapstones;
+  users: Array<PublicUser>;
+  me?: Maybe<User>;
+};
+
+
+export type QuerySearchCapstonesArgs = {
+  query: Scalars['String'];
+  limit: Scalars['Int'];
+  offset?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryCapstonesArgs = {
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['Int']>;
+};
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   user?: Maybe<User>;
   error?: Maybe<UserError>;
+};
+
+export type PublicUser = {
+  __typename?: 'PublicUser';
+  username: Scalars['String'];
 };
 
 export type CapstonesQueryVariables = Exact<{
