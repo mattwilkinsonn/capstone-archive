@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Zireael13/capstone-archive/server/internal/envs"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,8 +29,10 @@ func CreateDatabaseClient(dialector gorm.Dialector) *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// TODO: remove in prod
-	db.Debug()
+	env := envs.GetEnvironment()
+	if env == "development" {
+		db.Debug()
+	}
 
 	return db
 }
