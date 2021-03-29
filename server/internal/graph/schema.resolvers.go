@@ -148,6 +148,21 @@ func (r *queryResolver) Capstones(
 	return paginated, nil
 }
 
+func (r *queryResolver) Capstone(ctx context.Context, id int) (*model.Capstone, error) {
+
+	capstone, err := GetCapstoneById(r.DB, uint(id))
+
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		return nil, nil
+	}
+
+	gqlCapstone := CreateGraphCapstone(capstone)
+
+	return gqlCapstone, nil
+
+}
+
 func (r *queryResolver) Users(ctx context.Context) ([]*model.PublicUser, error) {
 	panic(fmt.Errorf("not implemented"))
 }

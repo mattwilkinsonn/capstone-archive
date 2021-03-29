@@ -62,6 +62,15 @@ func GetCapstones(DB *gorm.DB, number int, cursor *int) (capstones []*db.Capston
 	return capstones, res.Error
 }
 
+func GetCapstoneById(DB *gorm.DB, id uint) (*db.Capstone, error) {
+
+	capstone := db.Capstone{}
+
+	res := DB.Where("id = ?", id).First(&capstone)
+
+	return &capstone, res.Error
+}
+
 // Searches capstones with Postgres' full text search. Uses LIMIT/OFFSET pagination. Doing LIMIT/OFFSET is probably slow but good enough for use case
 func SearchCapstones(
 	DB *gorm.DB,

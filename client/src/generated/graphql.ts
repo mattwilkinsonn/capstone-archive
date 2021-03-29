@@ -17,6 +17,14 @@ export type Scalars = {
   Float: number;
 };
 
+export type Todo = {
+  __typename?: 'Todo';
+  id: Scalars['ID'];
+  text: Scalars['String'];
+  done: Scalars['Boolean'];
+  user: User;
+};
+
 export type Capstone = {
   __typename?: 'Capstone';
   id: Scalars['ID'];
@@ -26,6 +34,12 @@ export type Capstone = {
   createdAt: Scalars['Int'];
   updatedAt: Scalars['Int'];
   semester: Scalars['String'];
+};
+
+export type PaginatedCapstones = {
+  __typename?: 'PaginatedCapstones';
+  capstones: Array<Maybe<Capstone>>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type NewCapstone = {
@@ -38,6 +52,11 @@ export type UserError = {
   __typename?: 'UserError';
   field: Scalars['String'];
   message: Scalars['String'];
+};
+
+export type PublicUser = {
+  __typename?: 'PublicUser';
+  username: Scalars['String'];
 };
 
 export type Mutation = {
@@ -63,6 +82,17 @@ export type MutationLoginArgs = {
   input: Login;
 };
 
+export type Login = {
+  usernameOrEmail: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  user?: Maybe<User>;
+  error?: Maybe<UserError>;
+};
+
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -70,25 +100,6 @@ export type User = {
   email: Scalars['String'];
   createdAt: Scalars['Int'];
   updatedAt: Scalars['Int'];
-};
-
-export type PaginatedCapstones = {
-  __typename?: 'PaginatedCapstones';
-  capstones: Array<Maybe<Capstone>>;
-  hasMore: Scalars['Boolean'];
-};
-
-export type Login = {
-  usernameOrEmail: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type Todo = {
-  __typename?: 'Todo';
-  id: Scalars['ID'];
-  text: Scalars['String'];
-  done: Scalars['Boolean'];
-  user: User;
 };
 
 export type Register = {
@@ -101,6 +112,7 @@ export type Query = {
   __typename?: 'Query';
   searchCapstones: PaginatedCapstones;
   capstones: PaginatedCapstones;
+  capstone?: Maybe<Capstone>;
   users: Array<PublicUser>;
   me?: Maybe<User>;
 };
@@ -118,16 +130,23 @@ export type QueryCapstonesArgs = {
   cursor?: Maybe<Scalars['Int']>;
 };
 
-export type UserResponse = {
-  __typename?: 'UserResponse';
-  user?: Maybe<User>;
-  error?: Maybe<UserError>;
+
+export type QueryCapstoneArgs = {
+  id: Scalars['Int'];
 };
 
-export type PublicUser = {
-  __typename?: 'PublicUser';
-  username: Scalars['String'];
-};
+export type CapstoneQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type CapstoneQuery = (
+  { __typename?: 'Query' }
+  & { capstone?: Maybe<(
+    { __typename?: 'Capstone' }
+    & Pick<Capstone, 'id' | 'title' | 'description' | 'author' | 'createdAt' | 'updatedAt' | 'semester'>
+  )> }
+);
 
 export type CapstonesQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -237,6 +256,32 @@ export type RegisterMutation = (
 );
 
 
+export const CapstoneDocument = `
+    query Capstone($id: Int!) {
+  capstone(id: $id) {
+    id
+    title
+    description
+    author
+    createdAt
+    updatedAt
+    semester
+  }
+}
+    `;
+export const useCapstoneQuery = <
+      TData = CapstoneQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient, 
+      variables: CapstoneQueryVariables, 
+      options?: UseQueryOptions<CapstoneQuery, TError, TData>
+    ) => 
+    useQuery<CapstoneQuery, TError, TData>(
+      ['Capstone', variables],
+      fetcher<CapstoneQuery, CapstoneQueryVariables>(client, CapstoneDocument, variables),
+      options
+    );
 export const CapstonesDocument = `
     query Capstones($limit: Int!, $cursor: Int) {
   capstones(limit: $limit, cursor: $cursor) {

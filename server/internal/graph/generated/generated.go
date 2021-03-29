@@ -70,6 +70,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Capstone        func(childComplexity int, id int) int
 		Capstones       func(childComplexity int, limit int, cursor *int) int
 		Me              func(childComplexity int) int
 		SearchCapstones func(childComplexity int, query string, limit int, offset *int) int
@@ -111,6 +112,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	SearchCapstones(ctx context.Context, query string, limit int, offset *int) (*model.PaginatedCapstones, error)
 	Capstones(ctx context.Context, limit int, cursor *int) (*model.PaginatedCapstones, error)
+	Capstone(ctx context.Context, id int) (*model.Capstone, error)
 	Users(ctx context.Context) ([]*model.PublicUser, error)
 	Me(ctx context.Context) (*model.User, error)
 }
@@ -242,6 +244,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PublicUser.Username(childComplexity), true
+
+	case "Query.capstone":
+		if e.complexity.Query.Capstone == nil {
+			break
+		}
+
+		args, err := ec.field_Query_capstone_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Capstone(childComplexity, args["id"].(int)), true
 
 	case "Query.capstones":
 		if e.complexity.Query.Capstones == nil {
@@ -474,6 +488,7 @@ type Capstone {
 type Query {
   searchCapstones(query: String!, limit: Int!, offset: Int): PaginatedCapstones!
   capstones(limit: Int!, cursor: Int): PaginatedCapstones!
+  capstone(id: Int!): Capstone
   users: [PublicUser!]!
   me: User
 }
@@ -579,6 +594,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_capstone_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -1270,6 +1300,45 @@ func (ec *executionContext) _Query_capstones(ctx context.Context, field graphql.
 	res := resTmp.(*model.PaginatedCapstones)
 	fc.Result = res
 	return ec.marshalNPaginatedCapstones2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐPaginatedCapstones(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_capstone(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_capstone_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Capstone(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Capstone)
+	fc.Result = res
+	return ec.marshalOCapstone2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3257,6 +3326,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
+				return res
+			})
+		case "capstone":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_capstone(ctx, field)
 				return res
 			})
 		case "users":

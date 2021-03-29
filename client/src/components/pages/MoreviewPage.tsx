@@ -11,6 +11,8 @@ import CardMedia from '@material-ui/core/CardMedia'
 import Button from '@material-ui/core/Button'
 import { Link } from 'react-router-dom'
 import CardActions from '@material-ui/core/CardActions'
+import { createClient } from '../../graphql/createClient'
+import { useCapstoneQuery } from '../../generated/graphql'
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -69,11 +71,14 @@ export default function Moreviewpage(props: {
   const img = props.location.state.image
   const sem = props.location.state.semester
 
-  // capstone id from params
-  const id = props.match.params.id
+  const rqClient = createClient()
+  const id = parseInt(props.match.params.id)
+  if (isNaN(id) || id < 0) {
+    throw new Error('page id invalid')
+  }
+  const { data } = useCapstoneQuery(rqClient, { id }, { staleTime: 300000 })
 
-  // log capstone id
-  console.log(id)
+  console.log(data?.capstone)
 
   return (
     <React.Fragment>

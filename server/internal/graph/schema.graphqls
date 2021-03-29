@@ -36,6 +36,7 @@ type Capstone {
 type Query {
   searchCapstones(query: String!, limit: Int!, offset: Int): PaginatedCapstones!
   capstones(limit: Int!, cursor: Int): PaginatedCapstones!
+  capstone(id: Int!): Capstone
   users: [PublicUser!]!
   me: User
 }
