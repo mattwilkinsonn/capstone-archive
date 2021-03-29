@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom'
 import HomePage from './components/pages/HomePage'
 import MoreviewPage from './components/pages/MoreviewPage'
 import { QueryClientProvider, QueryClient } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 function App(): JSX.Element {
   const queryClient = new QueryClient()
@@ -14,6 +15,7 @@ function App(): JSX.Element {
         <Route path="/" exact component={HomePage} />
         <Route path="/View" exact component={MoreviewPage} />
       </div>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )
 }

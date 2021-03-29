@@ -91,7 +91,11 @@ export default function Homepage(): JSX.Element {
   const rqClient = createClient()
 
   // run the Capstones query, get the data back from that.
-  const { data } = useCapstonesQuery(rqClient, { limit: 20 })
+  const { data } = useCapstonesQuery(
+    rqClient,
+    { limit: 20 },
+    { staleTime: 300000 }
+  )
 
   // Log the array of capstones to the console
   console.log(data?.capstones.capstones)
