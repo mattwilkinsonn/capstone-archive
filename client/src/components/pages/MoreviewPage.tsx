@@ -7,6 +7,7 @@ import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import NavBar from '../NavBar'
 import Divider from '@material-ui/core/Divider'
+import CardMedia from '@material-ui/core/CardMedia'
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   cardMedia: {
-    // paddingTop: '56.25%', // 16:9
+    paddingTop: '56.25%', // 16:9
   },
   cardContent: {
     flexGrow: 1,
@@ -71,8 +72,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function Homepage(): JSX.Element {
+export default function Moreviewpage(props: {
+  location: {
+    state: { result: string; description: string; image: string }
+  }
+}): JSX.Element {
   const classes = useStyles()
+
+  const result = props.location.state.result
+  const desc = props.location.state.description
+  const img = props.location.state.image
 
   return (
     <React.Fragment>
@@ -82,13 +91,17 @@ export default function Homepage(): JSX.Element {
           <Grid container spacing={4}>
             <Grid item xs={12}>
               <Card className={classes.card}>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image={img}
+                  title="Image title"
+                />
                 <CardContent className={classes.cardContent}>
                   <Typography gutterBottom variant="h5" component="h2">
-                    Project
+                    {result}
                   </Typography>
                   <Divider variant="middle"></Divider>
-                  <Typography>Project Picture</Typography>
-                  <Typography>Project Description</Typography>
+                  <Typography>{desc}</Typography>
                   <Typography>Project URL</Typography>
                 </CardContent>
               </Card>
