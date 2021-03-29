@@ -19,9 +19,9 @@ func GetCorsOrigin() (origin string) {
 
 func CreateCorsMiddleware() gin.HandlerFunc {
 	config := cors.DefaultConfig()
+	config.AllowCredentials = true
 
 	origin := GetCorsOrigin()
-
 	config.AllowOrigins = []string{origin}
 
 	return cors.New(config)

@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load(".env.local")
 	_ = godotenv.Load(".env")
 
 	port := serve.GetPort()
