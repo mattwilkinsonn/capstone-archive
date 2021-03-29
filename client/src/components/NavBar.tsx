@@ -2,7 +2,6 @@ import React from 'react'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 
@@ -16,9 +15,7 @@ const NavBar = (): JSX.Element => {
               Capstone Archive
             </Typography>
           </Box>
-          <Button>
-            <AccountCircleIcon></AccountCircleIcon>
-          </Button>
+          <Button></Button>
         </Toolbar>
       </AppBar>
     </div>

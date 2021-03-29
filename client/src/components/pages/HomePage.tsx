@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(8, 0, 6),
   },
+  noProjContent: {
+    backgroundColor: fade(theme.palette.primary.light, 0.1),
+    padding: theme.spacing(12),
+  },
   heroButtons: {
     marginTop: theme.spacing(4),
   },
@@ -73,12 +77,13 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
   },
-  divide: {
-    marginBottom: theme.spacing(8),
+  cardDescription: {
+    margin: theme.spacing(0, 0, 1, 0),
+  },
+  cardSemester: {
+    color: fade(theme.palette.primary.light, 0.5),
   },
 }))
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 export default function Homepage(): JSX.Element {
   const classes = useStyles()
@@ -100,97 +105,142 @@ export default function Homepage(): JSX.Element {
   // Log the array of capstones to the console
   console.log(data?.capstones.capstones)
 
-  return (
-    <React.Fragment>
-      <NavBar></NavBar>
-      <main>
-        <div className={classes.heroContent}>
-          <Container maxWidth="sm">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="textPrimary"
-              gutterBottom
-            >
-              Capstone Projects
-            </Typography>
-            <Typography
-              variant="h5"
-              align="center"
-              color="textSecondary"
-              paragraph
-            >
-              Past projects can be seen here.
-            </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
+  if (data?.capstones.capstones) {
+    const cards = data?.capstones.capstones
+    return (
+      <React.Fragment>
+        <NavBar></NavBar>
+        <main>
+          <div className={classes.heroContent}>
+            <Container maxWidth="sm">
+              <Typography
+                component="h1"
+                variant="h2"
+                align="center"
+                color="textPrimary"
+                gutterBottom
+              >
+                Capstone Projects
+              </Typography>
+              <Typography
+                variant="h5"
+                align="center"
+                color="textSecondary"
+                paragraph
+              >
+                Past projects can be seen here.
+              </Typography>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Search…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                />
               </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </div>
-          </Container>
-        </div>
-        <Container className={classes.cardGrid} maxWidth="md">
-          <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image={img}
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {title}
-                    </Typography>
-                    <Typography>{desc}</Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" color="primary">
-                      <Link
+            </Container>
+          </div>
+          <Container className={classes.cardGrid} maxWidth="md">
+            <Grid container spacing={4}>
+              {cards.map((card) => (
+                <Grid item key={cards.indexOf(card)} xs={12} sm={6} md={4}>
+                  <Card className={classes.card}>
+                    <CardMedia
+                      className={classes.cardMedia}
+                      image={img}
+                      title="Image title"
+                    />
+                    <CardContent className={classes.cardContent}>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        {card?.title}
+                      </Typography>
+                      <Typography className={classes.cardSemester}>
+                        {card?.semester}
+                      </Typography>
+                      <Typography className={classes.cardDescription}>
+                        {card?.description}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        size="small"
+                        color="primary"
+                        component={Link}
                         to={{
                           pathname: '/View',
                           state: {
-                            name: title,
-                            description: desc,
+                            name: card?.title,
+                            description: card?.description,
                             image: img,
                           },
                         }}
                       >
                         View
-                      </Link>
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </main>
-      {/* Footer */}
-      <footer className={classes.footer}>
-        <Typography variant="h6" align="center" gutterBottom>
-          American University CS Capstone Project
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="textSecondary"
-          component="p"
-        >
-          By Ashlyn Levinson and Matthew Wilkinson
-        </Typography>
-      </footer>
-      {/* End footer */}
-    </React.Fragment>
-  )
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
+        </main>
+        {/* Footer */}
+        <footer className={classes.footer}>
+          <Typography variant="h6" align="center" gutterBottom>
+            American University CS Capstone Project
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            align="center"
+            color="textSecondary"
+            component="p"
+          >
+            By Ashlyn Levinson and Matthew Wilkinson
+          </Typography>
+        </footer>
+        {/* End footer */}
+      </React.Fragment>
+    )
+  } else {
+    return (
+      <React.Fragment>
+        <NavBar></NavBar>
+        <main>
+          <div className={classes.noProjContent}>
+            <Container maxWidth="sm">
+              <Typography
+                component="h1"
+                variant="h2"
+                align="center"
+                color="textPrimary"
+                gutterBottom
+              >
+                No Projects to Show
+              </Typography>
+            </Container>
+          </div>
+        </main>
+        {/* Footer */}
+        <footer className={classes.footer}>
+          <Typography variant="h6" align="center" gutterBottom>
+            American University CS Capstone Project
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            align="center"
+            color="textSecondary"
+            component="p"
+          >
+            By Ashlyn Levinson and Matthew Wilkinson
+          </Typography>
+        </footer>
+        {/* End footer */}
+      </React.Fragment>
+    )
+  }
 }
