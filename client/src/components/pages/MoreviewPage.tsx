@@ -8,17 +8,14 @@ import Container from '@material-ui/core/Container'
 import NavBar from '../NavBar'
 import Divider from '@material-ui/core/Divider'
 import CardMedia from '@material-ui/core/CardMedia'
+import Button from '@material-ui/core/Button'
+import { Link } from 'react-router-dom'
+import CardActions from '@material-ui/core/CardActions'
 
 const useStyles = makeStyles((theme) => ({
-  icon: {
-    marginRight: theme.spacing(2),
-  },
   heroContent: {
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(8, 0, 6),
-  },
-  heroButtons: {
-    marginTop: theme.spacing(4),
   },
   cardGrid: {
     paddingTop: theme.spacing(8),
@@ -39,49 +36,30 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(6),
   },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.primary.main, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.primary.main, 0.2),
-    },
-    marginTop: theme.spacing(4),
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    width: '50%',
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-  },
   divide: {
-    marginBottom: theme.spacing(8),
+    marginBottom: theme.spacing(1),
+  },
+  info: {
+    margin: theme.spacing(1, 0, 1, 0),
   },
 }))
 
 export default function Moreviewpage(props: {
   location: {
-    state: { result: string; description: string; image: string }
+    state: {
+      name: string
+      description: string
+      image: string
+      semester: string
+    }
   }
 }): JSX.Element {
   const classes = useStyles()
 
-  const result = props.location.state.result
+  const result = props.location.state.name
   const desc = props.location.state.description
   const img = props.location.state.image
+  const sem = props.location.state.semester
 
   return (
     <React.Fragment>
@@ -100,10 +78,35 @@ export default function Moreviewpage(props: {
                   <Typography gutterBottom variant="h5" component="h2">
                     {result}
                   </Typography>
-                  <Divider variant="middle"></Divider>
-                  <Typography>{desc}</Typography>
-                  <Typography>Project URL</Typography>
+                  <Divider
+                    variant="middle"
+                    className={classes.divide}
+                  ></Divider>
+                  <Typography className={classes.info}>
+                    <strong>Semester:</strong> {sem}
+                  </Typography>
+                  <Typography className={classes.info}>
+                    <strong>Authors:</strong>{' '}
+                  </Typography>
+                  <Typography className={classes.info}>
+                    <strong>Project Description:</strong> {desc}
+                  </Typography>
+                  <Typography>
+                    <strong>Project URL:</strong>{' '}
+                  </Typography>
                 </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="primary"
+                    component={Link}
+                    to={{
+                      pathname: '/',
+                    }}
+                  >
+                    Back
+                  </Button>
+                </CardActions>
               </Card>
             </Grid>
           </Grid>

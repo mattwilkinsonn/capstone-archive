@@ -16,9 +16,6 @@ import { createClient } from '../../graphql/createClient'
 import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
-  icon: {
-    marginRight: theme.spacing(2),
-  },
   heroContent: {
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(8, 0, 6),
@@ -26,9 +23,6 @@ const useStyles = makeStyles((theme) => ({
   noProjContent: {
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(12),
-  },
-  heroButtons: {
-    marginTop: theme.spacing(4),
   },
   cardGrid: {
     paddingTop: theme.spacing(8),
@@ -88,8 +82,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Homepage(): JSX.Element {
   const classes = useStyles()
 
-  const title = 'Project Title'
-  const desc = 'Project Description'
   const img = 'https://source.unsplash.com/random'
 
   // creates the client needed to query data.
@@ -177,6 +169,7 @@ export default function Homepage(): JSX.Element {
                             name: card?.title,
                             description: card?.description,
                             image: img,
+                            semester: card?.semester,
                           },
                         }}
                       >
