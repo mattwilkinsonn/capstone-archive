@@ -16,6 +16,8 @@ func main() {
 	orm := db.CreateDefaultDatabaseClient()
 	argon := auth.CreateArgon()
 
+	db.LoadSampleData(orm)
+
 	g := serve.CreateServer(orm, argon)
 
 	serve.RunServer(g, port)

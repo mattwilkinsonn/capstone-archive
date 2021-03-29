@@ -2,6 +2,7 @@ package db
 
 import (
 	"log"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -38,4 +39,21 @@ func CreateDefaultDatabaseClient() *gorm.DB {
 	orm := CreateDatabaseClient(dia)
 	InitalizeDatabase(orm)
 	return orm
+}
+func LoadSampleData(orm *gorm.DB) {
+
+	var capstone Capstone
+
+	res := orm.First(&capstone)
+
+	if res.Error != nil {
+		file, err := os.ReadFile("../sample/capstones.sql")
+
+		if err != nil {
+			panic(err)
+		}
+
+		orm.Exec(string(file))
+
+	}
 }
