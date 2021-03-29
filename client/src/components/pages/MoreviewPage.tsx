@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
   info: {
     margin: theme.spacing(1, 0, 1, 0),
   },
+  backButton: {
+    margin: theme.spacing(0, 0, 0, 2),
+  },
 }))
 
 export default function Moreviewpage(props: {
@@ -95,20 +98,19 @@ export default function Moreviewpage(props: {
                     <strong>Project URL:</strong>{' '}
                   </Typography>
                 </CardContent>
-                <CardActions>
-                  <Button
-                    size="small"
-                    color="primary"
-                    component={Link}
-                    to={{
-                      pathname: '/',
-                    }}
-                  >
-                    Back
-                  </Button>
-                </CardActions>
               </Card>
             </Grid>
+            <Button
+              className={classes.backButton}
+              size="small"
+              variant="contained"
+              component={Link}
+              to={{
+                pathname: '/',
+              }}
+            >
+              Back
+            </Button>
           </Grid>
         </Container>
       </main>

@@ -72,10 +72,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
   },
   cardDescription: {
-    margin: theme.spacing(0, 0, 1, 0),
-  },
-  cardSemester: {
-    color: fade(theme.palette.primary.light, 0.5),
+    margin: theme.spacing(1, 0, 0, 0),
   },
 }))
 
@@ -151,7 +148,7 @@ export default function Homepage(): JSX.Element {
                       <Typography gutterBottom variant="h5" component="h2">
                         {card?.title}
                       </Typography>
-                      <Typography className={classes.cardSemester}>
+                      <Typography color="textSecondary">
                         {card?.semester}
                       </Typography>
                       <Typography className={classes.cardDescription}>
@@ -161,7 +158,7 @@ export default function Homepage(): JSX.Element {
                     <CardActions>
                       <Button
                         size="small"
-                        color="primary"
+                        variant="contained"
                         component={Link}
                         to={{
                           pathname: '/View',
