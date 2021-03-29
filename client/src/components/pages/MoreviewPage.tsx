@@ -56,6 +56,11 @@ export default function Moreviewpage(props: {
       semester: string
     }
   }
+  match: {
+    params: {
+      id: string
+    }
+  }
 }): JSX.Element {
   const classes = useStyles()
 
@@ -63,6 +68,12 @@ export default function Moreviewpage(props: {
   const desc = props.location.state.description
   const img = props.location.state.image
   const sem = props.location.state.semester
+
+  // capstone id from params
+  const id = props.match.params.id
+
+  // log capstone id
+  console.log(id)
 
   return (
     <React.Fragment>

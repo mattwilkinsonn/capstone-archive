@@ -13,7 +13,7 @@ function App(): JSX.Element {
     <QueryClientProvider client={queryClient}>
       <div>
         <Route path="/" exact component={HomePage} />
-        <Route path="/View" exact component={MoreviewPage} />
+        <Route path="/:id" exact component={MoreviewPage} />
       </div>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

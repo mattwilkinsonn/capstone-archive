@@ -161,7 +161,7 @@ export default function Homepage(): JSX.Element {
                         variant="contained"
                         component={Link}
                         to={{
-                          pathname: '/View',
+                          pathname: card?.id,
                           state: {
                             name: card?.title,
                             description: card?.description,
