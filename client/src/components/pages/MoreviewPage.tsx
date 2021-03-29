@@ -50,14 +50,6 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Moreviewpage(props: {
-  location: {
-    state: {
-      name: string
-      description: string
-      image: string
-      semester: string
-    }
-  }
   match: {
     params: {
       id: string
@@ -66,10 +58,7 @@ export default function Moreviewpage(props: {
 }): JSX.Element {
   const classes = useStyles()
 
-  const result = props.location.state.name
-  const desc = props.location.state.description
-  const img = props.location.state.image
-  const sem = props.location.state.semester
+  const img = 'https://source.unsplash.com/random'
 
   const rqClient = createClient()
   const id = parseInt(props.match.params.id)
@@ -95,20 +84,20 @@ export default function Moreviewpage(props: {
                 />
                 <CardContent className={classes.cardContent}>
                   <Typography gutterBottom variant="h5" component="h2">
-                    {result}
+                    {data?.capstone?.title}
                   </Typography>
                   <Divider
                     variant="middle"
                     className={classes.divide}
                   ></Divider>
                   <Typography className={classes.info}>
-                    <strong>Semester:</strong> {sem}
+                    <strong>Semester:</strong> {data?.capstone?.semester}
                   </Typography>
                   <Typography className={classes.info}>
-                    <strong>Authors:</strong>{' '}
+                    <strong>Authors:</strong> {data?.capstone?.author}
                   </Typography>
                   <Typography className={classes.info}>
-                    <strong>Project Description:</strong> {desc}
+                    <strong>Project Description:</strong> {data?.capstone?.description}
                   </Typography>
                   <Typography>
                     <strong>Project URL:</strong>{' '}

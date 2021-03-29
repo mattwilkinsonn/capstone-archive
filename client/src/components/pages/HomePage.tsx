@@ -162,12 +162,6 @@ export default function Homepage(): JSX.Element {
                         component={Link}
                         to={{
                           pathname: card?.id,
-                          state: {
-                            name: card?.title,
-                            description: card?.description,
-                            image: img,
-                            semester: card?.semester,
-                          },
                         }}
                       >
                         View
