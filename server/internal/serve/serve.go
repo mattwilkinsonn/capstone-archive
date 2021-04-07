@@ -1,6 +1,8 @@
 package serve
 
 import (
+	"os"
+
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/router"
 	"github.com/gin-gonic/gin"

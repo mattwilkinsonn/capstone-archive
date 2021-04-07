@@ -391,27 +391,6 @@ func TestDBToGQLUser(t *testing.T) {
 func TestGetUserFromID(t *testing.T) {
 	orm, mock := dbtest.CreateMockDBClient(t)
 
-	// username := "Zireael"
-	// email := "zir@gmail.com"
-	// password := "hunter2"
-
-	// mock.ExpectQuery(
-	// 	regexp.QuoteMeta(`INSERT INTO "users"`),
-	// ).WithArgs(
-	// 	AnyTime{},
-	// 	AnyTime{},
-	// 	nil,
-	// 	username,
-	// 	email,
-	// 	password,
-	// ).WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1))
-
-	// created, err := CreateUserInDB(orm, username, email, password)
-
-	// assert.Nil(t, err, "should be no err")
-
-	// assert.Equal(t, email, created.Email, "returned user email should be wanted user email")
-
 	id := uint(1)
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users"`)).
