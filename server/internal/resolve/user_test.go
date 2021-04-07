@@ -387,3 +387,22 @@ func TestDBToGQLUser(t *testing.T) {
 
 	assert.Equal(t, want, got)
 }
+
+func TestGetUserFromID(t *testing.T) {
+	orm, mock := dbtest.CreateMockDBClient(t)
+
+	id := uint(1)
+
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users"`)).
+		WithArgs(id).
+		WillReturnRows(mock.NewRows([]string{"id"}).
+			AddRow(1))
+	user, err := GetUserFromID(orm, id)
+
+	assert.Nil(t, err, "should be no err")
+
+	assert.Equal(t, id, user.ID, "Created user and returned user should match")
+
+	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
+
+}
