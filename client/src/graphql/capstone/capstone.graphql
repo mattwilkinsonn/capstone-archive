@@ -1,0 +1,11 @@
+query Capstone($id: Int!) {
+  capstone(id: $id) {
+    id
+    title
+    description
+    author
+    createdAt
+    updatedAt
+    semester
+  }
+}

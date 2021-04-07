@@ -1,8 +1,6 @@
 package serve
 
 import (
-	"os"
-
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/router"
 	"github.com/gin-gonic/gin"
@@ -10,24 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
-const defaultPort = "4000"
-
-func GetPort() (port string) {
-	port = os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
-	}
-
-	return
-}
-
-func CreateArgon() *argon2.Config {
-	argon := argon2.DefaultConfig()
-	return &argon
-}
-
 func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 	g := gin.Default()
+
+	g.Use(auth.CreateCorsMiddleware())
 
 	g.Use(auth.GinContextToContextMiddleware())
 
@@ -45,6 +29,7 @@ func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 
 }
 
+// TODO: hardcoded to localhost will need to fix in future
 func RunServer(g *gin.Engine, port string) {
 	err := g.Run("localhost:" + port)
 	if err != nil {

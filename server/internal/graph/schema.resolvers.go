@@ -90,6 +90,36 @@ func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
+func (r *queryResolver) SearchCapstones(
+	ctx context.Context,
+	query string,
+	limit int,
+	offset *int,
+) (*model.PaginatedCapstones, error) {
+	realLimit := ix.Min(limit, 50)
+
+	capstones, err := SearchCapstones(r.DB, query, realLimit+1, offset)
+	if err != nil {
+		panic(err)
+	}
+
+	hasMore := false
+	if len(capstones) == realLimit+1 {
+		hasMore = true
+	} else if len(capstones) < realLimit {
+		realLimit = len(capstones)
+	}
+
+	gqlCapstones := CreateGraphCapstoneSlice(capstones[0:realLimit])
+
+	paginated := &model.PaginatedCapstones{
+		Capstones: gqlCapstones,
+		HasMore:   hasMore,
+	}
+
+	return paginated, nil
+}
+
 func (r *queryResolver) Capstones(
 	ctx context.Context,
 	limit int,
@@ -117,6 +147,21 @@ func (r *queryResolver) Capstones(
 	}
 
 	return paginated, nil
+}
+
+func (r *queryResolver) Capstone(ctx context.Context, id int) (*model.Capstone, error) {
+
+	capstone, err := GetCapstoneById(r.DB, uint(id))
+
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		return nil, nil
+	}
+
+	gqlCapstone := CreateGraphCapstone(capstone)
+
+	return gqlCapstone, nil
+
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.PublicUser, error) {

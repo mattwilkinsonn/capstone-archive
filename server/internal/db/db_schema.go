@@ -14,4 +14,5 @@ type Capstone struct {
 	Title       string `gorm:"not null;"`
 	Description string `gorm:"not null;"`
 	Author      string `gorm:"not null;"`
+	Semester    string `gorm:"not null;"`
 }

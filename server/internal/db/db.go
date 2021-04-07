@@ -2,7 +2,9 @@ package db
 
 import (
 	"log"
+	"os"
 
+	"github.com/Zireael13/capstone-archive/server/internal/envs"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -27,8 +29,10 @@ func CreateDatabaseClient(dialector gorm.Dialector) *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// TODO: remove in prod
-	db.Debug()
+	env := envs.GetEnvironment()
+	if env == "development" {
+		db.Debug()
+	}
 
 	return db
 }
@@ -38,4 +42,21 @@ func CreateDefaultDatabaseClient() *gorm.DB {
 	orm := CreateDatabaseClient(dia)
 	InitalizeDatabase(orm)
 	return orm
+}
+func LoadSampleData(orm *gorm.DB) {
+
+	var capstone Capstone
+
+	res := orm.First(&capstone)
+
+	if res.Error != nil {
+		file, err := os.ReadFile("../sample/capstones.sql")
+
+		if err != nil {
+			panic(err)
+		}
+
+		orm.Exec(string(file))
+
+	}
 }

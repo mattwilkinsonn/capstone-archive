@@ -1,0 +1,12 @@
+query Capstones($limit: Int!, $cursor: Int) {
+  capstones(limit: $limit, cursor: $cursor) {
+    capstones {
+      id
+      title
+      description
+      createdAt
+      semester
+    }
+    hasMore
+  }
+}

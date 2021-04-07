@@ -1,0 +1,14 @@
+query searchCapstones($query: String!, $limit: Int!, $offset: Int) {
+  searchCapstones(query: $query, limit: $limit, offset: $offset) {
+    capstones {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      author
+      semester
+    }
+    hasMore
+  }
+}
