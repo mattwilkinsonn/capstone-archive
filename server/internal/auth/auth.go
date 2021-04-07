@@ -1,18 +1,20 @@
 package auth
 
 import (
-	"os"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 )
 
-// Cretes the Redis store. Requires the .env variables to be set.
-func createStore() redis.Store {
-	addr := os.Getenv("REDIS_ADDRESS")
-	key := os.Getenv("REDIS_AUTH_KEY")
-	store, _ := redis.NewStore(10, "tcp", addr, "", []byte(key))
+// Creates the Redis store
+func createRedisStore(address string, key []byte) redis.Store {
+	// addr := os.Getenv("REDIS_ADDRESS")
+	// key := os.Getenv("REDIS_AUTH_KEY")
+	store, err := redis.NewStore(10, "tcp", address, "", key)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return store
 }
@@ -22,7 +24,7 @@ func createSessionMiddleware(store redis.Store) gin.HandlerFunc {
 	return sessions.Sessions("auth", store)
 }
 
-// Creates Session middleware using the default store.
-func CreateSessionMiddleware() gin.HandlerFunc {
-	return createSessionMiddleware(createStore())
+// Creates Redis Session middleware using the default store.
+func CreateRedisSessionMiddleware(address string, key []byte) gin.HandlerFunc {
+	return createSessionMiddleware(createRedisStore(address, key))
 }

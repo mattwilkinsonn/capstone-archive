@@ -31,7 +31,10 @@ func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 
 	g.Use(auth.GinContextToContextMiddleware())
 
-	g.Use(auth.CreateSessionMiddleware())
+	addr := os.Getenv("REDIS_ADDRESS")
+	key := os.Getenv("REDIS_AUTH_KEY")
+
+	g.Use(auth.CreateRedisSessionMiddleware(addr, []byte(key)))
 
 	gqlHandler := router.GraphQLHandler(orm, argon)
 	playHandler := router.PlaygroundHandler()

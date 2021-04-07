@@ -79,7 +79,8 @@ func (r *mutationResolver) Login(
 
 	userResponse := CreateUserResponse(user)
 
-	auth.CreateSessionFromUser(ctx, user)
+	ginCtx := auth.GinContextFromContext(ctx)
+	auth.CreateSessionFromUser(ginCtx, user)
 
 	return userResponse, nil
 }
