@@ -33,9 +33,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  cardMedia: {
-    paddingTop: '56.25%', // 16:9
-  },
   cardContent: {
     flexGrow: 1,
   },
@@ -78,8 +75,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Homepage(): JSX.Element {
   const classes = useStyles()
-
-  const img = 'https://source.unsplash.com/random'
 
   // creates the client needed to query data.
   const rqClient = createClient()
@@ -139,11 +134,6 @@ export default function Homepage(): JSX.Element {
               {cards.map((card) => (
                 <Grid item key={cards.indexOf(card)} xs={12} sm={6} md={4}>
                   <Card className={classes.card}>
-                    <CardMedia
-                      className={classes.cardMedia}
-                      image={img}
-                      title="Image title"
-                    />
                     <CardContent className={classes.cardContent}>
                       <Typography gutterBottom variant="h5" component="h2">
                         {card?.title}
@@ -161,7 +151,7 @@ export default function Homepage(): JSX.Element {
                         variant="contained"
                         component={Link}
                         to={{
-                          pathname: card?.id,
+                          pathname: 'view/' + card?.id,
                         }}
                       >
                         View

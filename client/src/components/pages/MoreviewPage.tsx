@@ -58,8 +58,6 @@ export default function Moreviewpage(props: {
 }): JSX.Element {
   const classes = useStyles()
 
-  const img = 'https://source.unsplash.com/random'
-
   const rqClient = createClient()
   const id = parseInt(props.match.params.id)
   if (isNaN(id) || id < 0) {
@@ -77,11 +75,6 @@ export default function Moreviewpage(props: {
           <Grid container spacing={4}>
             <Grid item xs={12}>
               <Card className={classes.card}>
-                <CardMedia
-                  className={classes.cardMedia}
-                  image={img}
-                  title="Image title"
-                />
                 <CardContent className={classes.cardContent}>
                   <Typography gutterBottom variant="h5" component="h2">
                     {data?.capstone?.title}
