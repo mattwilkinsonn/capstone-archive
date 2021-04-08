@@ -79,13 +79,16 @@ export default function Moreviewpage(props: {
                     className={classes.divide}
                   ></Divider>
                   <Typography className={classes.info}>
-                    <strong>Semester:</strong> {data?.capstone?.semester}
+                    <strong>Semester: </strong>
+                    {data?.capstone?.semester}
                   </Typography>
                   <Typography className={classes.info}>
-                    <strong>Authors:</strong> {data?.capstone?.author}
+                    <strong>Authors: </strong>
+                    {data?.capstone?.author}
                   </Typography>
                   <Typography className={classes.info}>
-                    <strong>Project Description:</strong> {data?.capstone?.description}
+                    <strong>Project Description: </strong>
+                    {data?.capstone?.description}
                   </Typography>
                   <Typography>
                     <strong>Project URL:</strong>{' '}
@@ -107,21 +110,6 @@ export default function Moreviewpage(props: {
           </Grid>
         </Container>
       </main>
-      {/* Footer */}
-      <footer className={classes.footer}>
-        <Typography variant="h6" align="center" gutterBottom>
-          American University CS Capstone Project
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="textSecondary"
-          component="p"
-        >
-          By Ashlyn Levinson and Matthew Wilkinson
-        </Typography>
-      </footer>
-      {/* End footer */}
     </React.Fragment>
   )
 }

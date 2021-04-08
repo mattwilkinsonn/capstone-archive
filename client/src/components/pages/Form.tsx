@@ -9,7 +9,6 @@ import NavBar from '../NavBar'
 import TextField from '@material-ui/core/textField'
 import Button from '@material-ui/core/Button'
 import { Link } from 'react-router-dom'
-import CardActions from '@material-ui/core/CardActions'
 import MenuItem from '@material-ui/core/MenuItem'
 
 const useStyles = makeStyles((theme) => ({
@@ -33,8 +32,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(6),
   },
-  backButton: {
-    margin: theme.spacing(0, 0, 0, 2),
+  formButtons: {
+    margin: theme.spacing(2, 0, 0, 1),
   },
 }))
 
@@ -113,54 +112,37 @@ export default function Form(): JSX.Element {
                       style={{ margin: 8 }}
                       label="URL (optional)"
                     />
+                    <Button
+                      color="primary"
+                      className={classes.formButtons}
+                      size="small"
+                      variant="contained"
+                      component={Link}
+                      to={{
+                        pathname: '/',
+                      }}
+                    >
+                      Add
+                    </Button>
+                    <Button
+                      color="secondary"
+                      className={classes.formButtons}
+                      size="small"
+                      variant="contained"
+                      component={Link}
+                      to={{
+                        pathname: '/',
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </form>
                 </CardContent>
-                <CardActions>
-                  <Button
-                    color="secondary"
-                    className={classes.backButton}
-                    size="small"
-                    variant="contained"
-                    component={Link}
-                    to={{
-                      pathname: '/',
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    color="primary"
-                    className={classes.backButton}
-                    size="small"
-                    variant="contained"
-                    component={Link}
-                    to={{
-                      pathname: '/',
-                    }}
-                  >
-                    Add
-                  </Button>
-                </CardActions>
               </Card>
             </Grid>
           </Grid>
         </Container>
       </main>
-      {/* Footer */}
-      <footer className={classes.footer}>
-        <Typography variant="h6" align="center" gutterBottom>
-          American University CS Capstone Project
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="textSecondary"
-          component="p"
-        >
-          By Ashlyn Levinson and Matthew Wilkinson
-        </Typography>
-      </footer>
-      {/* End footer */}
     </React.Fragment>
   )
 }

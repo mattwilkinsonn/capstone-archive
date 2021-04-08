@@ -19,6 +19,7 @@ const NavBar = (): JSX.Element => {
           <Button
             size="small"
             variant="contained"
+            color="primary"
             component={Link}
             to={{
               pathname: '/login',
