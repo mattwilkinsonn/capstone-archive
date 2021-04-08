@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { fade, makeStyles } from '@material-ui/core/styles'
@@ -8,6 +8,8 @@ import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
+import { useSearchCapstonesQuery } from '../../generated/graphql'
+import { createClient } from '../../graphql/createClient'
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -71,6 +73,24 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SearchPage(): JSX.Element {
   const classes = useStyles()
+  const rqClient = createClient()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [queryEnabled, setQueryEnabled] = useState(false)
+
+  const handleSearch = (input: string): void => {
+    setSearchTerm(input)
+    if (!queryEnabled) setQueryEnabled(true)
+  }
+
+  // run the Capstones query, get the data back from that.
+  const { data, isLoading } = useSearchCapstonesQuery(
+    rqClient,
+    { limit: 50, query: searchTerm },
+    { enabled: queryEnabled }
+  )
+
+  // Log the array of capstones to the console
+  console.log(data?.searchCapstones.capstones)
 
   return (
     <React.Fragment>

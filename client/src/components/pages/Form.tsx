@@ -6,10 +6,12 @@ import Typography from '@material-ui/core/Typography'
 import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import NavBar from '../NavBar'
-import TextField from '@material-ui/core/textField'
+import { TextField } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import { Link } from 'react-router-dom'
 import MenuItem from '@material-ui/core/MenuItem'
+import { createClient } from '../../graphql/createClient'
+import { NewCapstone, useCreateCapstoneMutation } from '../../generated/graphql'
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -50,6 +52,16 @@ export default function Form(): JSX.Element {
       label: 'Fall 2020',
     },
   ]
+  const rqClient = createClient()
+
+  const { mutateAsync, data } = useCreateCapstoneMutation(rqClient, {})
+
+  // what you want to call with the form when it submits
+  const handleSubmit = async (input: NewCapstone): Promise<void> => {
+    await mutateAsync({ input })
+    // probably want to send them back to the homepage or something
+    // could also get the id from the return and then send them to the capstone they just created
+  }
 
   let semester
 

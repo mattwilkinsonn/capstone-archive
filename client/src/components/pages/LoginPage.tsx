@@ -8,6 +8,8 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { Link } from 'react-router-dom'
+import { Login, useLoginMutation } from '../../generated/graphql'
+import { createClient } from '../../graphql/createClient'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -31,6 +33,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function LoginPage(): JSX.Element {
   const classes = useStyles()
+
+  const rqClient = createClient()
+  const { mutateAsync, data } = useLoginMutation(rqClient, {})
+
+  const handleSubmit = async (input: Login): Promise<void> => {
+    await mutateAsync({ input })
+    // want to redirect to homepage or somewhere here
+  }
 
   return (
     <Container component="main" maxWidth="xs">
