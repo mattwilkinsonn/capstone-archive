@@ -7,10 +7,8 @@ import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import NavBar from '../NavBar'
 import Divider from '@material-ui/core/Divider'
-import CardMedia from '@material-ui/core/CardMedia'
 import Button from '@material-ui/core/Button'
 import { Link } from 'react-router-dom'
-import CardActions from '@material-ui/core/CardActions'
 import { createClient } from '../../graphql/createClient'
 import { useCapstoneQuery } from '../../generated/graphql'
 
@@ -27,9 +25,6 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-  },
-  cardMedia: {
-    paddingTop: '56.25%', // 16:9
   },
   cardContent: {
     flexGrow: 1,

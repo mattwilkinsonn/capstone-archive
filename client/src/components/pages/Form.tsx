@@ -7,7 +7,6 @@ import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import NavBar from '../NavBar'
 import TextField from '@material-ui/core/textField'
-// import CardMedia from '@material-ui/core/CardMedia'
 import Button from '@material-ui/core/Button'
 import { Link } from 'react-router-dom'
 import CardActions from '@material-ui/core/CardActions'
@@ -27,21 +26,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  cardMedia: {
-    paddingTop: '56.25%', // 16:9
-  },
   cardContent: {
     flexGrow: 1,
   },
   footer: {
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(6),
-  },
-  divide: {
-    marginBottom: theme.spacing(1),
-  },
-  info: {
-    margin: theme.spacing(1, 0, 1, 0),
   },
   backButton: {
     margin: theme.spacing(0, 0, 0, 2),
@@ -65,8 +55,8 @@ export default function Form(): JSX.Element {
   let semester
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    semester = event.target.value;
-  };
+    semester = event.target.value
+  }
 
   return (
     <React.Fragment>

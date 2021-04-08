@@ -3,14 +3,11 @@ import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import NavBar from '../NavBar'
-import SearchIcon from '@material-ui/icons/Search'
-import InputBase from '@material-ui/core/InputBase'
 import { useCapstonesQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
 import { Link } from 'react-router-dom'
@@ -40,36 +37,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(6),
   },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.primary.main, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.primary.main, 0.2),
-    },
-    marginTop: theme.spacing(4),
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    width: '50%',
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-  },
   cardDescription: {
     margin: theme.spacing(1, 0, 0, 0),
+  },
+  heroButtons: {
+    marginTop: theme.spacing(2),
   },
 }))
 
@@ -114,18 +86,22 @@ export default function Homepage(): JSX.Element {
               >
                 Past projects can be seen here.
               </Typography>
-              <div className={classes.search}>
-                <div className={classes.searchIcon}>
-                  <SearchIcon />
-                </div>
-                <InputBase
-                  placeholder="Search…"
-                  classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput,
-                  }}
-                  inputProps={{ 'aria-label': 'search' }}
-                />
+              <div className={classes.heroButtons}>
+                <Grid container spacing={2} justify="center">
+                  <Grid item>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      className={classes.heroButtons}
+                      component={Link}
+                      to={{
+                        pathname: '/search',
+                      }}
+                    >
+                      Search for a Capstone
+                    </Button>
+                  </Grid>
+                </Grid>
               </div>
             </Container>
           </div>
