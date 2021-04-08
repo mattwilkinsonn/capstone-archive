@@ -11,6 +11,7 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
 
@@ -72,5 +73,75 @@ func TestHandleCreateCapstoneErr(t *testing.T) {
 	got := HandleCreateCapstoneErr(err)
 
 	assert.Equal(t, err, got)
+
+}
+
+func TestGetCapstones(t *testing.T) {
+	orm, mock := dbtest.CreateMockDBClient(t)
+
+	// now := time.Now().Unix()
+	limit := 3
+
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capstones"`)).
+		WithArgs().
+		WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1).AddRow(2).AddRow(3))
+
+	capstones, err := GetCapstones(orm, limit, nil)
+
+	require.Nil(t, err)
+	assert.Len(t, capstones, limit)
+	assert.NotNil(t, capstones)
+	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
+
+}
+
+func TestGetCapstonesWithCursor(t *testing.T) {
+	orm, mock := dbtest.CreateMockDBClient(t)
+
+	now := int(time.Now().Unix())
+	limit := 3
+
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capstones"`)).
+		WithArgs(AnyTime{}).
+		WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1).AddRow(2).AddRow(3))
+
+	capstones, err := GetCapstones(orm, limit, &now)
+
+	require.Nil(t, err)
+	assert.Len(t, capstones, limit)
+	assert.NotNil(t, capstones)
+	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
+
+}
+
+func TestCreateGraphCapstoneSlice(t *testing.T) {
+	now := time.Now()
+	formattedNow := int(now.Unix())
+
+	title := "Capstone Archive"
+	desc := "Archive for capstone projects"
+	author := "Matt Wilkinson"
+
+	input := []*db.Capstone{
+		{Title: title,
+			Description: desc,
+			Author:      author,
+			Model:       gorm.Model{ID: 24, CreatedAt: now, UpdatedAt: now}},
+	}
+
+	want := []*model.Capstone{
+		{
+			ID:          24,
+			Title:       title,
+			Description: desc,
+			Author:      author,
+			CreatedAt:   formattedNow,
+			UpdatedAt:   formattedNow,
+		},
+	}
+
+	got := CreateGraphCapstoneSlice(input)
+
+	assert.Equal(t, want, got)
 
 }

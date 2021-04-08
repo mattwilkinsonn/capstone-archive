@@ -5,12 +5,10 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/envs"
 	"github.com/Zireael13/capstone-archive/server/internal/serve"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	_ = godotenv.Load(".env.local")
-	_ = godotenv.Load(".env")
+	envs.LoadEnvs()
 
 	port := envs.GetPort()
 

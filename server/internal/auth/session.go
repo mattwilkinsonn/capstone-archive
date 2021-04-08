@@ -5,11 +5,11 @@ import (
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 // Creates a new session from the user's database representation.
-func CreateSessionFromUser(ctx context.Context, user *db.User) {
-	ginCtx := GinContextFromContext(ctx)
+func CreateSessionFromUser(ginCtx *gin.Context, user *db.User) {
 
 	session := sessions.Default(ginCtx)
 	session.Set("userId", user.ID)
