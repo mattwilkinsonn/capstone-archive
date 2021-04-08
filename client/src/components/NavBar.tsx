@@ -4,6 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
+import { Link } from 'react-router-dom'
 
 const NavBar = (): JSX.Element => {
   return (
@@ -15,7 +16,16 @@ const NavBar = (): JSX.Element => {
               Capstone Archive
             </Typography>
           </Box>
-          <Button></Button>
+          <Button
+            size="small"
+            variant="contained"
+            component={Link}
+            to={{
+              pathname: '/login',
+            }}
+          >
+            Sign Out
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
