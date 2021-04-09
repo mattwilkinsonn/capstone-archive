@@ -23,11 +23,15 @@ func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 }
 
 // Takes Capstone inputs and creates object in Database
-func CreateCapstoneInDB(DB *gorm.DB, title, description, author string) (*db.Capstone, error) {
+func CreateCapstoneInDB(
+	DB *gorm.DB,
+	title, description, author, semester string,
+) (*db.Capstone, error) {
 	capstone := db.Capstone{
 		Title:       title,
 		Description: description,
 		Author:      author,
+		Semester:    semester,
 	}
 
 	res := DB.Create(&capstone)

@@ -20,7 +20,13 @@ func (r *mutationResolver) CreateCapstone(
 ) (*model.Capstone, error) {
 	// TODO: input validation on capstone adds?
 
-	capstone, err := CreateCapstoneInDB(r.DB, input.Title, input.Description, input.Author)
+	capstone, err := CreateCapstoneInDB(
+		r.DB,
+		input.Title,
+		input.Description,
+		input.Author,
+		input.Semester,
+	)
 	if err != nil {
 		err = HandleCreateCapstoneErr(err)
 		panic(err)
@@ -150,7 +156,6 @@ func (r *queryResolver) Capstones(
 }
 
 func (r *queryResolver) Capstone(ctx context.Context, id int) (*model.Capstone, error) {
-
 	capstone, err := GetCapstoneById(r.DB, uint(id))
 
 	if err != nil {
@@ -161,7 +166,6 @@ func (r *queryResolver) Capstone(ctx context.Context, id int) (*model.Capstone, 
 	gqlCapstone := CreateGraphCapstone(capstone)
 
 	return gqlCapstone, nil
-
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.PublicUser, error) {

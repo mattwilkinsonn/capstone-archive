@@ -97,6 +97,7 @@ func DBToGQLUser(user *db.User) *model.User {
 		Email:     user.Email,
 		CreatedAt: int(user.CreatedAt.Unix()),
 		UpdatedAt: int(user.UpdatedAt.Unix()),
+		Role:      model.Role(user.Role),
 	}
 }
 

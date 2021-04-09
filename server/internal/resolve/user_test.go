@@ -202,7 +202,7 @@ func TestGetUserFromUsernameOrEmail(t *testing.T) {
 	mock.ExpectQuery(
 		"INSERT INTO \"users\"",
 	).WithArgs(
-		AnyTime{}, AnyTime{}, nil, user.Username, user.Email, user.Password,
+		AnyTime{}, AnyTime{}, nil, user.Username, user.Email, user.Password, "USER",
 	).WillReturnRows(mock.NewRows([]string{"id"}))
 	orm.Create(&user)
 
@@ -217,13 +217,15 @@ func TestGetUserFromUsernameOrEmail(t *testing.T) {
 			"created_at",
 			"updated_at",
 			"deleted_at",
-			"password"}).AddRow(user.ID,
+			"password",
+			"role"}).AddRow(user.ID,
 			user.Username,
 			user.Email,
 			user.CreatedAt,
 			user.UpdatedAt,
 			user.DeletedAt,
-			user.Password))
+			user.Password,
+			user.Role))
 
 		input := "matt@matt.com"
 		returned, err := GetUserFromUsernameOrEmail(input, orm)
@@ -244,13 +246,15 @@ func TestGetUserFromUsernameOrEmail(t *testing.T) {
 			"created_at",
 			"updated_at",
 			"deleted_at",
-			"password"}).AddRow(user.ID,
+			"password",
+			"role"}).AddRow(user.ID,
 			user.Username,
 			user.Email,
 			user.CreatedAt,
 			user.UpdatedAt,
 			user.DeletedAt,
-			user.Password))
+			user.Password,
+			user.Role))
 
 		input := user.Username
 		returned, err := GetUserFromUsernameOrEmail(input, orm)
@@ -273,6 +277,7 @@ func TestCreateUserResponse(t *testing.T) {
 		Username: "zireael",
 		Email:    "zir@gmail.com",
 		Password: "hunter2",
+		Role:     "USER",
 	}
 
 	want := &model.UserResponse{
@@ -282,6 +287,7 @@ func TestCreateUserResponse(t *testing.T) {
 			Email:     "zir@gmail.com",
 			CreatedAt: formattedNow,
 			UpdatedAt: formattedNow,
+			Role:      model.RoleUser,
 		},
 	}
 
@@ -305,6 +311,7 @@ func TestCreateUserInDB(t *testing.T) {
 		username,
 		email,
 		password,
+		"USER",
 	).WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1))
 
 	got, err := CreateUserInDB(orm, username, email, password)

@@ -50,16 +50,17 @@ func TestCreateCapstoneInDB(t *testing.T) {
 	title := "Capstone Archive"
 	desc := "Archive for capstone projects"
 	author := "Matt Wilkinson"
+	semester := "Fall 2019"
 
 	// capstone = &db.Capstone{Title: title, Description: desc, Author: author}
 
 	mock.ExpectQuery(
 		regexp.QuoteMeta(`INSERT INTO "capstones"`),
-	).WithArgs(AnyTime{}, AnyTime{}, nil, title, desc, author).WillReturnRows(
+	).WithArgs(AnyTime{}, AnyTime{}, nil, title, desc, author, semester).WillReturnRows(
 		mock.NewRows([]string{"id"}).AddRow(1),
 	)
 
-	capstone, err := CreateCapstoneInDB(orm, title, desc, author)
+	capstone, err := CreateCapstoneInDB(orm, title, desc, author, semester)
 
 	assert.Equal(t, author, capstone.Author, "Authors should be equal")
 	assert.Nil(t, err)
