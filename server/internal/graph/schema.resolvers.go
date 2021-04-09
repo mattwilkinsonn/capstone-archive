@@ -18,8 +18,6 @@ func (r *mutationResolver) CreateCapstone(
 	ctx context.Context,
 	input model.NewCapstone,
 ) (*model.Capstone, error) {
-	// TODO: input validation on capstone adds?
-
 	capstone, err := CreateCapstoneInDB(
 		r.DB,
 		input.Title,
