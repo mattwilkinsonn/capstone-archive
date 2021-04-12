@@ -10,7 +10,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
   redis:
     image: redis
     ports:
@@ -18,3 +18,24 @@ services:
     volumes:
       - ./data/redis:/data
       - ./data/redis-dump:/var/lib/redis
+  server:
+    build: ./server
+    container_name: server
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/capstone-archive
+      - REDIS_ADDRESS=redis:6379
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 4000:8080
+  client:
+    build: ./client
+    container_name: client
+    environment:
+      - REACT_APP_API_URL=http://localhost:4000/graphql
+    depends_on:
+      - server
+    ports:
+      - 3000:3000

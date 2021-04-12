@@ -19,7 +19,7 @@ func InitalizeDatabase(orm *gorm.DB) {
 }
 
 func CreateDatabaseDialector() gorm.Dialector {
-	dsn := "host=localhost user=postgres password=postgres dbname=capstone-archive port=5432 sslmode=disable"
+	dsn := envs.GetDatabaseUrl()
 	return postgres.Open(dsn)
 }
 
