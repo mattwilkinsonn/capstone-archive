@@ -90,9 +90,6 @@ export default function Moreviewpage(props: {
                     <strong>Project Description: </strong>
                     {data?.capstone?.description}
                   </Typography>
-                  <Typography>
-                    <strong>Project URL:</strong>{' '}
-                  </Typography>
                 </CardContent>
               </Card>
             </Grid>

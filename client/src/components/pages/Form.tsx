@@ -52,21 +52,36 @@ export default function Form(): JSX.Element {
       label: 'Fall 2020',
     },
   ]
+
   const rqClient = createClient()
 
   const { mutateAsync, data } = useCreateCapstoneMutation(rqClient, {})
 
   // what you want to call with the form when it submits
   const handleSubmit = async (input: NewCapstone): Promise<void> => {
+    console.log(input)
     await mutateAsync({ input })
     // probably want to send them back to the homepage or something
     // could also get the id from the return and then send them to the capstone they just created
   }
 
-  let semester
+  const [s, setSemester] = React.useState('')
+  const [t, setTitle] = React.useState('')
+  const [d, setDescription] = React.useState('')
+  const [a, setAuthor] = React.useState('')
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    semester = event.target.value
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    console.log(event.target)
+    //fix this
+    if (event.target.value == 'F20' || event.target.value == 'S21') {
+      setSemester(event.target.value)
+    } else if (event.target.id == 'title') {
+      setTitle(event.target.value)
+    } else if (event.target.id == 'desc') {
+      setDescription(event.target.value)
+    } else if (event.target.id == 'auth1') {
+      setAuthor(event.target.value)
+    }
   }
 
   return (
@@ -81,16 +96,20 @@ export default function Form(): JSX.Element {
                   <Typography gutterBottom variant="h5" component="h2">
                     Add New Project
                   </Typography>
-                  <form noValidate autoComplete="off">
+                  <form autoComplete="off">
                     <TextField
                       required
                       fullWidth
+                      id="title"
+                      onChange={handleChange}
                       style={{ margin: 8 }}
                       label="Title"
                     />
                     <TextField
                       required
                       fullWidth
+                      id="desc"
+                      onChange={handleChange}
                       style={{ margin: 8 }}
                       label="Description"
                       multiline
@@ -100,7 +119,8 @@ export default function Form(): JSX.Element {
                       fullWidth
                       select
                       label="Select"
-                      value={semester}
+                      value={s}
+                      id="sem"
                       onChange={handleChange}
                       style={{ margin: 8 }}
                       helperText="Please select your semester"
@@ -114,7 +134,9 @@ export default function Form(): JSX.Element {
                     <TextField
                       required
                       style={{ margin: 8 }}
+                      id="auth1"
                       label="Author 1"
+                      onChange={handleChange}
                     />
                     <TextField style={{ margin: 8 }} label="Author 2" />
                     <TextField style={{ margin: 8 }} label="Author 3" />
@@ -125,14 +147,22 @@ export default function Form(): JSX.Element {
                       label="URL (optional)"
                     />
                     <Button
+                      type="button"
                       color="primary"
                       className={classes.formButtons}
                       size="small"
                       variant="contained"
-                      component={Link}
-                      to={{
-                        pathname: '/',
-                      }}
+                      onClick={() =>
+                        handleSubmit({
+                          title: t,
+                          description: d,
+                          author: a,
+                        })
+                      }
+                      // component={Link}
+                      // to={{
+                      //   pathname: '/',
+                      // }}
                     >
                       Add
                     </Button>

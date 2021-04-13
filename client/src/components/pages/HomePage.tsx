@@ -92,13 +92,24 @@ export default function Homepage(): JSX.Element {
                     <Button
                       size="small"
                       variant="contained"
-                      className={classes.heroButtons}
                       component={Link}
                       to={{
                         pathname: '/search',
                       }}
                     >
                       Search for a Capstone
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      component={Link}
+                      to={{
+                        pathname: '/add',
+                      }}
+                    >
+                      Add a Capstone
                     </Button>
                   </Grid>
                 </Grid>
