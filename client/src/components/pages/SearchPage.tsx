@@ -5,11 +5,14 @@ import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import NavBar from '../NavBar'
 import SearchIcon from '@material-ui/icons/Search'
-import InputBase from '@material-ui/core/InputBase'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
 import { useSearchCapstonesQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
+import TextField from '@material-ui/core/TextField'
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -37,31 +40,10 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.primary.main, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.primary.main, 0.2),
-    },
     marginTop: theme.spacing(4),
     marginRight: 'auto',
     marginLeft: 'auto',
     width: '50%',
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
   },
   cardDescription: {
     margin: theme.spacing(1, 0, 0, 0),
@@ -74,126 +56,159 @@ const useStyles = makeStyles((theme) => ({
 export default function SearchPage(): JSX.Element {
   const classes = useStyles()
   const rqClient = createClient()
-  const [searchTerm, setSearchTerm] = useState('')
+  let searchTerm = ''
+  const [updatedTerm, setSearchTerm] = useState('')
   const [queryEnabled, setQueryEnabled] = useState(false)
 
-  const handleSearch = (input: string): void => {
-    setSearchTerm(input)
+  const handleSearch = (value: string): void => {
+    searchTerm = value
+  }
+
+  const handleSubmit = (): void => {
+    setSearchTerm(searchTerm)
     if (!queryEnabled) setQueryEnabled(true)
   }
 
   // run the Capstones query, get the data back from that.
   const { data, isLoading } = useSearchCapstonesQuery(
     rqClient,
-    { limit: 50, query: searchTerm },
+    { limit: 50, query: updatedTerm },
     { enabled: queryEnabled }
   )
 
   // Log the array of capstones to the console
   console.log(data?.searchCapstones.capstones)
 
-  return (
-    <React.Fragment>
-      <NavBar></NavBar>
-      <main>
-        <div className={classes.heroContent}>
-          <Container maxWidth="sm">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="textPrimary"
-              gutterBottom
-            >
-              Search Capstones
-            </Typography>
-            <Typography
-              variant="h5"
-              align="center"
-              color="textSecondary"
-              paragraph
-            >
-              Search for Capstone Projects here.
-            </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
+  const renderHeader = (): any => {
+    return (
+      <div className={classes.heroContent}>
+        <Container maxWidth="sm">
+          <Typography
+            component="h1"
+            variant="h2"
+            align="center"
+            color="textPrimary"
+            gutterBottom
+          >
+            Search Capstones
+          </Typography>
+          <Typography
+            variant="h5"
+            align="center"
+            color="textSecondary"
+            paragraph
+          >
+            Search for Capstone Projects here.
+          </Typography>
+          <form noValidate autoComplete="off" className={classes.search}>
+            <Grid container spacing={1} alignItems="flex-end">
+              <Grid item>
                 <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </div>
-            <div className={classes.heroButtons}>
-              <Grid container spacing={2} justify="center">
-                <Grid item>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    className={classes.heroButtons}
-                    component={Link}
-                    to={{
-                      pathname: '/',
-                    }}
-                  >
-                    Back to Main
-                  </Button>
-                </Grid>
               </Grid>
-            </div>
-          </Container>
-        </div>
-        <Container className={classes.cardGrid} maxWidth="md">
-          <Grid container spacing={4}>
-            {/* {cards.map((card) => (
-              <Grid item key={cards.indexOf(card)} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {card?.title}
-                    </Typography>
-                    <Typography color="textSecondary">
-                      {card?.semester}
-                    </Typography>
-                    <Typography className={classes.cardDescription}>
-                      {card?.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      component={Link}
-                      to={{
-                        pathname: 'view/' + card?.id,
-                      }}
-                    >
-                      View
-                    </Button>
-                  </CardActions>
-                </Card>
+              <Grid item>
+                <TextField
+                  id="input"
+                  placeholder="Search" 
+                  onChange={(event) => handleSearch(event.target.value)}
+                />
               </Grid>
-            ))} */}
-          </Grid>
+              <Grid item>
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => handleSubmit()}
+                >
+                  Enter
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+          <div className={classes.heroButtons}>
+            <Grid container spacing={2} justify="center">
+              <Grid item>
+                <Button
+                  size="small"
+                  variant="contained"
+                  className={classes.heroButtons}
+                  component={Link}
+                  to={{
+                    pathname: '/',
+                  }}
+                >
+                  Back to Main
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
         </Container>
-        <div className={classes.noProjContent}>
-          <Container maxWidth="sm">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="textPrimary"
-              gutterBottom
-            >
-              No Projects to Show
-            </Typography>
+      </div>
+    )
+  }
+
+  if (queryEnabled && data?.searchCapstones.capstones) {
+    const cards = data?.searchCapstones.capstones
+    return (
+      <React.Fragment>
+        <NavBar></NavBar>
+        <main>
+          {renderHeader()}
+          <Container className={classes.cardGrid} maxWidth="md">
+            <Grid container spacing={4}>
+              {cards.map((card) => (
+                <Grid item key={cards.indexOf(card)} xs={12} sm={6} md={4}>
+                  <Card className={classes.card}>
+                    <CardContent className={classes.cardContent}>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        {card?.title}
+                      </Typography>
+                      <Typography color="textSecondary">
+                        {card?.semester}
+                      </Typography>
+                      <Typography className={classes.cardDescription}>
+                        {card?.description}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        component={Link}
+                        to={{
+                          pathname: 'view/' + card?.id,
+                        }}
+                      >
+                        View
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           </Container>
-        </div>
-      </main>
-    </React.Fragment>
-  )
+        </main>
+      </React.Fragment>
+    )
+  } else {
+    return (
+      <React.Fragment>
+        <NavBar></NavBar>
+        <main>
+          {renderHeader()}
+          <div className={classes.noProjContent}>
+            <Container maxWidth="sm">
+              <Typography
+                component="h1"
+                variant="h2"
+                align="center"
+                color="textPrimary"
+                gutterBottom
+              >
+                No Projects to Show
+              </Typography>
+            </Container>
+          </div>
+        </main>
+      </React.Fragment>
+    )
+  }
 }
