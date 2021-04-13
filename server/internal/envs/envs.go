@@ -18,11 +18,6 @@ func LoadEnvs() {
 
 		fmt.Printf("%v\n%v\n", errLocal, err)
 
-		if err != nil {
-			panic(err)
-		}
-
-		panic(errLocal)
 	}
 }
 
@@ -43,6 +38,22 @@ func GetEnvironment() (env string) {
 	env = os.Getenv("ENV")
 	if env == "" {
 		env = defaultEnv
+	}
+	return
+}
+
+func GetDatabaseUrl() (url string) {
+	url = os.Getenv("DATABASE_URL")
+	if url == "" {
+		url = "postgresql://postgres:postgres@localhost:5432/capstone-archive"
+	}
+	return
+}
+
+func GetRedisAddress() (address string) {
+	address = os.Getenv("REDIS_ADDRESS")
+	if address == "" {
+		address = "localhost:6379"
 	}
 	return
 }
