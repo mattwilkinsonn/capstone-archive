@@ -53,6 +53,11 @@ export default function Form(): JSX.Element {
     },
   ]
 
+  const [tValid, setTFlag] = React.useState(false)
+  const [dValid, setDFlag] = React.useState(false)
+  const [sValid, setSFlag] = React.useState(false)
+  const [aValid, setAFlag] = React.useState(false)
+
   const rqClient = createClient()
 
   const { mutateAsync, data } = useCreateCapstoneMutation(rqClient, {})
@@ -60,7 +65,20 @@ export default function Form(): JSX.Element {
   // what you want to call with the form when it submits
   const handleSubmit = async (input: NewCapstone): Promise<void> => {
     console.log(input)
-    await mutateAsync({ input })
+    if (t == '') {
+      setTFlag(true)
+    }
+    if (d == '') {
+      setDFlag(true)
+    }
+    if (s == '') {
+      setSFlag(true)
+    }
+    if (a == '') {
+      setAFlag(true)
+    } else {
+      await mutateAsync({ input })
+    }
     // probably want to send them back to the homepage or something
     // could also get the id from the return and then send them to the capstone they just created
   }
@@ -71,15 +89,18 @@ export default function Form(): JSX.Element {
   const [a, setAuthor] = React.useState('')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log(event.target)
     //fix this
     if (event.target.value == 'F20' || event.target.value == 'S21') {
+      setSFlag(false)
       setSemester(event.target.value)
     } else if (event.target.id == 'title') {
+      setTFlag(false)
       setTitle(event.target.value)
     } else if (event.target.id == 'desc') {
+      setDFlag(false)
       setDescription(event.target.value)
     } else if (event.target.id == 'auth1') {
+      setAFlag(false)
       setAuthor(event.target.value)
     }
   }
@@ -96,23 +117,27 @@ export default function Form(): JSX.Element {
                   <Typography gutterBottom variant="h5" component="h2">
                     Add New Project
                   </Typography>
-                  <form autoComplete="off">
+                  <form autoComplete="off" noValidate>
                     <TextField
                       required
                       fullWidth
                       id="title"
+                      value={t}
                       onChange={handleChange}
                       style={{ margin: 8 }}
                       label="Title"
+                      error={tValid}
                     />
                     <TextField
                       required
                       fullWidth
                       id="desc"
+                      value={d}
                       onChange={handleChange}
                       style={{ margin: 8 }}
                       label="Description"
                       multiline
+                      error={dValid}
                     />
                     <TextField
                       required
@@ -123,7 +148,7 @@ export default function Form(): JSX.Element {
                       id="sem"
                       onChange={handleChange}
                       style={{ margin: 8 }}
-                      helperText="Please select your semester"
+                      error={sValid}
                     >
                       {semesters.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -136,7 +161,9 @@ export default function Form(): JSX.Element {
                       style={{ margin: 8 }}
                       id="auth1"
                       label="Author 1"
+                      value={a}
                       onChange={handleChange}
+                      error={aValid}
                     />
                     <TextField style={{ margin: 8 }} label="Author 2" />
                     <TextField style={{ margin: 8 }} label="Author 3" />
