@@ -52,21 +52,57 @@ export default function Form(): JSX.Element {
       label: 'Fall 2020',
     },
   ]
+
+  const [tValid, setTFlag] = React.useState(false)
+  const [dValid, setDFlag] = React.useState(false)
+  const [sValid, setSFlag] = React.useState(false)
+  const [aValid, setAFlag] = React.useState(false)
+
   const rqClient = createClient()
 
   const { mutateAsync, data } = useCreateCapstoneMutation(rqClient, {})
 
   // what you want to call with the form when it submits
   const handleSubmit = async (input: NewCapstone): Promise<void> => {
-    await mutateAsync({ input })
+    console.log(input)
+    if (t == '') {
+      setTFlag(true)
+    }
+    if (d == '') {
+      setDFlag(true)
+    }
+    if (s == '') {
+      setSFlag(true)
+    }
+    if (a == '') {
+      setAFlag(true)
+    } else {
+      await mutateAsync({ input })
+    }
     // probably want to send them back to the homepage or something
     // could also get the id from the return and then send them to the capstone they just created
   }
 
-  let semester
+  const [s, setSemester] = React.useState('')
+  const [t, setTitle] = React.useState('')
+  const [d, setDescription] = React.useState('')
+  const [a, setAuthor] = React.useState('')
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    semester = event.target.value
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    //fix this
+    if (event.target.value == 'F20' || event.target.value == 'S21') {
+      setSFlag(false)
+      setSemester(event.target.value)
+    } else if (event.target.id == 'title') {
+      setTFlag(false)
+      setTitle(event.target.value)
+    } else if (event.target.id == 'desc') {
+      setDFlag(false)
+      setDescription(event.target.value)
+    } else if (event.target.id == 'auth1') {
+      setAFlag(false)
+      setAuthor(event.target.value)
+    }
   }
 
   return (
@@ -81,29 +117,38 @@ export default function Form(): JSX.Element {
                   <Typography gutterBottom variant="h5" component="h2">
                     Add New Project
                   </Typography>
-                  <form noValidate autoComplete="off">
+                  <form autoComplete="off" noValidate>
                     <TextField
                       required
                       fullWidth
+                      id="title"
+                      value={t}
+                      onChange={handleChange}
                       style={{ margin: 8 }}
                       label="Title"
+                      error={tValid}
                     />
                     <TextField
                       required
                       fullWidth
+                      id="desc"
+                      value={d}
+                      onChange={handleChange}
                       style={{ margin: 8 }}
                       label="Description"
                       multiline
+                      error={dValid}
                     />
                     <TextField
                       required
                       fullWidth
                       select
                       label="Select"
-                      value={semester}
+                      value={s}
+                      id="sem"
                       onChange={handleChange}
                       style={{ margin: 8 }}
-                      helperText="Please select your semester"
+                      error={sValid}
                     >
                       {semesters.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -114,7 +159,11 @@ export default function Form(): JSX.Element {
                     <TextField
                       required
                       style={{ margin: 8 }}
+                      id="auth1"
                       label="Author 1"
+                      value={a}
+                      onChange={handleChange}
+                      error={aValid}
                     />
                     <TextField style={{ margin: 8 }} label="Author 2" />
                     <TextField style={{ margin: 8 }} label="Author 3" />
@@ -125,14 +174,22 @@ export default function Form(): JSX.Element {
                       label="URL (optional)"
                     />
                     <Button
+                      type="button"
                       color="primary"
                       className={classes.formButtons}
                       size="small"
                       variant="contained"
-                      component={Link}
-                      to={{
-                        pathname: '/',
-                      }}
+                      onClick={() =>
+                        handleSubmit({
+                          title: t,
+                          description: d,
+                          author: a,
+                        })
+                      }
+                      // component={Link}
+                      // to={{
+                      //   pathname: '/',
+                      // }}
                     >
                       Add
                     </Button>

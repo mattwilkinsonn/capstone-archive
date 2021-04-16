@@ -108,7 +108,7 @@ export default function SearchPage(): JSX.Element {
               <Grid item>
                 <TextField
                   id="input"
-                  placeholder="Search" 
+                  placeholder="Search"
                   onChange={(event) => handleSearch(event.target.value)}
                 />
               </Grid>
