@@ -2,15 +2,15 @@ package main
 
 import (
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
+	"github.com/Zireael13/capstone-archive/server/internal/config"
 	"github.com/Zireael13/capstone-archive/server/internal/db"
-	"github.com/Zireael13/capstone-archive/server/internal/envs"
 	"github.com/Zireael13/capstone-archive/server/internal/serve"
 )
 
 func main() {
-	envs.LoadEnvs()
+	config.LoadEnvs()
 
-	port := envs.GetPort()
+	port := config.GetPort()
 
 	orm := db.CreateDefaultDatabaseClient()
 	argon := auth.CreateArgon()

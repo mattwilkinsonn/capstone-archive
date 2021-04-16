@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
-	"github.com/Zireael13/capstone-archive/server/internal/envs"
+	"github.com/Zireael13/capstone-archive/server/internal/config"
 	"github.com/Zireael13/capstone-archive/server/internal/router"
 	"github.com/gin-gonic/gin"
 	"github.com/matthewhartstonge/argon2"
@@ -18,7 +18,7 @@ func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 
 	g.Use(auth.GinContextToContextMiddleware())
 
-	addr := envs.GetRedisAddress()
+	addr := config.GetRedisAddress()
 	key := os.Getenv("REDIS_AUTH_KEY")
 
 	g.Use(auth.CreateRedisSessionMiddleware(addr, []byte(key)))

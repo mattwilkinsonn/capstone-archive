@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Zireael13/capstone-archive/server/internal/envs"
+	"github.com/Zireael13/capstone-archive/server/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -19,7 +19,7 @@ func InitalizeDatabase(orm *gorm.DB) {
 }
 
 func CreateDatabaseDialector() gorm.Dialector {
-	dsn := envs.GetDatabaseUrl()
+	dsn := config.GetDatabaseUrl()
 	return postgres.Open(dsn)
 }
 
@@ -29,7 +29,7 @@ func CreateDatabaseClient(dialector gorm.Dialector) *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	env := envs.GetEnvironment()
+	env := config.GetEnvironment()
 	if env == "development" {
 		db.Debug()
 	}
