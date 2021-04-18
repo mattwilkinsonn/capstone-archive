@@ -1,4 +1,4 @@
-FROM golang AS builder
+FROM golang:latest AS builder
 
 ENV GO111MODULE=on
 
@@ -15,7 +15,7 @@ RUN mkdir -p out
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./out ./cmd/server.go
 
 
-FROM scratch as runtime
+FROM alpine:latest as runtime
 COPY --from=builder /builder/out /app
 ENV GIN_MODE=release
 ENV PORT=8080

@@ -2,7 +2,6 @@ package db
 
 import (
 	"log"
-	"os"
 
 	"github.com/Zireael13/capstone-archive/server/internal/config"
 	"gorm.io/driver/postgres"
@@ -50,13 +49,8 @@ func LoadSampleData(orm *gorm.DB) {
 	res := orm.First(&capstone)
 
 	if res.Error != nil {
-		file, err := os.ReadFile("../sample/capstones.sql")
 
-		if err != nil {
-			panic(err)
-		}
-
-		orm.Exec(string(file))
+		orm.Exec(sample)
 
 	}
 }

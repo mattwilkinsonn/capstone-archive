@@ -1,4 +1,6 @@
-insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (1, 'The Return of Ringo', 'pellentesque volutpat dui maecenas tristique est et tempus semper est quam pharetra magna ac consequat metus sapien ut nunc', '12/9/2020', '7/30/2020', 'Kettridge', 'Fall 2020');
+package db
+
+const sample = `insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (1, 'The Return of Ringo', 'pellentesque volutpat dui maecenas tristique est et tempus semper est quam pharetra magna ac consequat metus sapien ut nunc', '12/9/2020', '7/30/2020', 'Kettridge', 'Fall 2020');
 insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (2, 'My Dear Enemy (Meotjin haru)', 'sit amet erat nulla tempus vivamus in felis eu sapien cursus vestibulum proin eu mi', '5/13/2020', '1/25/2021', 'Killingbeck', 'Spring 2021');
 insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (3, 'Hound of the Baskervilles, The', 'quam sapien varius ut blandit non interdum in ante vestibulum ante ipsum primis in faucibus orci luctus et ultrices', '2/1/2021', '5/12/2020', 'Worms', 'Fall 2020');
 insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (4, 'Pink Ribbons, Inc.', 'ut erat id mauris vulputate elementum nullam varius nulla facilisi cras non velit nec nisi vulputate nonummy maecenas', '9/10/2020', '6/10/2020', 'Dedam', 'Fall 2020');
@@ -998,3 +1000,4 @@ insert into capstones (id, Title, Description, created_at, updated_at, author, s
 insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (998, 'Camp', 'ac diam cras pellentesque volutpat dui maecenas tristique est et', '6/30/2020', '12/8/2020', 'Kilgour', 'Fall 2020');
 insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (999, 'Man''s Favorite Sport?', 'eu interdum eu tincidunt in leo maecenas pulvinar lobortis est', '7/25/2020', '5/3/2020', 'Godleman', 'Spring 2021');
 insert into capstones (id, Title, Description, created_at, updated_at, author, semester) values (1000, 'Music Never Stopped, The', 'pede justo eu massa donec dapibus duis at velit eu est congue elementum', '8/23/2020', '10/23/2020', 'Friel', 'Spring 2020');
+`
