@@ -16,5 +16,8 @@ RUN npm install react-scripts -g --silent
 # add app
 COPY . ./
 
+HEALTHCHECK --interval=5s --timeout=5s --retries=3 \
+    CMD wget -nv -t1 --spider 'http://localhost:3000' || exit 1
+
 # start app
 CMD ["npm", "start"]
