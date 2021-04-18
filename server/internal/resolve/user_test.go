@@ -12,9 +12,9 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/db/dbtest"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
+	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/gorm"
 )
 
 func TestUIntToString(t *testing.T) {
@@ -272,8 +272,9 @@ func TestCreateUserResponse(t *testing.T) {
 
 	now := time.Now()
 	formattedNow := int(now.Unix())
+	id, _ := uuid.NewV4()
 	user := &db.User{
-		Model:    gorm.Model{ID: 1, CreatedAt: now, UpdatedAt: now},
+		Base:     db.Base{ID: id, CreatedAt: now, UpdatedAt: now},
 		Username: "zireael",
 		Email:    "zir@gmail.com",
 		Password: "hunter2",
@@ -282,7 +283,7 @@ func TestCreateUserResponse(t *testing.T) {
 
 	want := &model.UserResponse{
 		User: &model.User{
-			ID:        1,
+			ID:        id.String(),
 			Username:  "zireael",
 			Email:     "zir@gmail.com",
 			CreatedAt: formattedNow,
@@ -296,6 +297,12 @@ func TestCreateUserResponse(t *testing.T) {
 	assert.Equal(t, want, got, "Returned user response should mirror wanted one")
 }
 
+type Any struct{}
+
+func (a Any) Match(v driver.Value) bool {
+	return true
+}
+
 func TestCreateUserInDB(t *testing.T) {
 	orm, mock := dbtest.CreateMockDBClient(t)
 	username := "Zireael"
@@ -305,6 +312,7 @@ func TestCreateUserInDB(t *testing.T) {
 	mock.ExpectQuery(
 		regexp.QuoteMeta(`INSERT INTO "users"`),
 	).WithArgs(
+		Any{},
 		AnyTime{},
 		AnyTime{},
 		nil,
@@ -375,15 +383,16 @@ func TestHandleInvalidLogin(t *testing.T) {
 func TestDBToGQLUser(t *testing.T) {
 	now := time.Now()
 	formattedNow := int(now.Unix())
+	id, _ := uuid.NewV4()
 	user := &db.User{
-		Model:    gorm.Model{ID: 1, CreatedAt: now, UpdatedAt: now},
+		Base:     db.Base{ID: id, CreatedAt: now, UpdatedAt: now},
 		Username: "zireael",
 		Email:    "zir@gmail.com",
 		Password: "hunter2",
 	}
 
 	want := &model.User{
-		ID:        1,
+		ID:        id.String(),
 		Username:  "zireael",
 		Email:     "zir@gmail.com",
 		CreatedAt: formattedNow,
@@ -398,7 +407,7 @@ func TestDBToGQLUser(t *testing.T) {
 func TestGetUserFromID(t *testing.T) {
 	orm, mock := dbtest.CreateMockDBClient(t)
 
-	id := uint(1)
+	id, _ := uuid.NewV4()
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users"`)).
 		WithArgs(id).
