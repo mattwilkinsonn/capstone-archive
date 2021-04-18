@@ -8,6 +8,7 @@ require (
 	github.com/adam-lavrik/go-imath v0.0.0-20200104135348-19d2b923d06c
 	github.com/alecthomas/units v0.0.0-20210208195552-ff826a37aa15 // indirect
 	github.com/alicebob/miniredis/v2 v2.14.3 // indirect
+	github.com/bxcodec/faker/v3 v3.6.0 // indirect
 	github.com/dave/dst v0.26.2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gin-contrib/cors v1.3.1
@@ -23,6 +24,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/ugorji/go v1.2.4 // indirect
 	github.com/vektah/gqlparser/v2 v2.2.0
