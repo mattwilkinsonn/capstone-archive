@@ -9,9 +9,9 @@ import (
 
 // Base contains common columns for all tables.
 type Base struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key;"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID  `gorm:"type:uuid;primary_key;"`
+	CreatedAt time.Time  `gorm:"not null;"`
+	UpdatedAt time.Time  `gorm:"not null;"`
 	DeletedAt *time.Time `sql:"index"`
 }
 
@@ -32,8 +32,8 @@ type User struct {
 
 type Capstone struct {
 	Base
-	Title       string `gorm:"not null;"faker:"Sentence"`
-	Description string `gorm:"not null;"faker:"Sentence"`
-	Author      string `gorm:"not null;"faker:"FirstName"`
-	Semester    string `gorm:"not null;"faker:"Word"`
+	Title       string `gorm:"not null;"faker:"sentence"`
+	Description string `gorm:"not null;"faker:"paragraph"`
+	Author      string `gorm:"not null;"faker:"name"`
+	Semester    string `gorm:"not null;"faker:"word"`
 }

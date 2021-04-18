@@ -50,7 +50,7 @@ func LoadSampleData(orm *gorm.DB) {
 
 	if res.Error != nil {
 
-		orm.Exec(sample)
+		// orm.Exec(sample)
 
 	}
 }
