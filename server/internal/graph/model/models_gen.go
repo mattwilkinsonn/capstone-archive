@@ -9,7 +9,7 @@ import (
 )
 
 type Capstone struct {
-	ID          int    `json:"id"`
+	ID          string `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Author      string `json:"author"`
@@ -53,7 +53,7 @@ type Todo struct {
 }
 
 type User struct {
-	ID        int    `json:"id"`
+	ID        string `json:"id"`
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 	CreatedAt int    `json:"createdAt"`

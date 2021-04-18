@@ -12,7 +12,7 @@ import (
 // Transforms DB/ORM Capstone schema into GraphQL schema
 func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 	return &model.Capstone{
-		ID:          int(capstone.ID),
+		ID:          capstone.ID.String(),
 		Title:       capstone.Title,
 		Description: capstone.Description,
 		Author:      capstone.Author,

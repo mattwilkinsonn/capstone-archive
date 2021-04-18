@@ -14,10 +14,7 @@ import (
 	"github.com/adam-lavrik/go-imath/ix"
 )
 
-func (r *mutationResolver) CreateCapstone(
-	ctx context.Context,
-	input model.NewCapstone,
-) (*model.Capstone, error) {
+func (r *mutationResolver) CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.Capstone, error) {
 	capstone, err := CreateCapstoneInDB(
 		r.DB,
 		input.Title,
@@ -35,10 +32,7 @@ func (r *mutationResolver) CreateCapstone(
 	return graphCapstone, nil
 }
 
-func (r *mutationResolver) Register(
-	ctx context.Context,
-	input model.Register,
-) (*model.UserResponse, error) {
+func (r *mutationResolver) Register(ctx context.Context, input model.Register) (*model.UserResponse, error) {
 	ok, res := ValidateRegister(input)
 	if !ok {
 		return res, nil
@@ -62,10 +56,7 @@ func (r *mutationResolver) Register(
 	return CreateUserResponse(user), nil
 }
 
-func (r *mutationResolver) Login(
-	ctx context.Context,
-	input model.Login,
-) (*model.UserResponse, error) {
+func (r *mutationResolver) Login(ctx context.Context, input model.Login) (*model.UserResponse, error) {
 	user, err := GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
 	if err != nil {
 		return HandleInvalidLogin(), nil
@@ -94,12 +85,7 @@ func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
-func (r *queryResolver) SearchCapstones(
-	ctx context.Context,
-	query string,
-	limit int,
-	offset *int,
-) (*model.PaginatedCapstones, error) {
+func (r *queryResolver) SearchCapstones(ctx context.Context, query string, limit int, offset *int) (*model.PaginatedCapstones, error) {
 	realLimit := ix.Min(limit, 50)
 
 	capstones, err := SearchCapstones(r.DB, query, realLimit+1, offset)
@@ -124,11 +110,7 @@ func (r *queryResolver) SearchCapstones(
 	return paginated, nil
 }
 
-func (r *queryResolver) Capstones(
-	ctx context.Context,
-	limit int,
-	cursor *int,
-) (*model.PaginatedCapstones, error) {
+func (r *queryResolver) Capstones(ctx context.Context, limit int, cursor *int) (*model.PaginatedCapstones, error) {
 	realLimit := ix.Min(limit, 50)
 
 	capstones, err := GetCapstones(r.DB, realLimit+1, cursor)

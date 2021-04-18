@@ -6,6 +6,7 @@ import (
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
+	"github.com/gofrs/uuid"
 	"github.com/matthewhartstonge/argon2"
 	"gorm.io/gorm"
 )
@@ -92,7 +93,7 @@ func CreateUserResponse(user *db.User) *model.UserResponse {
 
 func DBToGQLUser(user *db.User) *model.User {
 	return &model.User{
-		ID:        int(user.ID),
+		ID:        user.ID.String(),
 		Username:  user.Username,
 		Email:     user.Email,
 		CreatedAt: int(user.CreatedAt.Unix()),
@@ -132,7 +133,7 @@ func HandleInvalidLogin() *model.UserResponse {
 }
 
 // Wraps GORM to get the user from their ID
-func GetUserFromID(DB *gorm.DB, id uint) (*db.User, error) {
+func GetUserFromID(DB *gorm.DB, id uuid.UUID) (*db.User, error) {
 	user := db.User{}
 
 	res := DB.Where("id = ?", id).First(&user)

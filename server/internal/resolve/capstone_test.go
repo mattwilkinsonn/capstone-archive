@@ -10,9 +10,9 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/db/dbtest"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
+	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/gorm"
 )
 
 func TestCreateGraphCapstone(t *testing.T) {
@@ -23,15 +23,17 @@ func TestCreateGraphCapstone(t *testing.T) {
 	desc := "Archive for capstone projects"
 	author := "Matt Wilkinson"
 
+	id, _ := uuid.NewV4()
+
 	input := &db.Capstone{
 		Title:       title,
 		Description: desc,
 		Author:      author,
-		Model:       gorm.Model{ID: 24, CreatedAt: now, UpdatedAt: now},
+		Base:        db.Base{ID: id, CreatedAt: now, UpdatedAt: now},
 	}
 
 	want := &model.Capstone{
-		ID:          24,
+		ID:          id.String(),
 		Title:       title,
 		Description: desc,
 		Author:      author,
@@ -123,16 +125,18 @@ func TestCreateGraphCapstoneSlice(t *testing.T) {
 	desc := "Archive for capstone projects"
 	author := "Matt Wilkinson"
 
+	id, _ := uuid.NewV4()
+
 	input := []*db.Capstone{
 		{Title: title,
 			Description: desc,
 			Author:      author,
-			Model:       gorm.Model{ID: 24, CreatedAt: now, UpdatedAt: now}},
+			Base:        db.Base{ID: id, CreatedAt: now, UpdatedAt: now}},
 	}
 
 	want := []*model.Capstone{
 		{
-			ID:          24,
+			ID:          id.String(),
 			Title:       title,
 			Description: desc,
 			Author:      author,

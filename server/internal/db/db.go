@@ -50,7 +50,9 @@ func LoadSampleData(orm *gorm.DB) {
 
 	if res.Error != nil {
 
-		// orm.Exec(sample)
+		capstones := GenerateFakeCapstones(100)
+
+		orm.Create(&capstones)
 
 	}
 }
