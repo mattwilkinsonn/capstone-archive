@@ -4,7 +4,7 @@ import (
 	"github.com/bxcodec/faker/v3"
 )
 
-func GenerateFakeCapstones(int num) []Capstone {
+func GenerateFakeCapstones(num int) []Capstone {
 
 	list := make([]Capstone, 0)
 	for i := 0; i < num; i++ {

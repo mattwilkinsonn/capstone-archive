@@ -32,8 +32,8 @@ type User struct {
 
 type Capstone struct {
 	Base
-	Title       string `gorm:"not null;"faker:"sentence"`
-	Description string `gorm:"not null;"faker:"paragraph"`
-	Author      string `gorm:"not null;"faker:"name"`
-	Semester    string `gorm:"not null;"faker:"word"`
+	Title       string `gorm:"not null;" faker:"sentence"`
+	Description string `gorm:"not null;" faker:"paragraph"`
+	Author      string `gorm:"not null;" faker:"name"`
+	Semester    string `gorm:"not null;" faker:"word"`
 }
