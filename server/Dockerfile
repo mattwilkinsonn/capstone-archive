@@ -23,3 +23,5 @@ ENV ENVIRONMENT=release
 
 EXPOSE 8080
 ENTRYPOINT ["/app/server"]
+HEALTHCHECK --interval=5s --timeout=5s --retries=3 \
+    CMD wget -nv -t1 --spider 'http://localhost:8080/' || exit 1
