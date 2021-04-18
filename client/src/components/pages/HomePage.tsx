@@ -61,61 +61,67 @@ export default function Homepage(): JSX.Element {
   // Log the array of capstones to the console
   console.log(data?.capstones.capstones)
 
+  const renderHeader = (): any => {
+    return (
+      <div className={classes.heroContent}>
+        <Container maxWidth="sm">
+          <Typography
+            component="h1"
+            variant="h2"
+            align="center"
+            color="textPrimary"
+            gutterBottom
+          >
+            Capstone Projects
+          </Typography>
+          <Typography
+            variant="h5"
+            align="center"
+            color="textSecondary"
+            paragraph
+          >
+            Past projects can be seen here.
+          </Typography>
+          <div className={classes.heroButtons}>
+            <Grid container spacing={2} justify="center">
+              <Grid item>
+                <Button
+                  size="small"
+                  variant="contained"
+                  component={Link}
+                  to={{
+                    pathname: '/search',
+                  }}
+                >
+                  Search for a Capstone
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  size="small"
+                  variant="contained"
+                  component={Link}
+                  to={{
+                    pathname: '/add',
+                  }}
+                >
+                  Add a Capstone
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+        </Container>
+      </div>
+    )
+  }
+
   if (data?.capstones.capstones) {
     const cards = data?.capstones.capstones
     return (
       <React.Fragment>
         <NavBar></NavBar>
         <main>
-          <div className={classes.heroContent}>
-            <Container maxWidth="sm">
-              <Typography
-                component="h1"
-                variant="h2"
-                align="center"
-                color="textPrimary"
-                gutterBottom
-              >
-                Capstone Projects
-              </Typography>
-              <Typography
-                variant="h5"
-                align="center"
-                color="textSecondary"
-                paragraph
-              >
-                Past projects can be seen here.
-              </Typography>
-              <div className={classes.heroButtons}>
-                <Grid container spacing={2} justify="center">
-                  <Grid item>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      component={Link}
-                      to={{
-                        pathname: '/search',
-                      }}
-                    >
-                      Search for a Capstone
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      component={Link}
-                      to={{
-                        pathname: '/add',
-                      }}
-                    >
-                      Add a Capstone
-                    </Button>
-                  </Grid>
-                </Grid>
-              </div>
-            </Container>
-          </div>
+          {renderHeader()}
           <Container className={classes.cardGrid} maxWidth="md">
             <Grid container spacing={4}>
               {cards.map((card) => (
@@ -172,16 +178,17 @@ export default function Homepage(): JSX.Element {
       <React.Fragment>
         <NavBar></NavBar>
         <main>
+          {renderHeader()}
           <div className={classes.noProjContent}>
             <Container maxWidth="sm">
               <Typography
-                component="h1"
-                variant="h2"
+                component="h3"
+                variant="h4"
                 align="center"
                 color="textPrimary"
                 gutterBottom
               >
-                No Projects to Show
+                Cannot load projects
               </Typography>
             </Container>
           </div>
