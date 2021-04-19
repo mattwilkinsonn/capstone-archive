@@ -8,6 +8,7 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/bxcodec/faker/v3"
 	"github.com/gofrs/uuid"
+	"github.com/gosimple/slug"
 )
 
 type FakeCapstoneText struct {
@@ -36,6 +37,7 @@ func GenerateFakeCapstones(num int) []db.CreateCapstoneParams {
 		capstone.Description = text.Description
 		capstone.Author = text.Author
 		capstone.Semester = text.Semester
+		capstone.Slug = slug.Make(text.Title)
 
 		list = append(list, capstone)
 	}

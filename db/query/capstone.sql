@@ -7,6 +7,24 @@ WHERE
     id = $1
 LIMIT 1;
 
+-- name: GetCapstoneByTitle :one
+SELECT
+    *
+FROM
+    capstones
+WHERE
+    title = $1
+LIMIT 1;
+
+-- name: GetCapstoneBySlug :one
+SELECT
+    *
+FROM
+    capstones
+WHERE
+    slug = $1
+LIMIT 1;
+
 -- name: GetCapstonesWithCursor :many
 SELECT
     *
@@ -37,8 +55,8 @@ WHERE
 LIMIT $2 OFFSET $3;
 
 -- name: CreateCapstone :one
-INSERT INTO capstones (id, created_at, updated_at, title, description, author, semester)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO capstones (id, created_at, updated_at, title, description, author, semester, slug)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING
     *;
 

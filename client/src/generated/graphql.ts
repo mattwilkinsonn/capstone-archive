@@ -17,86 +17,12 @@ export type Scalars = {
   Float: number;
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  username: Scalars['String'];
-  email: Scalars['String'];
-  createdAt: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-  role: Role;
-};
-
-export type Capstone = {
-  __typename?: 'Capstone';
-  id: Scalars['ID'];
-  title: Scalars['String'];
-  description: Scalars['String'];
-  author: Scalars['String'];
-  createdAt: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-  semester: Scalars['String'];
-};
-
-export type Login = {
-  usernameOrEmail: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type Todo = {
-  __typename?: 'Todo';
-  id: Scalars['ID'];
-  text: Scalars['String'];
-  done: Scalars['Boolean'];
-  user: User;
-};
-
-export enum Role {
-  User = 'USER',
-  Admin = 'ADMIN'
-}
-
-export type PaginatedCapstones = {
-  __typename?: 'PaginatedCapstones';
-  capstones: Array<Maybe<Capstone>>;
-  hasMore: Scalars['Boolean'];
-};
-
-export type NewCapstone = {
-  title: Scalars['String'];
-  description: Scalars['String'];
-  author: Scalars['String'];
-  semester: Scalars['String'];
-};
-
-export type UserError = {
-  __typename?: 'UserError';
-  field: Scalars['String'];
-  message: Scalars['String'];
-};
-
-export type UserResponse = {
-  __typename?: 'UserResponse';
-  user?: Maybe<User>;
-  error?: Maybe<UserError>;
-};
-
-export type PublicUser = {
-  __typename?: 'PublicUser';
-  username: Scalars['String'];
-};
-
-export type Register = {
-  username: Scalars['String'];
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
 export type Query = {
   __typename?: 'Query';
   searchCapstones: PaginatedCapstones;
   capstones: PaginatedCapstones;
-  capstone?: Maybe<Capstone>;
+  capstoneById?: Maybe<Capstone>;
+  capstoneBySlug?: Maybe<Capstone>;
   users: Array<PublicUser>;
   me?: Maybe<User>;
 };
@@ -115,8 +41,66 @@ export type QueryCapstonesArgs = {
 };
 
 
-export type QueryCapstoneArgs = {
-  id: Scalars['Int'];
+export type QueryCapstoneByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryCapstoneBySlugArgs = {
+  slug: Scalars['String'];
+};
+
+export type PaginatedCapstones = {
+  __typename?: 'PaginatedCapstones';
+  capstones: Array<Maybe<Capstone>>;
+  hasMore: Scalars['Boolean'];
+};
+
+export type UserError = {
+  __typename?: 'UserError';
+  field: Scalars['String'];
+  message: Scalars['String'];
+};
+
+export type PublicUser = {
+  __typename?: 'PublicUser';
+  username: Scalars['String'];
+};
+
+export type Todo = {
+  __typename?: 'Todo';
+  id: Scalars['ID'];
+  text: Scalars['String'];
+  done: Scalars['Boolean'];
+  user: User;
+};
+
+export enum Role {
+  User = 'USER',
+  Admin = 'ADMIN'
+}
+
+export type Register = {
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type Capstone = {
+  __typename?: 'Capstone';
+  id: Scalars['String'];
+  slug: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  author: Scalars['String'];
+  createdAt: Scalars['Int'];
+  updatedAt: Scalars['Int'];
+  semester: Scalars['String'];
+};
+
+export type Login = {
+  usernameOrEmail: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type Mutation = {
@@ -142,16 +126,44 @@ export type MutationLoginArgs = {
   input: Login;
 };
 
-export type CapstoneQueryVariables = Exact<{
-  id: Scalars['Int'];
+export type User = {
+  __typename?: 'User';
+  id: Scalars['String'];
+  username: Scalars['String'];
+  email: Scalars['String'];
+  createdAt: Scalars['Int'];
+  updatedAt: Scalars['Int'];
+  role: Role;
+};
+
+export type NewCapstone = {
+  title: Scalars['String'];
+  description: Scalars['String'];
+  author: Scalars['String'];
+  semester: Scalars['String'];
+};
+
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  user?: Maybe<User>;
+  error?: Maybe<UserError>;
+};
+
+export type RegularCapstoneFragment = (
+  { __typename?: 'Capstone' }
+  & Pick<Capstone, 'id' | 'title' | 'description' | 'createdAt' | 'author' | 'updatedAt' | 'semester' | 'slug'>
+);
+
+export type CapstoneBySlugQueryVariables = Exact<{
+  slug: Scalars['String'];
 }>;
 
 
-export type CapstoneQuery = (
+export type CapstoneBySlugQuery = (
   { __typename?: 'Query' }
-  & { capstone?: Maybe<(
+  & { capstoneBySlug?: Maybe<(
     { __typename?: 'Capstone' }
-    & Pick<Capstone, 'id' | 'title' | 'description' | 'author' | 'createdAt' | 'updatedAt' | 'semester'>
+    & RegularCapstoneFragment
   )> }
 );
 
@@ -168,7 +180,7 @@ export type CapstonesQuery = (
     & Pick<PaginatedCapstones, 'hasMore'>
     & { capstones: Array<Maybe<(
       { __typename?: 'Capstone' }
-      & Pick<Capstone, 'id' | 'title' | 'description' | 'createdAt' | 'semester'>
+      & RegularCapstoneFragment
     )>> }
   ) }
 );
@@ -182,7 +194,7 @@ export type CreateCapstoneMutation = (
   { __typename?: 'Mutation' }
   & { createCapstone: (
     { __typename?: 'Capstone' }
-    & Pick<Capstone, 'id' | 'title' | 'description' | 'createdAt' | 'author' | 'updatedAt' | 'semester'>
+    & RegularCapstoneFragment
   ) }
 );
 
@@ -200,7 +212,7 @@ export type SearchCapstonesQuery = (
     & Pick<PaginatedCapstones, 'hasMore'>
     & { capstones: Array<Maybe<(
       { __typename?: 'Capstone' }
-      & Pick<Capstone, 'id' | 'title' | 'description' | 'createdAt' | 'updatedAt' | 'author' | 'semester'>
+      & RegularCapstoneFragment
     )>> }
   ) }
 );
@@ -262,47 +274,48 @@ export type RegisterMutation = (
   ) }
 );
 
-
-export const CapstoneDocument = `
-    query Capstone($id: Int!) {
-  capstone(id: $id) {
-    id
-    title
-    description
-    author
-    createdAt
-    updatedAt
-    semester
-  }
+export const RegularCapstoneFragmentDoc = `
+    fragment RegularCapstone on Capstone {
+  id
+  title
+  description
+  createdAt
+  author
+  updatedAt
+  semester
+  slug
 }
     `;
-export const useCapstoneQuery = <
-      TData = CapstoneQuery,
+export const CapstoneBySlugDocument = `
+    query capstoneBySlug($slug: String!) {
+  capstoneBySlug(slug: $slug) {
+    ...RegularCapstone
+  }
+}
+    ${RegularCapstoneFragmentDoc}`;
+export const useCapstoneBySlugQuery = <
+      TData = CapstoneBySlugQuery,
       TError = unknown
     >(
       client: GraphQLClient, 
-      variables: CapstoneQueryVariables, 
-      options?: UseQueryOptions<CapstoneQuery, TError, TData>
+      variables: CapstoneBySlugQueryVariables, 
+      options?: UseQueryOptions<CapstoneBySlugQuery, TError, TData>
     ) => 
-    useQuery<CapstoneQuery, TError, TData>(
-      ['Capstone', variables],
-      fetcher<CapstoneQuery, CapstoneQueryVariables>(client, CapstoneDocument, variables),
+    useQuery<CapstoneBySlugQuery, TError, TData>(
+      ['capstoneBySlug', variables],
+      fetcher<CapstoneBySlugQuery, CapstoneBySlugQueryVariables>(client, CapstoneBySlugDocument, variables),
       options
     );
 export const CapstonesDocument = `
     query Capstones($limit: Int!, $cursor: Int) {
   capstones(limit: $limit, cursor: $cursor) {
     capstones {
-      id
-      title
-      description
-      createdAt
-      semester
+      ...RegularCapstone
     }
     hasMore
   }
 }
-    `;
+    ${RegularCapstoneFragmentDoc}`;
 export const useCapstonesQuery = <
       TData = CapstonesQuery,
       TError = unknown
@@ -319,16 +332,10 @@ export const useCapstonesQuery = <
 export const CreateCapstoneDocument = `
     mutation createCapstone($input: NewCapstone!) {
   createCapstone(input: $input) {
-    id
-    title
-    description
-    createdAt
-    author
-    updatedAt
-    semester
+    ...RegularCapstone
   }
 }
-    `;
+    ${RegularCapstoneFragmentDoc}`;
 export const useCreateCapstoneMutation = <
       TError = unknown,
       TContext = unknown
@@ -344,18 +351,12 @@ export const SearchCapstonesDocument = `
     query searchCapstones($query: String!, $limit: Int!, $offset: Int) {
   searchCapstones(query: $query, limit: $limit, offset: $offset) {
     capstones {
-      id
-      title
-      description
-      createdAt
-      updatedAt
-      author
-      semester
+      ...RegularCapstone
     }
     hasMore
   }
 }
-    `;
+    ${RegularCapstoneFragmentDoc}`;
 export const useSearchCapstonesQuery = <
       TData = SearchCapstonesQuery,
       TError = unknown

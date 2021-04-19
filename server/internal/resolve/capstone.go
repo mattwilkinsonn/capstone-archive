@@ -8,6 +8,7 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	"github.com/gofrs/uuid"
+	"github.com/gosimple/slug"
 )
 
 // Transforms DB/ORM Capstone schema into GraphQL schema
@@ -20,6 +21,7 @@ func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 		CreatedAt:   int(capstone.CreatedAt.Unix()),
 		UpdatedAt:   int(capstone.UpdatedAt.Unix()),
 		Semester:    capstone.Semester,
+		Slug:        capstone.Slug,
 	}
 }
 
@@ -43,6 +45,7 @@ func CreateCapstoneInDB(
 		Description: description,
 		Author:      author,
 		Semester:    semester,
+		Slug:        slug.Make(title),
 	}
 
 	capstone, err := Queries.CreateCapstone(ctx, input)
@@ -125,4 +128,20 @@ func CreateGraphCapstoneSlice(capstones []db.Capstone) (gqlCapstones []*model.Ca
 	}
 
 	return gqlCapstones
+}
+
+func GetCapstoneByTitle(
+	ctx context.Context,
+	Queries *db.Queries,
+	title string,
+) (*db.Capstone, error) {
+	capstone, err := Queries.GetCapstoneByTitle(ctx, title)
+	return &capstone, err
+}
+
+func GetCapstoneBySlug(ctx context.Context,
+	Queries *db.Queries, slug string) (*db.Capstone, error) {
+	capstone, err := Queries.GetCapstoneBySlug(ctx, slug)
+
+	return &capstone, err
 }

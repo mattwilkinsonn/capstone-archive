@@ -11,10 +11,10 @@ import (
 )
 
 const createCapstone = `-- name: CreateCapstone :one
-INSERT INTO capstones (id, created_at, updated_at, title, description, author, semester)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO capstones (id, created_at, updated_at, title, description, author, semester, slug)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING
-    id, created_at, updated_at, deleted_at, title, description, author, semester
+    id, created_at, updated_at, deleted_at, title, description, author, semester, slug
 `
 
 type CreateCapstoneParams struct {
@@ -25,6 +25,7 @@ type CreateCapstoneParams struct {
 	Description string
 	Author      string
 	Semester    string
+	Slug        string
 }
 
 func (q *Queries) CreateCapstone(ctx context.Context, arg CreateCapstoneParams) (Capstone, error) {
@@ -36,6 +37,7 @@ func (q *Queries) CreateCapstone(ctx context.Context, arg CreateCapstoneParams) 
 		arg.Description,
 		arg.Author,
 		arg.Semester,
+		arg.Slug,
 	)
 	var i Capstone
 	err := row.Scan(
@@ -47,13 +49,14 @@ func (q *Queries) CreateCapstone(ctx context.Context, arg CreateCapstoneParams) 
 		&i.Description,
 		&i.Author,
 		&i.Semester,
+		&i.Slug,
 	)
 	return i, err
 }
 
 const getCapstoneById = `-- name: GetCapstoneById :one
 SELECT
-    id, created_at, updated_at, deleted_at, title, description, author, semester
+    id, created_at, updated_at, deleted_at, title, description, author, semester, slug
 FROM
     capstones
 WHERE
@@ -73,13 +76,68 @@ func (q *Queries) GetCapstoneById(ctx context.Context, id uuid.UUID) (Capstone, 
 		&i.Description,
 		&i.Author,
 		&i.Semester,
+		&i.Slug,
+	)
+	return i, err
+}
+
+const getCapstoneBySlug = `-- name: GetCapstoneBySlug :one
+SELECT
+    id, created_at, updated_at, deleted_at, title, description, author, semester, slug
+FROM
+    capstones
+WHERE
+    slug = $1
+LIMIT 1
+`
+
+func (q *Queries) GetCapstoneBySlug(ctx context.Context, slug string) (Capstone, error) {
+	row := q.db.QueryRowContext(ctx, getCapstoneBySlug, slug)
+	var i Capstone
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Title,
+		&i.Description,
+		&i.Author,
+		&i.Semester,
+		&i.Slug,
+	)
+	return i, err
+}
+
+const getCapstoneByTitle = `-- name: GetCapstoneByTitle :one
+SELECT
+    id, created_at, updated_at, deleted_at, title, description, author, semester, slug
+FROM
+    capstones
+WHERE
+    title = $1
+LIMIT 1
+`
+
+func (q *Queries) GetCapstoneByTitle(ctx context.Context, title string) (Capstone, error) {
+	row := q.db.QueryRowContext(ctx, getCapstoneByTitle, title)
+	var i Capstone
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Title,
+		&i.Description,
+		&i.Author,
+		&i.Semester,
+		&i.Slug,
 	)
 	return i, err
 }
 
 const getCapstones = `-- name: GetCapstones :many
 SELECT
-    id, created_at, updated_at, deleted_at, title, description, author, semester
+    id, created_at, updated_at, deleted_at, title, description, author, semester, slug
 FROM
     capstones
 ORDER BY
@@ -105,6 +163,7 @@ func (q *Queries) GetCapstones(ctx context.Context, limit int32) ([]Capstone, er
 			&i.Description,
 			&i.Author,
 			&i.Semester,
+			&i.Slug,
 		); err != nil {
 			return nil, err
 		}
@@ -121,7 +180,7 @@ func (q *Queries) GetCapstones(ctx context.Context, limit int32) ([]Capstone, er
 
 const getCapstonesWithCursor = `-- name: GetCapstonesWithCursor :many
 SELECT
-    id, created_at, updated_at, deleted_at, title, description, author, semester
+    id, created_at, updated_at, deleted_at, title, description, author, semester, slug
 FROM
     capstones
 WHERE
@@ -154,6 +213,7 @@ func (q *Queries) GetCapstonesWithCursor(ctx context.Context, arg GetCapstonesWi
 			&i.Description,
 			&i.Author,
 			&i.Semester,
+			&i.Slug,
 		); err != nil {
 			return nil, err
 		}
@@ -170,7 +230,7 @@ func (q *Queries) GetCapstonesWithCursor(ctx context.Context, arg GetCapstonesWi
 
 const searchCapstones = `-- name: SearchCapstones :many
 SELECT
-    id, created_at, updated_at, deleted_at, title, description, author, semester
+    id, created_at, updated_at, deleted_at, title, description, author, semester, slug
 FROM
     capstones c
 WHERE
@@ -202,6 +262,7 @@ func (q *Queries) SearchCapstones(ctx context.Context, arg SearchCapstonesParams
 			&i.Description,
 			&i.Author,
 			&i.Semester,
+			&i.Slug,
 		); err != nil {
 			return nil, err
 		}

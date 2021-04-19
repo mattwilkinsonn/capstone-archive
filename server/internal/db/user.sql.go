@@ -136,3 +136,35 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 	)
 	return i, err
 }
+
+const updateUserRole = `-- name: UpdateUserRole :one
+UPDATE
+    users
+SET
+    ROLE = $1
+WHERE
+    id = $2
+RETURNING
+    id, created_at, updated_at, deleted_at, username, email, password, role
+`
+
+type UpdateUserRoleParams struct {
+	Role UserRole
+	ID   uuid.UUID
+}
+
+func (q *Queries) UpdateUserRole(ctx context.Context, arg UpdateUserRoleParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUserRole, arg.Role, arg.ID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.Role,
+	)
+	return i, err
+}

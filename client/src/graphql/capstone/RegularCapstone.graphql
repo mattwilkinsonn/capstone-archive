@@ -1,0 +1,10 @@
+fragment RegularCapstone on Capstone {
+  id
+  title
+  description
+  createdAt
+  author
+  updatedAt
+  semester
+  slug
+}

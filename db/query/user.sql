@@ -35,3 +35,13 @@ RETURNING
 DELETE FROM users
 WHERE id = $1;
 
+-- name: UpdateUserRole :one
+UPDATE
+    users
+SET
+    ROLE = $1
+WHERE
+    id = $2
+RETURNING
+    *;
+
