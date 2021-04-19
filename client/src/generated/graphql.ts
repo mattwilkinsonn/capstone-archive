@@ -17,12 +17,14 @@ export type Scalars = {
   Float: number;
 };
 
-export type Todo = {
-  __typename?: 'Todo';
+export type User = {
+  __typename?: 'User';
   id: Scalars['ID'];
-  text: Scalars['String'];
-  done: Scalars['Boolean'];
-  user: User;
+  username: Scalars['String'];
+  email: Scalars['String'];
+  createdAt: Scalars['Int'];
+  updatedAt: Scalars['Int'];
+  role: Role;
 };
 
 export type Capstone = {
@@ -36,6 +38,24 @@ export type Capstone = {
   semester: Scalars['String'];
 };
 
+export type Login = {
+  usernameOrEmail: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type Todo = {
+  __typename?: 'Todo';
+  id: Scalars['ID'];
+  text: Scalars['String'];
+  done: Scalars['Boolean'];
+  user: User;
+};
+
+export enum Role {
+  User = 'USER',
+  Admin = 'ADMIN'
+}
+
 export type PaginatedCapstones = {
   __typename?: 'PaginatedCapstones';
   capstones: Array<Maybe<Capstone>>;
@@ -46,6 +66,7 @@ export type NewCapstone = {
   title: Scalars['String'];
   description: Scalars['String'];
   author: Scalars['String'];
+  semester: Scalars['String'];
 };
 
 export type UserError = {
@@ -54,52 +75,15 @@ export type UserError = {
   message: Scalars['String'];
 };
 
-export type PublicUser = {
-  __typename?: 'PublicUser';
-  username: Scalars['String'];
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  createCapstone: Capstone;
-  register: UserResponse;
-  login: UserResponse;
-  logout: Scalars['Boolean'];
-};
-
-
-export type MutationCreateCapstoneArgs = {
-  input: NewCapstone;
-};
-
-
-export type MutationRegisterArgs = {
-  input: Register;
-};
-
-
-export type MutationLoginArgs = {
-  input: Login;
-};
-
-export type Login = {
-  usernameOrEmail: Scalars['String'];
-  password: Scalars['String'];
-};
-
 export type UserResponse = {
   __typename?: 'UserResponse';
   user?: Maybe<User>;
   error?: Maybe<UserError>;
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
+export type PublicUser = {
+  __typename?: 'PublicUser';
   username: Scalars['String'];
-  email: Scalars['String'];
-  createdAt: Scalars['Int'];
-  updatedAt: Scalars['Int'];
 };
 
 export type Register = {
@@ -133,6 +117,29 @@ export type QueryCapstonesArgs = {
 
 export type QueryCapstoneArgs = {
   id: Scalars['Int'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createCapstone: Capstone;
+  register: UserResponse;
+  login: UserResponse;
+  logout: Scalars['Boolean'];
+};
+
+
+export type MutationCreateCapstoneArgs = {
+  input: NewCapstone;
+};
+
+
+export type MutationRegisterArgs = {
+  input: Register;
+};
+
+
+export type MutationLoginArgs = {
+  input: Login;
 };
 
 export type CapstoneQueryVariables = Exact<{

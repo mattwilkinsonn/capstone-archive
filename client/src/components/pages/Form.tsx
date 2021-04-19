@@ -44,11 +44,11 @@ export default function Form(): JSX.Element {
 
   const semesters = [
     {
-      value: 'S21',
+      value: 'Spring 2021',
       label: 'Spring 2021',
     },
     {
-      value: 'F20',
+      value: 'Fall 2020',
       label: 'Fall 2020',
     },
   ]
@@ -90,7 +90,10 @@ export default function Form(): JSX.Element {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     //fix this
-    if (event.target.value == 'F20' || event.target.value == 'S21') {
+    if (
+      event.target.value == 'Fall 2020' ||
+      event.target.value == 'Spring 2021'
+    ) {
       setSFlag(false)
       setSemester(event.target.value)
     } else if (event.target.id == 'title') {
@@ -141,13 +144,12 @@ export default function Form(): JSX.Element {
                     />
                     <TextField
                       required
-                      fullWidth
                       select
                       label="Select"
                       value={s}
                       id="sem"
                       onChange={handleChange}
-                      style={{ margin: 8 }}
+                      style={{ margin: 8, width: '20%'}}
                       error={sValid}
                     >
                       {semesters.map((option) => (
@@ -160,14 +162,12 @@ export default function Form(): JSX.Element {
                       required
                       style={{ margin: 8 }}
                       id="auth1"
-                      label="Author 1"
+                      label="Authors"
                       value={a}
                       onChange={handleChange}
                       error={aValid}
+                      fullWidth
                     />
-                    <TextField style={{ margin: 8 }} label="Author 2" />
-                    <TextField style={{ margin: 8 }} label="Author 3" />
-                    <TextField style={{ margin: 8 }} label="Author 4" />
                     <TextField
                       fullWidth
                       style={{ margin: 8 }}
@@ -184,6 +184,7 @@ export default function Form(): JSX.Element {
                           title: t,
                           description: d,
                           author: a,
+                          semester: s
                         })
                       }
                       // component={Link}

@@ -37,9 +37,38 @@ export default function LoginPage(): JSX.Element {
   const rqClient = createClient()
   const { mutateAsync, data } = useLoginMutation(rqClient, {})
 
+  const [user, setUsername] = React.useState('')
+  const [pass, setPassword] = React.useState('')
+  const [usernameValid, setUserFlag] = React.useState(false)
+  const [passwordValid, setPassFlag] = React.useState(false)
+  const [userErrorText, setUserText] = React.useState('')
+  const [passErrorText, setPassText] = React.useState('')
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.id == 'username') {
+      setUserFlag(false)
+      setUsername(event.target.value)
+      setUserText('')
+    } else if (event.target.id == 'password') {
+      setPassFlag(false)
+      setPassword(event.target.value)
+      setPassText('')
+    }
+  }
+
   const handleSubmit = async (input: Login): Promise<void> => {
-    await mutateAsync({ input })
-    // want to redirect to homepage or somewhere here
+    console.log(input)
+    if (user == '') {
+      setUserFlag(true)
+      setUserText('Must enter username or email')
+    }
+    if (pass == '') {
+      setPassFlag(true)
+      setPassText('Must enter password')
+    } else {
+      await mutateAsync({ input })
+      // want to redirect to homepage or somewhere here
+    }
   }
 
   return (
@@ -62,6 +91,9 @@ export default function LoginPage(): JSX.Element {
             label="Username"
             name="username"
             autoComplete="username"
+            error={usernameValid}
+            helperText={userErrorText}
+            onChange={handleChange}
           />
           <TextField
             variant="outlined"
@@ -73,17 +105,26 @@ export default function LoginPage(): JSX.Element {
             type="password"
             id="password"
             autoComplete="current-password"
+            error={passwordValid}
+            helperText={passErrorText}
+            onChange={handleChange}
           />
           <Button
-            type="submit"
+            type="button"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
-            component={Link}
-            to={{
-              pathname: '/',
-            }}
+            onClick={() =>
+              handleSubmit({
+                usernameOrEmail: user,
+                password: pass,
+              })
+            }
+            // component={Link}
+            // to={{
+            //   pathname: '/',
+            // }}
           >
             Sign In
           </Button>
