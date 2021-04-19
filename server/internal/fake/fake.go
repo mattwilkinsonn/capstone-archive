@@ -68,12 +68,8 @@ func AddFakeCapstonesIfEmpty(queries *db.Queries) {
 
 // TODO REMOVE THIS IF ACTUALLY DEPLOYING
 func AddTestAdminUserIfEmpty(queries *db.Queries) {
-	user, err := queries.GetUserByEmail(context.Background(), "admin@test.com")
+	_, err := queries.GetUserByEmail(context.Background(), "admin@test.com")
 	if err != nil {
-		panic(err)
-	}
-
-	if user == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
 			panic(err)
@@ -92,6 +88,5 @@ func AddTestAdminUserIfEmpty(queries *db.Queries) {
 		if err != nil {
 			panic(err)
 		}
-
 	}
 }
