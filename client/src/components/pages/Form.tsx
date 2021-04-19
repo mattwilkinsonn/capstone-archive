@@ -11,7 +11,11 @@ import Button from '@material-ui/core/Button'
 import { Link } from 'react-router-dom'
 import MenuItem from '@material-ui/core/MenuItem'
 import { createClient } from '../../graphql/createClient'
-import { NewCapstone, useCreateCapstoneMutation } from '../../generated/graphql'
+import {
+  NewCapstone,
+  useCreateCapstoneMutation,
+  useMeQuery,
+} from '../../generated/graphql'
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -60,7 +64,9 @@ export default function Form(): JSX.Element {
 
   const rqClient = createClient()
 
-  const { mutateAsync, data } = useCreateCapstoneMutation(rqClient, {})
+  const { data, isFetching } = useMeQuery(rqClient, {}, { staleTime: 360000 })
+
+  const { mutateAsync } = useCreateCapstoneMutation(rqClient, {})
 
   // what you want to call with the form when it submits
   const handleSubmit = async (input: NewCapstone): Promise<void> => {
@@ -149,7 +155,7 @@ export default function Form(): JSX.Element {
                       value={s}
                       id="sem"
                       onChange={handleChange}
-                      style={{ margin: 8, width: '20%'}}
+                      style={{ margin: 8, width: '20%' }}
                       error={sValid}
                     >
                       {semesters.map((option) => (
@@ -184,7 +190,7 @@ export default function Form(): JSX.Element {
                           title: t,
                           description: d,
                           author: a,
-                          semester: s
+                          semester: s,
                         })
                       }
                       // component={Link}
