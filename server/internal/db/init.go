@@ -67,9 +67,3 @@ func CreateClient(db_url string) (*Queries, error) {
 
 	return queries, err
 }
-
-func createPgxConn(db_url string) (*pgx.Conn, error) {
-	conn, err := pgx.Connect(context.Background(), db_url)
-
-	return conn, err
-}
