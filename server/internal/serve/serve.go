@@ -5,13 +5,13 @@ import (
 
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/config"
+	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/router"
 	"github.com/gin-gonic/gin"
 	"github.com/matthewhartstonge/argon2"
-	"gorm.io/gorm"
 )
 
-func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
+func CreateServer(queries *db.Queries, argon *argon2.Config) *gin.Engine {
 	g := gin.Default()
 
 	g.Use(auth.CreateCorsMiddleware())
@@ -23,7 +23,7 @@ func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 
 	g.Use(auth.CreateRedisSessionMiddleware(addr, []byte(key)))
 
-	gqlHandler := router.GraphQLHandler(orm, argon)
+	gqlHandler := router.GraphQLHandler(queries, argon)
 	playHandler := router.PlaygroundHandler()
 
 	router.AttachRoutes(g, gqlHandler, playHandler)
@@ -32,7 +32,6 @@ func CreateServer(orm *gorm.DB, argon *argon2.Config) *gin.Engine {
 
 }
 
-// TODO: hardcoded to localhost will need to fix in future
 func RunServer(g *gin.Engine, port string) {
 	err := g.Run(":" + port)
 	if err != nil {

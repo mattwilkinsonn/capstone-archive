@@ -6,13 +6,14 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 )
 
 // Creates a new session from the user's database representation.
 func CreateSessionFromUser(ginCtx *gin.Context, user *db.User) {
 
 	session := sessions.Default(ginCtx)
-	session.Set("userId", user.ID)
+	session.Set("userId", user.ID.String())
 	err := session.Save()
 
 	if err != nil {
@@ -34,16 +35,21 @@ func ClearSession(ctx context.Context) {
 }
 
 // Gets UserID out of the session inside the gin context, which is packed inside the gqlgen context. Returns true/false if id is found.
-func GetUserIDFromSession(ctx context.Context) (uint, bool) {
+func GetUserIDFromSession(ctx context.Context) (uuid.UUID, bool) {
 	ginCtx := GinContextFromContext(ctx)
 
 	session := sessions.Default(ginCtx)
 	userId := session.Get("userId")
 
 	if userId == nil {
-		return 0, false
+		return uuid.Nil, false
 	}
 
-	return userId.(uint), true
+	uid, err := uuid.FromString(userId.(string))
+	if err != nil {
+		panic(err)
+	}
+
+	return uid, true
 
 }

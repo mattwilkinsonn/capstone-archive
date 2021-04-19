@@ -16,12 +16,14 @@ import (
 
 func (r *mutationResolver) CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.Capstone, error) {
 	capstone, err := CreateCapstoneInDB(
-		r.DB,
+		ctx,
+		r.Queries,
 		input.Title,
 		input.Description,
 		input.Author,
 		input.Semester,
 	)
+
 	if err != nil {
 		err = HandleCreateCapstoneErr(err)
 		panic(err)
@@ -43,7 +45,7 @@ func (r *mutationResolver) Register(ctx context.Context, input model.Register) (
 		panic(err)
 	}
 
-	user, err := CreateUserInDB(r.DB, input.Username, input.Email, hashed)
+	user, err := CreateUserInDB(ctx, r.Queries, input.Username, input.Email, hashed)
 
 	if err != nil {
 		res, unhandledErr := HandleCreateUserErr(err)
@@ -57,7 +59,7 @@ func (r *mutationResolver) Register(ctx context.Context, input model.Register) (
 }
 
 func (r *mutationResolver) Login(ctx context.Context, input model.Login) (*model.UserResponse, error) {
-	user, err := GetUserFromUsernameOrEmail(input.UsernameOrEmail, r.DB)
+	user, err := GetUserFromUsernameOrEmail(ctx, r.Queries, input.UsernameOrEmail)
 	if err != nil {
 		return HandleInvalidLogin(), nil
 	}
@@ -88,11 +90,10 @@ func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
 func (r *queryResolver) SearchCapstones(ctx context.Context, query string, limit int, offset *int) (*model.PaginatedCapstones, error) {
 	realLimit := ix.Min(limit, 50)
 
-	capstones, err := SearchCapstones(r.DB, query, realLimit+1, offset)
+	capstones, err := SearchCapstones(ctx, r.Queries, query, realLimit+1, offset)
 	if err != nil {
 		panic(err)
 	}
-
 	hasMore := false
 	if len(capstones) == realLimit+1 {
 		hasMore = true
@@ -113,7 +114,7 @@ func (r *queryResolver) SearchCapstones(ctx context.Context, query string, limit
 func (r *queryResolver) Capstones(ctx context.Context, limit int, cursor *int) (*model.PaginatedCapstones, error) {
 	realLimit := ix.Min(limit, 50)
 
-	capstones, err := GetCapstones(r.DB, realLimit+1, cursor)
+	capstones, err := GetCapstones(ctx, r.Queries, realLimit+1, cursor)
 	if err != nil {
 		panic(err)
 	}
@@ -135,8 +136,8 @@ func (r *queryResolver) Capstones(ctx context.Context, limit int, cursor *int) (
 	return paginated, nil
 }
 
-func (r *queryResolver) Capstone(ctx context.Context, id int) (*model.Capstone, error) {
-	capstone, err := GetCapstoneById(r.DB, uint(id))
+func (r *queryResolver) Capstone(ctx context.Context, id string) (*model.Capstone, error) {
+	capstone, err := GetCapstoneById(ctx, r.Queries, id)
 
 	if err != nil {
 		fmt.Printf("%v\n", err)
@@ -158,7 +159,7 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		return nil, nil
 	}
 
-	user, err := GetUserFromID(r.DB, id)
+	user, err := GetUserFromID(ctx, r.Queries, id)
 	if err != nil {
 		return nil, nil
 	}

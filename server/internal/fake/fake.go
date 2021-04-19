@@ -1,14 +1,15 @@
-package db
+package fake
 
 import (
+	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/bxcodec/faker/v3"
 )
 
-func GenerateFakeCapstones(num int) []Capstone {
+func GenerateFakeCapstones(num int) []db.Capstone {
 
-	list := make([]Capstone, 0)
+	list := make([]db.Capstone, 0)
 	for i := 0; i < num; i++ {
-		capstone := Capstone{}
+		capstone := db.Capstone{}
 		err := faker.FakeData(&capstone)
 		if err != nil {
 			panic(err)

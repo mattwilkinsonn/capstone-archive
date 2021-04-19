@@ -1,14 +1,15 @@
 package resolve
 
 import (
+	"context"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	"github.com/gofrs/uuid"
 	"github.com/matthewhartstonge/argon2"
-	"gorm.io/gorm"
 )
 
 // Converts UInt type to String
@@ -72,17 +73,19 @@ func IsEmail(usernameOrEmail string) bool {
 }
 
 // Queries DB for User on an ambigious username or email param.
-func GetUserFromUsernameOrEmail(usernameOrEmail string, DB *gorm.DB) (*db.User, error) {
-	var res *gorm.DB
-	user := db.User{}
+func GetUserFromUsernameOrEmail(ctx context.Context,
+	Queries *db.Queries, usernameOrEmail string) (*db.User, error) {
+
+	var user db.User
+	var err error
 
 	if IsEmail(usernameOrEmail) {
-		res = DB.Where("email = ?", usernameOrEmail).First(&user)
+		user, err = Queries.GetUserByEmail(ctx, usernameOrEmail)
 	} else {
-		res = DB.Where("username = ?", usernameOrEmail).First(&user)
+		user, err = Queries.GetUserByUsername(ctx, usernameOrEmail)
 	}
 
-	return &user, res.Error
+	return &user, err
 }
 
 // Transforms DB/ORM User to GraphQL UserResponse
@@ -103,12 +106,26 @@ func DBToGQLUser(user *db.User) *model.User {
 }
 
 // takes User inputs and creates User in DB, returns User object and error if failed
-func CreateUserInDB(DB *gorm.DB, username, email, password string) (*db.User, error) {
-	user := db.User{Username: username, Email: email, Password: password}
+func CreateUserInDB(ctx context.Context,
+	Queries *db.Queries, username, email, password string) (*db.User, error) {
+	id, err := uuid.NewV4()
 
-	res := DB.Create(&user)
+	if err != nil {
+		panic(err)
+	}
 
-	return &user, res.Error
+	params := db.CreateUserParams{
+		ID:        id,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Username:  username,
+		Email:     email,
+		Password:  password,
+	}
+
+	user, err := Queries.CreateUser(ctx, params)
+
+	return &user, err
 }
 
 const DuplicateUsernameErr = `ERROR: duplicate key value violates unique constraint "users_username_key" (SQLSTATE 23505)`
@@ -132,11 +149,11 @@ func HandleInvalidLogin() *model.UserResponse {
 	return CreateUserResponseErr(CreateUserErr("None", "Invalid Login"))
 }
 
-// Wraps GORM to get the user from their ID
-func GetUserFromID(DB *gorm.DB, id uuid.UUID) (*db.User, error) {
-	user := db.User{}
+// Get the user from their ID
+func GetUserFromID(ctx context.Context,
+	Queries *db.Queries, id uuid.UUID) (*db.User, error) {
 
-	res := DB.Where("id = ?", id).First(&user)
+	user, err := Queries.GetUserById(ctx, id)
 
-	return &user, res.Error
+	return &user, err
 }

@@ -12,12 +12,19 @@ func main() {
 
 	port := config.GetPort()
 
-	orm := db.CreateDefaultDatabaseClient()
+	db_url := config.GetDatabaseUrl()
+
+	queries, err := db.CreateClient(db_url)
+
+	if err != nil {
+		panic(err)
+	}
+
 	argon := auth.CreateArgon()
 
-	db.LoadSampleData(orm)
+	// db.LoadSampleData(orm)
 
-	g := serve.CreateServer(orm, argon)
+	g := serve.CreateServer(queries, argon)
 
 	serve.RunServer(g, port)
 

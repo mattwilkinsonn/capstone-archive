@@ -37,7 +37,6 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
-	__Directive() __DirectiveResolver
 }
 
 type DirectiveRoot struct {
@@ -71,7 +70,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Capstone        func(childComplexity int, id int) int
+		Capstone        func(childComplexity int, id string) int
 		Capstones       func(childComplexity int, limit int, cursor *int) int
 		Me              func(childComplexity int) int
 		SearchCapstones func(childComplexity int, query string, limit int, offset *int) int
@@ -114,12 +113,9 @@ type MutationResolver interface {
 type QueryResolver interface {
 	SearchCapstones(ctx context.Context, query string, limit int, offset *int) (*model.PaginatedCapstones, error)
 	Capstones(ctx context.Context, limit int, cursor *int) (*model.PaginatedCapstones, error)
-	Capstone(ctx context.Context, id int) (*model.Capstone, error)
+	Capstone(ctx context.Context, id string) (*model.Capstone, error)
 	Users(ctx context.Context) ([]*model.PublicUser, error)
 	Me(ctx context.Context) (*model.User, error)
-}
-type __DirectiveResolver interface {
-	IsRepeatable(ctx context.Context, obj *introspection.Directive) (bool, error)
 }
 
 type executableSchema struct {
@@ -260,7 +256,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Capstone(childComplexity, args["id"].(int)), true
+		return e.complexity.Query.Capstone(childComplexity, args["id"].(string)), true
 
 	case "Query.capstones":
 		if e.complexity.Query.Capstones == nil {
@@ -506,7 +502,7 @@ type Capstone {
 type Query {
   searchCapstones(query: String!, limit: Int!, offset: Int): PaginatedCapstones!
   capstones(limit: Int!, cursor: Int): PaginatedCapstones!
-  capstone(id: Int!): Capstone
+  capstone(id: String!): Capstone
   users: [PublicUser!]!
   me: User
 }
@@ -619,10 +615,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_capstone_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
+	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1346,7 +1342,7 @@ func (ec *executionContext) _Query_capstone(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Capstone(rctx, args["id"].(int))
+		return ec.resolvers.Query().Capstone(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2117,41 +2113,6 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	res := resTmp.([]introspection.InputValue)
 	fc.Result = res
 	return ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "__Directive",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.__Directive().IsRepeatable(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql.CollectedField, obj *introspection.EnumValue) (ret graphql.Marshaler) {
@@ -3642,34 +3603,20 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 		case "name":
 			out.Values[i] = ec.___Directive_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
-		case "isRepeatable":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec.___Directive_isRepeatable(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

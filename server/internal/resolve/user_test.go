@@ -1,6 +1,8 @@
 package resolve_test
 
 import (
+	"context"
+	"database/sql"
 	"database/sql/driver"
 	"errors"
 	"regexp"
@@ -195,40 +197,53 @@ func (a AnyTime) Match(v driver.Value) bool {
 }
 
 func TestGetUserFromUsernameOrEmail(t *testing.T) {
-	orm, mock := dbtest.CreateMockDBClient(t)
+	queries, mock := dbtest.CreateMockDBClient(t)
 
-	user := &db.User{Username: "matt123", Email: "matt@matt.com", Password: "hunter2"}
+	id, _ := uuid.NewV4()
 
-	mock.ExpectQuery(
-		"INSERT INTO \"users\"",
-	).WithArgs(
-		AnyTime{}, AnyTime{}, nil, user.Username, user.Email, user.Password, "USER",
-	).WillReturnRows(mock.NewRows([]string{"id"}))
-	orm.Create(&user)
+	user := &db.User{
+		ID:        id,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		DeletedAt: sql.NullTime{},
+		Username:  "matt123",
+		Email:     "matt@matt.com",
+		Password:  "hunter2",
+		Role:      db.UserRoleUSER,
+	}
+
+	// mock.ExpectQuery(
+	// 	"INSERT INTO \"users\"",
+	// ).WithArgs(
+	// 	Any{}, AnyTime{}, AnyTime{}, nil, user.Username, user.Email, user.Password, "USER",
+	// ).WillReturnRows(mock.NewRows([]string{"id"}))
+	// orm.Create(&user)
 
 	t.Run("Email", func(t *testing.T) {
 		mock.ExpectQuery(
-			regexp.QuoteMeta(`SELECT * FROM "users" WHERE email = $1`),
+			regexp.QuoteMeta(
+				`SELECT id, created_at, updated_at, deleted_at, username, email, password, role FROM users WHERE email = $1`,
+			),
 		).WithArgs(
 			user.Email,
 		).WillReturnRows(mock.NewRows([]string{"id",
-			"username",
-			"email",
 			"created_at",
 			"updated_at",
 			"deleted_at",
+			"username",
+			"email",
 			"password",
 			"role"}).AddRow(user.ID,
-			user.Username,
-			user.Email,
 			user.CreatedAt,
 			user.UpdatedAt,
 			user.DeletedAt,
+			user.Username,
+			user.Email,
 			user.Password,
 			user.Role))
 
 		input := "matt@matt.com"
-		returned, err := GetUserFromUsernameOrEmail(input, orm)
+		returned, err := GetUserFromUsernameOrEmail(context.Background(), queries, input)
 
 		assert.Nil(t, err, "err should be nil")
 
@@ -237,31 +252,33 @@ func TestGetUserFromUsernameOrEmail(t *testing.T) {
 
 	t.Run("Username", func(t *testing.T) {
 		mock.ExpectQuery(
-			regexp.QuoteMeta(`SELECT * FROM "users" WHERE username = $1`),
+			regexp.QuoteMeta(
+				`SELECT id, created_at, updated_at, deleted_at, username, email, password, role FROM users WHERE username = $1`,
+			),
 		).WithArgs(
 			user.Username,
 		).WillReturnRows(mock.NewRows([]string{"id",
-			"username",
-			"email",
 			"created_at",
 			"updated_at",
 			"deleted_at",
+			"username",
+			"email",
 			"password",
 			"role"}).AddRow(user.ID,
-			user.Username,
-			user.Email,
 			user.CreatedAt,
 			user.UpdatedAt,
 			user.DeletedAt,
+			user.Username,
+			user.Email,
 			user.Password,
 			user.Role))
 
 		input := user.Username
-		returned, err := GetUserFromUsernameOrEmail(input, orm)
+		returned, err := GetUserFromUsernameOrEmail(context.Background(), queries, input)
 
 		assert.Nil(t, err, "err should be nil")
 
-		assert.Equal(t, user, returned, "returned user shoud match user")
+		assert.Equal(t, user, returned, "returned user should match user")
 
 	})
 
@@ -274,7 +291,7 @@ func TestCreateUserResponse(t *testing.T) {
 	formattedNow := int(now.Unix())
 	id, _ := uuid.NewV4()
 	user := &db.User{
-		Base:     db.Base{ID: id, CreatedAt: now, UpdatedAt: now},
+		ID: id, CreatedAt: now, UpdatedAt: now,
 		Username: "zireael",
 		Email:    "zir@gmail.com",
 		Password: "hunter2",
@@ -304,25 +321,48 @@ func (a Any) Match(v driver.Value) bool {
 }
 
 func TestCreateUserInDB(t *testing.T) {
-	orm, mock := dbtest.CreateMockDBClient(t)
+	queries, mock := dbtest.CreateMockDBClient(t)
 	username := "Zireael"
 	email := "zir@gmail.com"
 	password := "hunter2"
 
+	uid, _ := uuid.NewV4()
+
 	mock.ExpectQuery(
-		regexp.QuoteMeta(`INSERT INTO "users"`),
+		regexp.QuoteMeta(`INSERT INTO users`),
 	).WithArgs(
 		Any{},
 		AnyTime{},
 		AnyTime{},
-		nil,
 		username,
 		email,
 		password,
-		"USER",
-	).WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1))
+	).WillReturnRows(
+		mock.NewRows(
+			[]string{
+				"id",
+				"created_at",
+				"updated_at",
+				"deleted_at",
+				"username",
+				"email",
+				"password",
+				"role",
+			},
+		).
+			AddRow(
+				uid,
+				time.Now(),
+				time.Now(),
+				nil,
+				username,
+				email,
+				password,
+				db.UserRoleUSER,
+			),
+	)
 
-	got, err := CreateUserInDB(orm, username, email, password)
+	got, err := CreateUserInDB(context.Background(), queries, username, email, password)
 
 	assert.Nil(t, err, "should be no err")
 
@@ -385,7 +425,7 @@ func TestDBToGQLUser(t *testing.T) {
 	formattedNow := int(now.Unix())
 	id, _ := uuid.NewV4()
 	user := &db.User{
-		Base:     db.Base{ID: id, CreatedAt: now, UpdatedAt: now},
+		ID: id, CreatedAt: now, UpdatedAt: now,
 		Username: "zireael",
 		Email:    "zir@gmail.com",
 		Password: "hunter2",
@@ -405,15 +445,44 @@ func TestDBToGQLUser(t *testing.T) {
 }
 
 func TestGetUserFromID(t *testing.T) {
-	orm, mock := dbtest.CreateMockDBClient(t)
+	queries, mock := dbtest.CreateMockDBClient(t)
 
 	id, _ := uuid.NewV4()
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users"`)).
-		WithArgs(id).
-		WillReturnRows(mock.NewRows([]string{"id"}).
-			AddRow(1))
-	user, err := GetUserFromID(orm, id)
+	mock.ExpectQuery(
+		regexp.QuoteMeta(
+			`SELECT id, created_at, updated_at, deleted_at, username, email, password, role FROM users`,
+		),
+	).
+		WithArgs(
+			id,
+		).
+		WillReturnRows(
+			mock.NewRows(
+				[]string{
+					"id",
+					"created_at",
+					"updated_at",
+					"deleted_at",
+					"username",
+					"email",
+					"password",
+					"role",
+				},
+			).
+				AddRow(
+					id,
+					time.Now(),
+					time.Now(),
+					nil,
+					"zireael",
+					"zir@zir.com",
+					"hunter2",
+					db.UserRoleUSER,
+				),
+		)
+
+	user, err := GetUserFromID(context.Background(), queries, id)
 
 	assert.Nil(t, err, "should be no err")
 

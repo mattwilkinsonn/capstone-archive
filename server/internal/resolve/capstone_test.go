@@ -1,6 +1,7 @@
 package resolve_test
 
 import (
+	"context"
 	"errors"
 	"regexp"
 	"testing"
@@ -29,7 +30,9 @@ func TestCreateGraphCapstone(t *testing.T) {
 		Title:       title,
 		Description: desc,
 		Author:      author,
-		Base:        db.Base{ID: id, CreatedAt: now, UpdatedAt: now},
+		ID:          id,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	}
 
 	want := &model.Capstone{
@@ -47,7 +50,7 @@ func TestCreateGraphCapstone(t *testing.T) {
 }
 
 func TestCreateCapstoneInDB(t *testing.T) {
-	orm, mock := dbtest.CreateMockDBClient(t)
+	queries, mock := dbtest.CreateMockDBClient(t)
 
 	title := "Capstone Archive"
 	desc := "Archive for capstone projects"
@@ -56,13 +59,35 @@ func TestCreateCapstoneInDB(t *testing.T) {
 
 	// capstone = &db.Capstone{Title: title, Description: desc, Author: author}
 
+	id, _ := uuid.NewV4()
 	mock.ExpectQuery(
-		regexp.QuoteMeta(`INSERT INTO "capstones"`),
-	).WithArgs(AnyTime{}, AnyTime{}, nil, title, desc, author, semester).WillReturnRows(
-		mock.NewRows([]string{"id"}).AddRow(1),
+		regexp.QuoteMeta(`INSERT INTO capstones`),
+	).WithArgs(Any{}, AnyTime{}, AnyTime{}, title, desc, author, semester).WillReturnRows(
+		mock.NewRows([]string{"id",
+			"created_at",
+			"updated_at",
+			"deleted_at",
+			"title",
+			"description",
+			"author",
+			"semester"}).AddRow(id,
+			time.Now(),
+			time.Now(),
+			nil,
+			title,
+			desc,
+			author,
+			semester),
 	)
 
-	capstone, err := CreateCapstoneInDB(orm, title, desc, author, semester)
+	capstone, err := CreateCapstoneInDB(
+		context.Background(),
+		queries,
+		title,
+		desc,
+		author,
+		semester,
+	)
 
 	assert.Equal(t, author, capstone.Author, "Authors should be equal")
 	assert.Nil(t, err)
@@ -80,39 +105,138 @@ func TestHandleCreateCapstoneErr(t *testing.T) {
 }
 
 func TestGetCapstones(t *testing.T) {
-	orm, mock := dbtest.CreateMockDBClient(t)
+	queries, mock := dbtest.CreateMockDBClient(t)
 
-	// now := time.Now().Unix()
 	limit := 3
+	id1, _ := uuid.NewV4()
+	id2, _ := uuid.NewV4()
+	id3, _ := uuid.NewV4()
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capstones"`)).
+	mock.ExpectQuery(
+		regexp.QuoteMeta(
+			`SELECT id, created_at, updated_at, deleted_at, title, description, author, semester FROM capstones`,
+		),
+	).
 		WithArgs().
-		WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1).AddRow(2).AddRow(3))
+		WillReturnRows(
+			mock.NewRows(
+				[]string{
+					"id",
+					"created_at",
+					"updated_at",
+					"deleted_at",
+					"title",
+					"description",
+					"author",
+					"semester",
+				},
+			).AddRow(
+				id1,
+				time.Now(),
+				time.Now(),
+				nil,
+				"Lalalala",
+				"this is a description",
+				"Matt",
+				"Fall 2019",
+			).AddRow(
+				id2,
+				time.Now(),
+				time.Now(),
+				nil,
+				"Lalalala",
+				"this is a description",
+				"Matt",
+				"Fall 2019",
+			).AddRow(
+				id3,
+				time.Now(),
+				time.Now(),
+				nil,
+				"Lalalala",
+				"this is a description",
+				"Matt",
+				"Fall 2019",
+			),
+		)
 
-	capstones, err := GetCapstones(orm, limit, nil)
+	capstones, err := GetCapstones(context.Background(), queries, limit, nil)
 
 	require.Nil(t, err)
 	assert.Len(t, capstones, limit)
 	assert.NotNil(t, capstones)
+	assert.Equal(t, capstones[0].ID, id1)
 	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
 
 }
 
 func TestGetCapstonesWithCursor(t *testing.T) {
-	orm, mock := dbtest.CreateMockDBClient(t)
+	queries, mock := dbtest.CreateMockDBClient(t)
 
 	now := int(time.Now().Unix())
 	limit := 3
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capstones"`)).
-		WithArgs(AnyTime{}).
-		WillReturnRows(mock.NewRows([]string{"id"}).AddRow(1).AddRow(2).AddRow(3))
+	id1, _ := uuid.NewV4()
+	id2, _ := uuid.NewV4()
+	id3, _ := uuid.NewV4()
 
-	capstones, err := GetCapstones(orm, limit, &now)
+	mock.ExpectQuery(
+		regexp.QuoteMeta(
+			`SELECT id, created_at, updated_at, deleted_at, title, description, author, semester FROM capstones`,
+		),
+	).
+		WithArgs(
+			AnyTime{},
+			limit,
+		).
+		WillReturnRows(
+			mock.NewRows(
+				[]string{
+					"id",
+					"created_at",
+					"updated_at",
+					"deleted_at",
+					"title",
+					"description",
+					"author",
+					"semester",
+				},
+			).AddRow(
+				id1,
+				time.Now(),
+				time.Now(),
+				nil,
+				"Lalalala",
+				"this is a description",
+				"Matt",
+				"Fall 2019",
+			).AddRow(
+				id2,
+				time.Now(),
+				time.Now(),
+				nil,
+				"Lalalala",
+				"this is a description",
+				"Matt",
+				"Fall 2019",
+			).AddRow(
+				id3,
+				time.Now(),
+				time.Now(),
+				nil,
+				"Lalalala",
+				"this is a description",
+				"Matt",
+				"Fall 2019",
+			),
+		)
+
+	capstones, err := GetCapstones(context.Background(), queries, limit, &now)
 
 	require.Nil(t, err)
 	assert.Len(t, capstones, limit)
 	assert.NotNil(t, capstones)
+	assert.Equal(t, capstones[0].ID, id1)
 	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
 
 }
@@ -127,11 +251,11 @@ func TestCreateGraphCapstoneSlice(t *testing.T) {
 
 	id, _ := uuid.NewV4()
 
-	input := []*db.Capstone{
+	input := []db.Capstone{
 		{Title: title,
 			Description: desc,
 			Author:      author,
-			Base:        db.Base{ID: id, CreatedAt: now, UpdatedAt: now}},
+			ID:          id, CreatedAt: now, UpdatedAt: now},
 	}
 
 	want := []*model.Capstone{

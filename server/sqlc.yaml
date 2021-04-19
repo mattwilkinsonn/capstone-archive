@@ -1,0 +1,12 @@
+version: "1"
+packages:
+  - name: db
+    path: internal/db
+    queries: "./db/query/"
+    schema: "./db/migrations/"
+    engine: postgresql
+    emit_prepared_queries: false
+    emit_interface: false
+overrides:
+  - go_type: "github.com/gofrs/uuid.UUID"
+    db_type: "uuid"

@@ -1,12 +1,13 @@
 package resolve
 
 import (
+	"context"
 	"regexp"
 	"time"
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
-	"gorm.io/gorm"
+	"github.com/gofrs/uuid"
 )
 
 // Transforms DB/ORM Capstone schema into GraphQL schema
@@ -24,19 +25,29 @@ func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 
 // Takes Capstone inputs and creates object in Database
 func CreateCapstoneInDB(
-	DB *gorm.DB,
+	ctx context.Context,
+	Queries *db.Queries,
 	title, description, author, semester string,
 ) (*db.Capstone, error) {
-	capstone := db.Capstone{
+	id, err := uuid.NewV4()
+
+	if err != nil {
+		panic(err)
+	}
+
+	input := db.CreateCapstoneParams{
+		ID:          id,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 		Title:       title,
 		Description: description,
 		Author:      author,
 		Semester:    semester,
 	}
 
-	res := DB.Create(&capstone)
+	capstone, err := Queries.CreateCapstone(ctx, input)
 
-	return &capstone, res.Error
+	return &capstone, err
 }
 
 // very dumb function right now. Need to add a way to return errors in capstone graphql schema
@@ -45,64 +56,72 @@ func HandleCreateCapstoneErr(err error) error {
 }
 
 // Gets list of most recent capstones using cursor pagination.
-func GetCapstones(DB *gorm.DB, number int, cursor *int) (capstones []*db.Capstone, err error) {
-	var res *gorm.DB
+func GetCapstones(ctx context.Context,
+	Queries *db.Queries, limit int, cursor *int) ([]db.Capstone, error) {
+
+	var capstones []db.Capstone
+	var err error
 
 	if cursor != nil {
-		res = DB.Where(
-			"created_at < ?",
-			time.Unix(int64(*cursor), 0),
-		).Order(
-			"created_at DESC",
-		).Limit(
-			number,
-		).Find(
-			&capstones,
-		)
+		cursor_time := time.Unix(int64(*cursor), 0)
+		params := db.GetCapstonesWithCursorParams{CreatedAt: cursor_time, Limit: int32(limit)}
+		capstones, err = Queries.GetCapstonesWithCursor(ctx, params)
 	} else {
-		res = DB.Limit(number).Order("created_at DESC").Find(&capstones)
+		capstones, err = Queries.GetCapstones(ctx, int32(limit))
 	}
 
-	return capstones, res.Error
+	return capstones, err
 }
 
-func GetCapstoneById(DB *gorm.DB, id uint) (*db.Capstone, error) {
+func GetCapstoneById(ctx context.Context,
+	Queries *db.Queries, id string) (*db.Capstone, error) {
 
-	capstone := db.Capstone{}
+	uid, err := uuid.FromString(id)
 
-	res := DB.Where("id = ?", id).First(&capstone)
+	if err != nil {
+		return nil, err
+	}
 
-	return &capstone, res.Error
+	capstone, err := Queries.GetCapstoneById(ctx, uid)
+
+	return &capstone, err
 }
+
+var whitespace = regexp.MustCompile(`\s+`)
 
 // Searches capstones with Postgres' full text search. Uses LIMIT/OFFSET pagination. Doing LIMIT/OFFSET is probably slow but good enough for use case
 func SearchCapstones(
-	DB *gorm.DB,
+	ctx context.Context,
+	Queries *db.Queries,
 	query string,
-	number int,
+	limit int,
 	offset *int,
-) (capstones []*db.Capstone, err error) {
-	var res *gorm.DB
+) ([]db.Capstone, error) {
 
-	whitespace := regexp.MustCompile(`\s+`)
+	var capstones []db.Capstone
+	var err error
 
 	query = whitespace.ReplaceAllString(query, "&")
 
 	if offset != nil {
-		sql := "SELECT * FROM (SELECT to_tsvector(c.Title) || to_tsvector(c.Description) || to_tsvector(c.Author) || to_tsvector(c.Semester) as document, * FROM capstones c) capstone WHERE capstone.document @@ to_tsquery('english', ?) LIMIT ? OFFSET ?;"
-		res = DB.Raw(sql, query, number, offset).Scan(&capstones)
+		capstones, err = Queries.SearchCapstones(
+			ctx,
+			db.SearchCapstonesParams{ToTsquery: query, Limit: int32(limit), Offset: int32(*offset)},
+		)
 	} else {
-		sql := "SELECT * FROM (SELECT to_tsvector(c.Title) || to_tsvector(c.Description) || to_tsvector(c.Author) || to_tsvector(c.Semester) as document, * FROM capstones c) capstone WHERE capstone.document @@ to_tsquery('english', ?) LIMIT ?"
-		res = DB.Raw(sql, query, number).Scan(&capstones)
+		capstones, err = Queries.SearchCapstones(
+			ctx,
+			db.SearchCapstonesParams{ToTsquery: query, Limit: int32(limit), Offset: 0},
+		)
 	}
 
-	return capstones, res.Error
+	return capstones, err
 }
 
 // Iterates over a slice of DB capstones and creates GQL ones.
-func CreateGraphCapstoneSlice(capstones []*db.Capstone) (gqlCapstones []*model.Capstone) {
+func CreateGraphCapstoneSlice(capstones []db.Capstone) (gqlCapstones []*model.Capstone) {
 	for _, capstone := range capstones {
-		gqlCapstones = append(gqlCapstones, CreateGraphCapstone(capstone))
+		gqlCapstones = append(gqlCapstones, CreateGraphCapstone(&capstone))
 	}
 
 	return gqlCapstones
