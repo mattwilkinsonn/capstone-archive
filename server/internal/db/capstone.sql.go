@@ -27,17 +27,6 @@ type CreateCapstoneParams struct {
 	Semester    string
 }
 
-// SELECT
-//     *
-// FROM (
-//     SELECT
-//         to_tsvector(c.Title) || to_tsvector(c.Description) || to_tsvector(c.Author) || to_tsvector(c.Semester) AS document,
-//         *
-//     FROM
-//         capstones c) search
-// WHERE
-//     search.document @@ to_tsquery('english', $1)
-// LIMIT $2 OFFSET $3;
 func (q *Queries) CreateCapstone(ctx context.Context, arg CreateCapstoneParams) (Capstone, error) {
 	row := q.db.QueryRowContext(ctx, createCapstone,
 		arg.ID,
