@@ -12,7 +12,7 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD", "pg_isready", "-U postgres"]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 1s
       timeout: 3s
       retries: 30
@@ -28,6 +28,17 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
+  dbmate:
+    image: amacneil/dbmate
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/capstone-archive?sslmode=disable
+      - DBMATE_WAIT=true
+    depends_on:
+      - postgres
+    command: up
+    volumes:
+      - ./db:/db
+
   server:
     build: ./server
     container_name: server
@@ -36,10 +47,10 @@ services:
       - REDIS_ADDRESS=redis:6379
       - CORS_ORIGIN=http://localhost:3000
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
+      - dbmate
+
     ports:
       - 4000:8080
   client:
@@ -48,7 +59,6 @@ services:
     environment:
       - REACT_APP_API_URL=http://localhost:4000/graphql
     depends_on:
-      server:
-        condition: service_healthy
+      - server
     ports:
       - 3000:3000

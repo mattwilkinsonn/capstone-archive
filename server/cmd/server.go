@@ -4,6 +4,7 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/config"
 	"github.com/Zireael13/capstone-archive/server/internal/db"
+	"github.com/Zireael13/capstone-archive/server/internal/fake"
 	"github.com/Zireael13/capstone-archive/server/internal/serve"
 )
 
@@ -22,7 +23,7 @@ func main() {
 
 	argon := auth.CreateArgon()
 
-	// db.LoadSampleData(orm)
+	fake.AddFakeCapstonesIfEmpty(queries)
 
 	g := serve.CreateServer(queries, argon)
 
