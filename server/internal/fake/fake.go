@@ -3,9 +3,11 @@ package fake
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
 	"github.com/bxcodec/faker/v3"
+	"github.com/gofrs/uuid"
 )
 
 type FakeCapstoneText struct {
@@ -62,4 +64,34 @@ func AddFakeCapstonesIfEmpty(queries *db.Queries) {
 
 	}
 
+}
+
+// TODO REMOVE THIS IF ACTUALLY DEPLOYING
+func AddTestAdminUserIfEmpty(queries *db.Queries) {
+	user, err := queries.GetUserByEmail(context.Background(), "admin@test.com")
+	if err != nil {
+		panic(err)
+	}
+
+	if user == nil {
+		id, err := uuid.NewV4()
+		if err != nil {
+			panic(err)
+		}
+
+		addUser := db.CreateUserParams{
+			ID:        id,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			Username:  "admin",
+			Email:     "admin@test.com",
+			Password:  "hunter2",
+		}
+
+		_, err = queries.CreateUser(context.Background(), addUser)
+		if err != nil {
+			panic(err)
+		}
+
+	}
 }
