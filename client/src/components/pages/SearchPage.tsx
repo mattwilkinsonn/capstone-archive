@@ -55,7 +55,6 @@ export default function SearchPage(): JSX.Element {
   const classes = useStyles()
   const rqClient = createClient()
   const [searchTerm, setSearchTerm] = useState('')
-  // const [updatedTerm, setSearchTerm] = useState('')
   const [queryEnabled, setQueryEnabled] = useState(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -66,7 +65,7 @@ export default function SearchPage(): JSX.Element {
   // run the Capstones query, get the data back from that.
   const { data, isLoading } = useSearchCapstonesQuery(
     rqClient,
-    { limit: 50, query: searchTerm },
+    { limit: 500, query: searchTerm },
     { enabled: queryEnabled }
   )
 

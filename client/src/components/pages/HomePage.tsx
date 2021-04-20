@@ -58,6 +58,14 @@ export default function Homepage(): JSX.Element {
     { staleTime: 300000 }
   )
 
+  const truncateStr = (str: string, num: number): string => {
+    if (str.length <= num) {
+      return str
+    } else {
+      return str.slice(0, num) + '...'
+    }
+  }
+
   // Log the array of capstones to the console
   console.log(data?.capstones.capstones)
 
@@ -129,13 +137,13 @@ export default function Homepage(): JSX.Element {
                   <Card className={classes.card}>
                     <CardContent className={classes.cardContent}>
                       <Typography gutterBottom variant="h5" component="h2">
-                        {card?.title}
+                        {truncateStr(card!.title, 50)}
                       </Typography>
                       <Typography color="textSecondary">
                         {card?.semester}
                       </Typography>
                       <Typography className={classes.cardDescription}>
-                        {card?.description}
+                        {truncateStr(card!.description, 100)}
                       </Typography>
                     </CardContent>
                     <CardActions>
@@ -144,7 +152,7 @@ export default function Homepage(): JSX.Element {
                         variant="contained"
                         component={Link}
                         to={{
-                          pathname: 'view/' + card?.id,
+                          pathname: 'view/' + card?.title,
                         }}
                       >
                         View

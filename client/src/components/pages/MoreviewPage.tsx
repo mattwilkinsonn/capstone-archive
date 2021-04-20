@@ -54,8 +54,9 @@ export default function Moreviewpage(props: {
   const classes = useStyles()
 
   const rqClient = createClient()
-  const id = parseInt(props.match.params.id)
-  if (isNaN(id) || id < 0) {
+  const id = Number(props.match.params.id)
+  console.log(id)
+  if (isNaN(id)) {
     throw new Error('page id invalid')
   }
   const { data } = useCapstoneQuery(rqClient, { id }, { staleTime: 300000 })

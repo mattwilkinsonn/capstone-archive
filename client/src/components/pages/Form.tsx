@@ -180,7 +180,7 @@ export default function Form(): JSX.Element {
                       label="URL (optional)"
                     />
                     <Button
-                      type="button"
+                      type="submit"
                       color="primary"
                       className={classes.formButtons}
                       size="small"
