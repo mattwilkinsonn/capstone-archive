@@ -66,6 +66,8 @@ export default function Form(): JSX.Element {
 
   const { data, isFetching } = useMeQuery(rqClient, {}, { staleTime: 360000 })
 
+  console.log(data)
+
   const { mutateAsync } = useCreateCapstoneMutation(rqClient, {})
 
   // what you want to call with the form when it submits
@@ -168,16 +170,11 @@ export default function Form(): JSX.Element {
                       required
                       style={{ margin: 8 }}
                       id="auth1"
-                      label="Authors"
+                      label="Author(s)"
                       value={a}
                       onChange={handleChange}
                       error={aValid}
                       fullWidth
-                    />
-                    <TextField
-                      fullWidth
-                      style={{ margin: 8 }}
-                      label="URL (optional)"
                     />
                     <Button
                       type="submit"

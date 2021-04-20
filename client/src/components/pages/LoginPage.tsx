@@ -65,6 +65,12 @@ export default function LoginPage(): JSX.Element {
     if (pass == '') {
       setPassFlag(true)
       setPassText('Must enter password')
+    // } else if (user !== "admin@test.com") {
+    //   setUserFlag(true)
+    //   setUserText('Invalid Username')
+    // } else if (user == "admin@test.com" && pass !== "hunter2") {
+    //   setPassFlag(true)
+    //   setPassText('Incorrect Password')
     } else {
       await mutateAsync({ input })
       // want to redirect to homepage or somewhere here
@@ -121,10 +127,10 @@ export default function LoginPage(): JSX.Element {
                 password: pass,
               })
             }
-            // component={Link}
-            // to={{
-            //   pathname: '/',
-            // }}
+            component={Link}
+            to={{
+              pathname: '/',
+            }}
           >
             Sign In
           </Button>

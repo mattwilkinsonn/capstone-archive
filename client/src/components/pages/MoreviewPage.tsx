@@ -87,7 +87,7 @@ export default function Moreviewpage(props: {
                     {capstone?.semester}
                   </Typography>
                   <Typography className={classes.info}>
-                    <strong>Authors: </strong>
+                    <strong>Author(s): </strong>
                     {capstone?.author}
                   </Typography>
                   <Typography className={classes.info}>
