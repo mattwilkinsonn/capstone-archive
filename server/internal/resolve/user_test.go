@@ -322,9 +322,13 @@ func (a Any) Match(v driver.Value) bool {
 
 func TestCreateUserInDB(t *testing.T) {
 	queries, mock := dbtest.CreateMockDBClient(t)
-	username := "Zireael"
-	email := "zir@gmail.com"
-	password := "hunter2"
+	argon := auth.CreateArgon()
+
+	input := CreateUserInDBInput{
+		Username: "Zireael",
+		Email:    "zir@gmail.com",
+		Password: "hunter2",
+	}
 
 	uid, _ := uuid.NewV4()
 
@@ -334,9 +338,9 @@ func TestCreateUserInDB(t *testing.T) {
 		Any{},
 		AnyTime{},
 		AnyTime{},
-		username,
-		email,
-		password,
+		input.Username,
+		input.Email,
+		Any{},
 	).WillReturnRows(
 		mock.NewRows(
 			[]string{
@@ -355,18 +359,18 @@ func TestCreateUserInDB(t *testing.T) {
 				time.Now(),
 				time.Now(),
 				nil,
-				username,
-				email,
-				password,
+				input.Username,
+				input.Email,
+				input.Password,
 				db.UserRoleUSER,
 			),
 	)
 
-	got, err := CreateUserInDB(context.Background(), queries, username, email, password)
+	got, err := CreateUserInDB(context.Background(), queries, argon, input)
 
 	assert.Nil(t, err, "should be no err")
 
-	assert.Equal(t, email, got.Email, "returned user email should be wanted user email")
+	assert.Equal(t, input.Email, got.Email, "returned user email should be wanted user email")
 
 	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
 }

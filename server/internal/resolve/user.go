@@ -2,6 +2,7 @@ package resolve
 
 import (
 	"context"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -26,6 +27,10 @@ func HashPassword(argon *argon2.Config, password string) (string, error) {
 
 // Dehash password and check it against hashed
 func VerifyPassword(password string, hashed string) (bool, error) {
+	_, err := argon2.Decode([]byte(hashed))
+	if err != nil {
+		log.Fatalf("decode: %v", err)
+	}
 
 	ok, err := argon2.VerifyEncoded([]byte(password), []byte(hashed))
 
@@ -105,10 +110,22 @@ func DBToGQLUser(user *db.User) *model.User {
 	}
 }
 
-// takes User inputs and creates User in DB, returns User object and error if failed
+type CreateUserInDBInput struct {
+	Username string
+	Email    string
+	Password string
+}
+
+// takes User inputs, hashes password, then creates User in DB, returns User object and error if failed
 func CreateUserInDB(ctx context.Context,
-	Queries *db.Queries, username, email, password string) (*db.User, error) {
+	Queries *db.Queries, Argon *argon2.Config, input CreateUserInDBInput) (*db.User, error) {
 	id, err := uuid.NewV4()
+
+	if err != nil {
+		panic(err)
+	}
+
+	hashed, err := Argon.HashEncoded([]byte(input.Password))
 
 	if err != nil {
 		panic(err)
@@ -118,9 +135,9 @@ func CreateUserInDB(ctx context.Context,
 		ID:        id,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Username:  username,
-		Email:     email,
-		Password:  password,
+		Username:  input.Username,
+		Email:     input.Email,
+		Password:  string(hashed),
 	}
 
 	user, err := Queries.CreateUser(ctx, params)

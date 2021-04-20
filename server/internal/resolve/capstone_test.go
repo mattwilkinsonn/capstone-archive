@@ -12,6 +12,7 @@ import (
 	"github.com/Zireael13/capstone-archive/server/internal/graph/model"
 	. "github.com/Zireael13/capstone-archive/server/internal/resolve"
 	"github.com/gofrs/uuid"
+	"github.com/gosimple/slug"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -52,17 +53,21 @@ func TestCreateGraphCapstone(t *testing.T) {
 func TestCreateCapstoneInDB(t *testing.T) {
 	queries, mock := dbtest.CreateMockDBClient(t)
 
-	title := "Capstone Archive"
-	desc := "Archive for capstone projects"
-	author := "Matt Wilkinson"
-	semester := "Fall 2019"
+	input := CreateCapstoneInDBInput{
+		Title:       "Capstone Archive",
+		Description: "Archive for capstone projects",
+		Author:      "Matt Wilkinson",
+		Semester:    "Fall 2019",
+	}
+
+	input_slug := slug.Make(input.Title)
 
 	// capstone = &db.Capstone{Title: title, Description: desc, Author: author}
 
 	id, _ := uuid.NewV4()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(`INSERT INTO capstones`),
-	).WithArgs(Any{}, AnyTime{}, AnyTime{}, title, desc, author, semester).WillReturnRows(
+	).WithArgs(Any{}, AnyTime{}, AnyTime{}, input.Title, input.Description, input.Author, input.Semester, input_slug).WillReturnRows(
 		mock.NewRows([]string{"id",
 			"created_at",
 			"updated_at",
@@ -70,26 +75,20 @@ func TestCreateCapstoneInDB(t *testing.T) {
 			"title",
 			"description",
 			"author",
-			"semester"}).AddRow(id,
+			"semester", "slug"}).AddRow(id,
 			time.Now(),
 			time.Now(),
 			nil,
-			title,
-			desc,
-			author,
-			semester),
+			input.Title, input.Description, input.Author, input.Semester, input_slug),
 	)
 
 	capstone, err := CreateCapstoneInDB(
 		context.Background(),
 		queries,
-		title,
-		desc,
-		author,
-		semester,
+		input,
 	)
 
-	assert.Equal(t, author, capstone.Author, "Authors should be equal")
+	assert.Equal(t, input.Author, capstone.Author, "Authors should be equal")
 	assert.Nil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet(), "all mock expectations should be met")
 }
@@ -114,7 +113,7 @@ func TestGetCapstones(t *testing.T) {
 
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
-			`SELECT id, created_at, updated_at, deleted_at, title, description, author, semester FROM capstones`,
+			`SELECT id, created_at, updated_at, deleted_at, title, description, author, semester, slug FROM capstones`,
 		),
 	).
 		WithArgs().
@@ -129,6 +128,7 @@ func TestGetCapstones(t *testing.T) {
 					"description",
 					"author",
 					"semester",
+					"slug",
 				},
 			).AddRow(
 				id1,
@@ -139,6 +139,7 @@ func TestGetCapstones(t *testing.T) {
 				"this is a description",
 				"Matt",
 				"Fall 2019",
+				slug.Make("Lalalala"),
 			).AddRow(
 				id2,
 				time.Now(),
@@ -148,6 +149,7 @@ func TestGetCapstones(t *testing.T) {
 				"this is a description",
 				"Matt",
 				"Fall 2019",
+				slug.Make("Lalalala"),
 			).AddRow(
 				id3,
 				time.Now(),
@@ -157,6 +159,7 @@ func TestGetCapstones(t *testing.T) {
 				"this is a description",
 				"Matt",
 				"Fall 2019",
+				slug.Make("Lalalala"),
 			),
 		)
 
@@ -182,7 +185,7 @@ func TestGetCapstonesWithCursor(t *testing.T) {
 
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
-			`SELECT id, created_at, updated_at, deleted_at, title, description, author, semester FROM capstones`,
+			`SELECT id, created_at, updated_at, deleted_at, title, description, author, semester, slug FROM capstones`,
 		),
 	).
 		WithArgs(
@@ -200,6 +203,7 @@ func TestGetCapstonesWithCursor(t *testing.T) {
 					"description",
 					"author",
 					"semester",
+					"slug",
 				},
 			).AddRow(
 				id1,
@@ -210,6 +214,7 @@ func TestGetCapstonesWithCursor(t *testing.T) {
 				"this is a description",
 				"Matt",
 				"Fall 2019",
+				slug.Make("Lalalala"),
 			).AddRow(
 				id2,
 				time.Now(),
@@ -219,6 +224,7 @@ func TestGetCapstonesWithCursor(t *testing.T) {
 				"this is a description",
 				"Matt",
 				"Fall 2019",
+				slug.Make("Lalalala"),
 			).AddRow(
 				id3,
 				time.Now(),
@@ -228,6 +234,7 @@ func TestGetCapstonesWithCursor(t *testing.T) {
 				"this is a description",
 				"Matt",
 				"Fall 2019",
+				slug.Make("Lalalala"),
 			),
 		)
 

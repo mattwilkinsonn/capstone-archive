@@ -26,7 +26,7 @@ func main() {
 	fake.AddFakeCapstonesIfEmpty(queries)
 
 	// REMOVE IF DEPLOYING!!
-	fake.AddTestAdminUserIfEmpty(queries)
+	fake.AddTestAdminUserIfEmpty(queries, argon)
 
 	g := serve.CreateServer(queries, argon)
 

@@ -25,11 +25,18 @@ func CreateGraphCapstone(capstone *db.Capstone) *model.Capstone {
 	}
 }
 
+type CreateCapstoneInDBInput struct {
+	Title       string
+	Description string
+	Author      string
+	Semester    string
+}
+
 // Takes Capstone inputs and creates object in Database
 func CreateCapstoneInDB(
 	ctx context.Context,
 	Queries *db.Queries,
-	title, description, author, semester string,
+	input CreateCapstoneInDBInput,
 ) (*db.Capstone, error) {
 	id, err := uuid.NewV4()
 
@@ -37,18 +44,18 @@ func CreateCapstoneInDB(
 		panic(err)
 	}
 
-	input := db.CreateCapstoneParams{
+	db_input := db.CreateCapstoneParams{
 		ID:          id,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
-		Title:       title,
-		Description: description,
-		Author:      author,
-		Semester:    semester,
-		Slug:        slug.Make(title),
+		Title:       input.Title,
+		Description: input.Description,
+		Author:      input.Author,
+		Semester:    input.Semester,
+		Slug:        slug.Make(input.Title),
 	}
 
-	capstone, err := Queries.CreateCapstone(ctx, input)
+	capstone, err := Queries.CreateCapstone(ctx, db_input)
 
 	return &capstone, err
 }

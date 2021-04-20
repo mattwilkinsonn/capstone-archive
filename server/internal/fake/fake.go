@@ -3,12 +3,12 @@ package fake
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/Zireael13/capstone-archive/server/internal/db"
+	"github.com/Zireael13/capstone-archive/server/internal/resolve"
 	"github.com/bxcodec/faker/v3"
-	"github.com/gofrs/uuid"
 	"github.com/gosimple/slug"
+	"github.com/matthewhartstonge/argon2"
 )
 
 type FakeCapstoneText struct {
@@ -69,24 +69,17 @@ func AddFakeCapstonesIfEmpty(queries *db.Queries) {
 }
 
 // TODO REMOVE THIS IF ACTUALLY DEPLOYING
-func AddTestAdminUserIfEmpty(queries *db.Queries) {
+func AddTestAdminUserIfEmpty(queries *db.Queries, argon *argon2.Config) {
 	_, err := queries.GetUserByEmail(context.Background(), "admin@test.com")
 	if err != nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			panic(err)
+		input := resolve.CreateUserInDBInput{
+			Username: "admin",
+			Email:    "admin@test.com",
+			Password: "hunter2",
 		}
 
-		addUser := db.CreateUserParams{
-			ID:        id,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-			Username:  "admin",
-			Email:     "admin@test.com",
-			Password:  "hunter2",
-		}
+		_, err := resolve.CreateUserInDB(context.Background(), queries, argon, input)
 
-		_, err = queries.CreateUser(context.Background(), addUser)
 		if err != nil {
 			panic(err)
 		}

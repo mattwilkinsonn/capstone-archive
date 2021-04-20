@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/graph/generated"
@@ -18,13 +19,11 @@ func (r *mutationResolver) CreateCapstone(
 	ctx context.Context,
 	input model.NewCapstone,
 ) (*model.Capstone, error) {
+
 	capstone, err := CreateCapstoneInDB(
 		ctx,
 		r.Queries,
-		input.Title,
-		input.Description,
-		input.Author,
-		input.Semester,
+		CreateCapstoneInDBInput(input),
 	)
 
 	if err != nil {
@@ -46,12 +45,7 @@ func (r *mutationResolver) Register(
 		return res, nil
 	}
 
-	hashed, err := HashPassword(r.Argon, input.Password)
-	if err != nil {
-		panic(err)
-	}
-
-	user, err := CreateUserInDB(ctx, r.Queries, input.Username, input.Email, hashed)
+	user, err := CreateUserInDB(ctx, r.Queries, r.Argon, CreateUserInDBInput(input))
 
 	if err != nil {
 		res, unhandledErr := HandleCreateUserErr(err)
@@ -76,7 +70,9 @@ func (r *mutationResolver) Login(
 	ok, err := VerifyPassword(input.Password, user.Password)
 	// leaving here because might want to handle this error later
 	if err != nil {
-		panic(err)
+		log.Fatalf("%v", err)
+		// fmt.Errorf()
+		// panic(err)
 	}
 
 	if !ok {
