@@ -157,3 +157,12 @@ func GetUserFromID(ctx context.Context,
 
 	return &user, err
 }
+
+func SetUserToAdmin(ctx context.Context, Queries *db.Queries, id uuid.UUID) (*db.User, error) {
+	user, err := Queries.UpdateUserRole(
+		ctx,
+		db.UpdateUserRoleParams{Role: db.UserRoleADMIN, ID: id},
+	)
+
+	return &user, err
+}

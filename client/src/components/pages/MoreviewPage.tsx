@@ -1,16 +1,16 @@
-import React from 'react'
+import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
-import NavBar from '../NavBar'
 import Divider from '@material-ui/core/Divider'
-import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import { fade, makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import React from 'react'
 import { Link } from 'react-router-dom'
+import { useCapstoneBySlugQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
-import { useCapstoneQuery } from '../../generated/graphql'
+import NavBar from '../NavBar'
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -47,21 +47,24 @@ const useStyles = makeStyles((theme) => ({
 export default function Moreviewpage(props: {
   match: {
     params: {
-      id: string
+      slug: string
     }
   }
 }): JSX.Element {
   const classes = useStyles()
 
   const rqClient = createClient()
-  const id = Number(props.match.params.id)
-  console.log(id)
-  if (isNaN(id)) {
-    throw new Error('page id invalid')
-  }
-  const { data } = useCapstoneQuery(rqClient, { id }, { staleTime: 300000 })
+  const slug = props.match.params.slug
 
-  console.log(data?.capstone)
+  const { data } = useCapstoneBySlugQuery(
+    rqClient,
+    { slug },
+    { staleTime: 300000 }
+  )
+
+  console.log(data?.capstoneBySlug)
+
+  const capstone = data?.capstoneBySlug
 
   return (
     <React.Fragment>
@@ -73,7 +76,7 @@ export default function Moreviewpage(props: {
               <Card className={classes.card}>
                 <CardContent className={classes.cardContent}>
                   <Typography gutterBottom variant="h5" component="h2">
-                    {data?.capstone?.title}
+                    {capstone?.title}
                   </Typography>
                   <Divider
                     variant="middle"
@@ -81,15 +84,15 @@ export default function Moreviewpage(props: {
                   ></Divider>
                   <Typography className={classes.info}>
                     <strong>Semester: </strong>
-                    {data?.capstone?.semester}
+                    {capstone?.semester}
                   </Typography>
                   <Typography className={classes.info}>
                     <strong>Authors: </strong>
-                    {data?.capstone?.author}
+                    {capstone?.author}
                   </Typography>
                   <Typography className={classes.info}>
                     <strong>Project Description: </strong>
-                    {data?.capstone?.description}
+                    {capstone?.description}
                   </Typography>
                 </CardContent>
               </Card>

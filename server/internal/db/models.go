@@ -38,6 +38,7 @@ type Capstone struct {
 	Description string
 	Author      string
 	Semester    string
+	Slug        string
 }
 
 type User struct {

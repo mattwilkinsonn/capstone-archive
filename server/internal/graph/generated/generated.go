@@ -49,6 +49,7 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Semester    func(childComplexity int) int
+		Slug        func(childComplexity int) int
 		Title       func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 	}
@@ -70,7 +71,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Capstone        func(childComplexity int, id string) int
+		CapstoneByID    func(childComplexity int, id string) int
+		CapstoneBySlug  func(childComplexity int, slug string) int
 		Capstones       func(childComplexity int, limit int, cursor *int) int
 		Me              func(childComplexity int) int
 		SearchCapstones func(childComplexity int, query string, limit int, offset *int) int
@@ -113,7 +115,8 @@ type MutationResolver interface {
 type QueryResolver interface {
 	SearchCapstones(ctx context.Context, query string, limit int, offset *int) (*model.PaginatedCapstones, error)
 	Capstones(ctx context.Context, limit int, cursor *int) (*model.PaginatedCapstones, error)
-	Capstone(ctx context.Context, id string) (*model.Capstone, error)
+	CapstoneByID(ctx context.Context, id string) (*model.Capstone, error)
+	CapstoneBySlug(ctx context.Context, slug string) (*model.Capstone, error)
 	Users(ctx context.Context) ([]*model.PublicUser, error)
 	Me(ctx context.Context) (*model.User, error)
 }
@@ -167,6 +170,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Capstone.Semester(childComplexity), true
+
+	case "Capstone.slug":
+		if e.complexity.Capstone.Slug == nil {
+			break
+		}
+
+		return e.complexity.Capstone.Slug(childComplexity), true
 
 	case "Capstone.title":
 		if e.complexity.Capstone.Title == nil {
@@ -246,17 +256,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PublicUser.Username(childComplexity), true
 
-	case "Query.capstone":
-		if e.complexity.Query.Capstone == nil {
+	case "Query.capstoneById":
+		if e.complexity.Query.CapstoneByID == nil {
 			break
 		}
 
-		args, err := ec.field_Query_capstone_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_capstoneById_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Capstone(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.CapstoneByID(childComplexity, args["id"].(string)), true
+
+	case "Query.capstoneBySlug":
+		if e.complexity.Query.CapstoneBySlug == nil {
+			break
+		}
+
+		args, err := ec.field_Query_capstoneBySlug_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CapstoneBySlug(childComplexity, args["slug"].(string)), true
 
 	case "Query.capstones":
 		if e.complexity.Query.Capstones == nil {
@@ -491,6 +513,7 @@ input Register {
 
 type Capstone {
   id: String!
+  slug: String!
   title: String!
   description: String!
   author: String!
@@ -502,7 +525,8 @@ type Capstone {
 type Query {
   searchCapstones(query: String!, limit: Int!, offset: Int): PaginatedCapstones!
   capstones(limit: Int!, cursor: Int): PaginatedCapstones!
-  capstone(id: String!): Capstone
+  capstoneById(id: String!): Capstone
+  capstoneBySlug(slug: String!): Capstone
   users: [PublicUser!]!
   me: User
 }
@@ -612,7 +636,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_capstone_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_capstoneById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -624,6 +648,21 @@ func (ec *executionContext) field_Query_capstone_args(ctx context.Context, rawAr
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_capstoneBySlug_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["slug"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slug"] = arg0
 	return args, nil
 }
 
@@ -741,6 +780,41 @@ func (ec *executionContext) _Capstone_id(ctx context.Context, field graphql.Coll
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Capstone_slug(ctx context.Context, field graphql.CollectedField, obj *model.Capstone) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Capstone",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slug, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1317,7 +1391,7 @@ func (ec *executionContext) _Query_capstones(ctx context.Context, field graphql.
 	return ec.marshalNPaginatedCapstones2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐPaginatedCapstones(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_capstone(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_capstoneById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1334,7 +1408,7 @@ func (ec *executionContext) _Query_capstone(ctx context.Context, field graphql.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_capstone_args(ctx, rawArgs)
+	args, err := ec.field_Query_capstoneById_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -1342,7 +1416,46 @@ func (ec *executionContext) _Query_capstone(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Capstone(rctx, args["id"].(string))
+		return ec.resolvers.Query().CapstoneByID(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Capstone)
+	fc.Result = res
+	return ec.marshalOCapstone2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_capstoneBySlug(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_capstoneBySlug_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CapstoneBySlug(rctx, args["slug"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3197,6 +3310,11 @@ func (ec *executionContext) _Capstone(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "slug":
+			out.Values[i] = ec._Capstone_slug(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "title":
 			out.Values[i] = ec._Capstone_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3386,7 +3504,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "capstone":
+		case "capstoneById":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -3394,7 +3512,18 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_capstone(ctx, field)
+				res = ec._Query_capstoneById(ctx, field)
+				return res
+			})
+		case "capstoneBySlug":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_capstoneBySlug(ctx, field)
 				return res
 			})
 		case "users":

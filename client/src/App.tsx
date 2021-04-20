@@ -16,7 +16,7 @@ function App(): JSX.Element {
     <QueryClientProvider client={queryClient}>
       <div>
         <Route path="/" exact component={HomePage} />
-        <Route path="/view/:id" exact component={MoreviewPage} />
+        <Route path="/view/:slug" exact component={MoreviewPage} />
         <Route path="/add" exact component={Form} />
         <Route path="/search" exact component={SearchPage} />
         <Route path="/login" exact component={LoginPage} />

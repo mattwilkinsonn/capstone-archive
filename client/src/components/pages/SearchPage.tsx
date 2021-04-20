@@ -72,7 +72,7 @@ export default function SearchPage(): JSX.Element {
   // Log the array of capstones to the console
   console.log(data?.searchCapstones.capstones)
 
-  const renderHeader = (): any => {
+  const renderHeader = (): JSX.Element => {
     return (
       <div className={classes.heroContent}>
         <Container maxWidth="sm">
@@ -164,7 +164,7 @@ export default function SearchPage(): JSX.Element {
                           variant="contained"
                           component={Link}
                           to={{
-                            pathname: 'view/' + card?.id,
+                            pathname: 'view/' + card?.slug,
                           }}
                         >
                           View

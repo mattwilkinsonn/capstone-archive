@@ -1,16 +1,16 @@
-import React from 'react'
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import { fade, makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
-import NavBar from '../NavBar'
+import Grid from '@material-ui/core/Grid'
+import { fade, makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import React from 'react'
+import { Link } from 'react-router-dom'
 import { useCapstonesQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
-import { Link } from 'react-router-dom'
+import NavBar from '../NavBar'
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -69,7 +69,7 @@ export default function Homepage(): JSX.Element {
   // Log the array of capstones to the console
   console.log(data?.capstones.capstones)
 
-  const renderHeader = (): any => {
+  const renderHeader = (): JSX.Element => {
     return (
       <div className={classes.heroContent}>
         <Container maxWidth="sm">
@@ -152,7 +152,7 @@ export default function Homepage(): JSX.Element {
                         variant="contained"
                         component={Link}
                         to={{
-                          pathname: 'view/' + card?.title,
+                          pathname: 'view/' + card?.slug,
                         }}
                       >
                         View

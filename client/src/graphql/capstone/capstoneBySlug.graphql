@@ -1,0 +1,5 @@
+query capstoneBySlug($slug: String!) {
+  capstoneBySlug(slug: $slug) {
+    ...RegularCapstone
+  }
+}

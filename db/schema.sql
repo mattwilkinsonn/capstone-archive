@@ -35,7 +35,8 @@ CREATE TABLE public.capstones (
     title text NOT NULL,
     description text NOT NULL,
     author text NOT NULL,
-    semester text NOT NULL
+    semester text NOT NULL,
+    slug text NOT NULL
 );
 
 
@@ -70,6 +71,14 @@ CREATE TABLE public.users (
 
 ALTER TABLE ONLY public.capstones
     ADD CONSTRAINT capstones_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: capstones capstones_slug_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.capstones
+    ADD CONSTRAINT capstones_slug_key UNIQUE (slug);
 
 
 --
@@ -122,4 +131,5 @@ ALTER TABLE ONLY public.users
 --
 
 INSERT INTO public.schema_migrations (version) VALUES
-    ('20210418212229');
+    ('20210418212229'),
+    ('20210419221041');
