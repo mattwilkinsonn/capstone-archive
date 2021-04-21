@@ -54,6 +54,16 @@ type ComplexityRoot struct {
 		UpdatedAt   func(childComplexity int) int
 	}
 
+	CapstoneError struct {
+		Error   func(childComplexity int) int
+		Message func(childComplexity int) int
+	}
+
+	CapstoneResponse struct {
+		Capstone func(childComplexity int) int
+		Error    func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateCapstone func(childComplexity int, input model.NewCapstone) int
 		Login          func(childComplexity int, input model.Login) int
@@ -106,7 +116,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.Capstone, error)
+	CreateCapstone(ctx context.Context, input model.NewCapstone) (*model.CapstoneResponse, error)
 	Register(ctx context.Context, input model.Register) (*model.UserResponse, error)
 	Login(ctx context.Context, input model.Login) (*model.UserResponse, error)
 	Logout(ctx context.Context) (bool, error)
@@ -189,6 +199,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Capstone.UpdatedAt(childComplexity), true
+
+	case "CapstoneError.error":
+		if e.complexity.CapstoneError.Error == nil {
+			break
+		}
+
+		return e.complexity.CapstoneError.Error(childComplexity), true
+
+	case "CapstoneError.message":
+		if e.complexity.CapstoneError.Message == nil {
+			break
+		}
+
+		return e.complexity.CapstoneError.Message(childComplexity), true
+
+	case "CapstoneResponse.capstone":
+		if e.complexity.CapstoneResponse.Capstone == nil {
+			break
+		}
+
+		return e.complexity.CapstoneResponse.Capstone(childComplexity), true
+
+	case "CapstoneResponse.error":
+		if e.complexity.CapstoneResponse.Error == nil {
+			break
+		}
+
+		return e.complexity.CapstoneResponse.Error(childComplexity), true
 
 	case "Mutation.createCapstone":
 		if e.complexity.Mutation.CreateCapstone == nil {
@@ -548,12 +586,22 @@ type UserResponse {
   error: UserError
 }
 
+type CapstoneError {
+  error: String!
+  message: String!
+}
+
+type CapstoneResponse {
+  capstone: Capstone
+  error: CapstoneError
+}
+
 type PublicUser {
   username: String!
 }
 
 type Mutation {
-  createCapstone(input: NewCapstone!): Capstone!
+  createCapstone(input: NewCapstone!): CapstoneResponse!
   register(input: Register!): UserResponse!
   login(input: Login!): UserResponse!
   logout: Boolean!
@@ -1031,6 +1079,140 @@ func (ec *executionContext) _Capstone_semester(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _CapstoneError_error(ctx context.Context, field graphql.CollectedField, obj *model.CapstoneError) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CapstoneError",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Error, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CapstoneError_message(ctx context.Context, field graphql.CollectedField, obj *model.CapstoneError) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CapstoneError",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CapstoneResponse_capstone(ctx context.Context, field graphql.CollectedField, obj *model.CapstoneResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CapstoneResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Capstone, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Capstone)
+	fc.Result = res
+	return ec.marshalOCapstone2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CapstoneResponse_error(ctx context.Context, field graphql.CollectedField, obj *model.CapstoneResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CapstoneResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Error, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CapstoneError)
+	fc.Result = res
+	return ec.marshalOCapstoneError2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstoneError(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createCapstone(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1068,9 +1250,9 @@ func (ec *executionContext) _Mutation_createCapstone(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Capstone)
+	res := resTmp.(*model.CapstoneResponse)
 	fc.Result = res
-	return ec.marshalNCapstone2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx, field.Selections, res)
+	return ec.marshalNCapstoneResponse2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstoneResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_register(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3311,6 +3493,64 @@ func (ec *executionContext) _Capstone(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var capstoneErrorImplementors = []string{"CapstoneError"}
+
+func (ec *executionContext) _CapstoneError(ctx context.Context, sel ast.SelectionSet, obj *model.CapstoneError) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, capstoneErrorImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CapstoneError")
+		case "error":
+			out.Values[i] = ec._CapstoneError_error(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "message":
+			out.Values[i] = ec._CapstoneError_message(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var capstoneResponseImplementors = []string{"CapstoneResponse"}
+
+func (ec *executionContext) _CapstoneResponse(ctx context.Context, sel ast.SelectionSet, obj *model.CapstoneResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, capstoneResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CapstoneResponse")
+		case "capstone":
+			out.Values[i] = ec._CapstoneResponse_capstone(ctx, field, obj)
+		case "error":
+			out.Values[i] = ec._CapstoneResponse_error(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -3919,10 +4159,6 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCapstone2githubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx context.Context, sel ast.SelectionSet, v model.Capstone) graphql.Marshaler {
-	return ec._Capstone(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNCapstone2ᚕᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx context.Context, sel ast.SelectionSet, v []*model.Capstone) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -3960,14 +4196,18 @@ func (ec *executionContext) marshalNCapstone2ᚕᚖgithubᚗcomᚋZireael13ᚋca
 	return ret
 }
 
-func (ec *executionContext) marshalNCapstone2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx context.Context, sel ast.SelectionSet, v *model.Capstone) graphql.Marshaler {
+func (ec *executionContext) marshalNCapstoneResponse2githubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstoneResponse(ctx context.Context, sel ast.SelectionSet, v model.CapstoneResponse) graphql.Marshaler {
+	return ec._CapstoneResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCapstoneResponse2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstoneResponse(ctx context.Context, sel ast.SelectionSet, v *model.CapstoneResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._Capstone(ctx, sel, v)
+	return ec._CapstoneResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2int(ctx context.Context, v interface{}) (int, error) {
@@ -4336,6 +4576,13 @@ func (ec *executionContext) marshalOCapstone2ᚖgithubᚗcomᚋZireael13ᚋcapst
 		return graphql.Null
 	}
 	return ec._Capstone(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOCapstoneError2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstoneError(ctx context.Context, sel ast.SelectionSet, v *model.CapstoneError) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CapstoneError(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 
@@ -19,16 +18,19 @@ import (
 func (r *mutationResolver) CreateCapstone(
 	ctx context.Context,
 	input model.NewCapstone,
-) (*model.Capstone, error) {
-
+) (*model.CapstoneResponse, error) {
 	session, ok := auth.GetUserSession(ctx)
 	if !ok {
-		return nil, errors.New("Not logged in")
+		return &model.CapstoneResponse{
+			Error: &model.CapstoneError{Error: "User", Message: "Not logged in"},
+		}, nil
 	}
 
 	ok = CheckAdminRole(session.Role)
 	if !ok {
-		return nil, errors.New("Not admin role")
+		return &model.CapstoneResponse{
+			Error: &model.CapstoneError{Error: "Role", Message: "Not admin role"},
+		}, nil
 	}
 
 	capstone, err := CreateCapstoneInDB(
@@ -44,7 +46,7 @@ func (r *mutationResolver) CreateCapstone(
 
 	graphCapstone := CreateGraphCapstone(capstone)
 
-	return graphCapstone, nil
+	return &model.CapstoneResponse{Capstone: graphCapstone}, nil
 }
 
 func (r *mutationResolver) Register(

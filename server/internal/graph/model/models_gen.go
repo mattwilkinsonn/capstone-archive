@@ -19,6 +19,16 @@ type Capstone struct {
 	Semester    string `json:"semester"`
 }
 
+type CapstoneError struct {
+	Error   string `json:"error"`
+	Message string `json:"message"`
+}
+
+type CapstoneResponse struct {
+	Capstone *Capstone      `json:"capstone"`
+	Error    *CapstoneError `json:"error"`
+}
+
 type Login struct {
 	UsernameOrEmail string `json:"usernameOrEmail"`
 	Password        string `json:"password"`

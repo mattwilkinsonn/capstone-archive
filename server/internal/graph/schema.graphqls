@@ -75,12 +75,22 @@ type UserResponse {
   error: UserError
 }
 
+type CapstoneError {
+  error: String!
+  message: String!
+}
+
+type CapstoneResponse {
+  capstone: Capstone
+  error: CapstoneError
+}
+
 type PublicUser {
   username: String!
 }
 
 type Mutation {
-  createCapstone(input: NewCapstone!): Capstone!
+  createCapstone(input: NewCapstone!): CapstoneResponse!
   register(input: Register!): UserResponse!
   login(input: Login!): UserResponse!
   logout: Boolean!

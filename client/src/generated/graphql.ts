@@ -23,7 +23,6 @@ export type Query = {
   capstones: PaginatedCapstones;
   capstoneById?: Maybe<Capstone>;
   capstoneBySlug?: Maybe<Capstone>;
-  users: Array<PublicUser>;
   me?: Maybe<User>;
 };
 
@@ -50,21 +49,22 @@ export type QueryCapstoneBySlugArgs = {
   slug: Scalars['String'];
 };
 
-export type PaginatedCapstones = {
-  __typename?: 'PaginatedCapstones';
-  capstones: Array<Maybe<Capstone>>;
-  hasMore: Scalars['Boolean'];
+export type CapstoneError = {
+  __typename?: 'CapstoneError';
+  error: Scalars['String'];
+  message: Scalars['String'];
+};
+
+export type Register = {
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type UserError = {
   __typename?: 'UserError';
   field: Scalars['String'];
   message: Scalars['String'];
-};
-
-export type PublicUser = {
-  __typename?: 'PublicUser';
-  username: Scalars['String'];
 };
 
 export type Todo = {
@@ -75,37 +75,9 @@ export type Todo = {
   user: User;
 };
 
-export enum Role {
-  User = 'USER',
-  Admin = 'ADMIN'
-}
-
-export type Register = {
-  username: Scalars['String'];
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type Capstone = {
-  __typename?: 'Capstone';
-  id: Scalars['String'];
-  slug: Scalars['String'];
-  title: Scalars['String'];
-  description: Scalars['String'];
-  author: Scalars['String'];
-  createdAt: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-  semester: Scalars['String'];
-};
-
-export type Login = {
-  usernameOrEmail: Scalars['String'];
-  password: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
-  createCapstone: Capstone;
+  createCapstone: CapstoneResponse;
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -136,6 +108,34 @@ export type User = {
   role: Role;
 };
 
+export type PublicUser = {
+  __typename?: 'PublicUser';
+  username: Scalars['String'];
+};
+
+export enum Role {
+  User = 'USER',
+  Admin = 'ADMIN'
+}
+
+export type Capstone = {
+  __typename?: 'Capstone';
+  id: Scalars['String'];
+  slug: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  author: Scalars['String'];
+  createdAt: Scalars['Int'];
+  updatedAt: Scalars['Int'];
+  semester: Scalars['String'];
+};
+
+export type PaginatedCapstones = {
+  __typename?: 'PaginatedCapstones';
+  capstones: Array<Maybe<Capstone>>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type NewCapstone = {
   title: Scalars['String'];
   description: Scalars['String'];
@@ -143,10 +143,21 @@ export type NewCapstone = {
   semester: Scalars['String'];
 };
 
+export type Login = {
+  usernameOrEmail: Scalars['String'];
+  password: Scalars['String'];
+};
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   user?: Maybe<User>;
   error?: Maybe<UserError>;
+};
+
+export type CapstoneResponse = {
+  __typename?: 'CapstoneResponse';
+  capstone?: Maybe<Capstone>;
+  error?: Maybe<CapstoneError>;
 };
 
 export type RegularCapstoneFragment = (
@@ -193,8 +204,14 @@ export type CreateCapstoneMutationVariables = Exact<{
 export type CreateCapstoneMutation = (
   { __typename?: 'Mutation' }
   & { createCapstone: (
-    { __typename?: 'Capstone' }
-    & RegularCapstoneFragment
+    { __typename?: 'CapstoneResponse' }
+    & { capstone?: Maybe<(
+      { __typename?: 'Capstone' }
+      & RegularCapstoneFragment
+    )>, error?: Maybe<(
+      { __typename?: 'CapstoneError' }
+      & Pick<CapstoneError, 'error' | 'message'>
+    )> }
   ) }
 );
 
@@ -332,7 +349,13 @@ export const useCapstonesQuery = <
 export const CreateCapstoneDocument = `
     mutation createCapstone($input: NewCapstone!) {
   createCapstone(input: $input) {
-    ...RegularCapstone
+    capstone {
+      ...RegularCapstone
+    }
+    error {
+      error
+      message
+    }
   }
 }
     ${RegularCapstoneFragmentDoc}`;

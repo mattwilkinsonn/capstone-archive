@@ -64,9 +64,7 @@ export default function Form(): JSX.Element {
 
   const rqClient = createClient()
 
-  const { data, isFetching } = useMeQuery(rqClient, {}, { staleTime: 360000 })
-
-  console.log(data)
+  const { data, isFetching } = useMeQuery(rqClient, {}, { staleTime: Infinity })
 
   const { mutateAsync } = useCreateCapstoneMutation(rqClient, {})
 
@@ -85,7 +83,8 @@ export default function Form(): JSX.Element {
     if (a == '') {
       setAFlag(true)
     } else {
-      await mutateAsync({ input })
+      const res = await mutateAsync({ input })
+      console.log(res.createCapstone)
     }
     // probably want to send them back to the homepage or something
     // could also get the id from the return and then send them to the capstone they just created

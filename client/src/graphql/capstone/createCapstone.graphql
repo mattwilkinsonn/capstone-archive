@@ -1,5 +1,11 @@
 mutation createCapstone($input: NewCapstone!) {
   createCapstone(input: $input) {
-    ...RegularCapstone
+    capstone {
+      ...RegularCapstone
+    }
+    error {
+      error
+      message
+    }
   }
 }
