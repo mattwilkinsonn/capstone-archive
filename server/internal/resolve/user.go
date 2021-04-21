@@ -78,8 +78,11 @@ func IsEmail(usernameOrEmail string) bool {
 }
 
 // Queries DB for User on an ambigious username or email param.
-func GetUserFromUsernameOrEmail(ctx context.Context,
-	Queries *db.Queries, usernameOrEmail string) (*db.User, error) {
+func GetUserFromUsernameOrEmail(
+	ctx context.Context,
+	Queries *db.Queries,
+	usernameOrEmail string,
+) (*db.User, error) {
 
 	var user db.User
 	var err error
@@ -117,8 +120,12 @@ type CreateUserInDBInput struct {
 }
 
 // takes User inputs, hashes password, then creates User in DB, returns User object and error if failed
-func CreateUserInDB(ctx context.Context,
-	Queries *db.Queries, Argon *argon2.Config, input CreateUserInDBInput) (*db.User, error) {
+func CreateUserInDB(
+	ctx context.Context,
+	Queries *db.Queries,
+	Argon *argon2.Config,
+	input CreateUserInDBInput,
+) (*db.User, error) {
 	id, err := uuid.NewV4()
 
 	if err != nil {
@@ -167,19 +174,27 @@ func HandleInvalidLogin() *model.UserResponse {
 }
 
 // Get the user from their ID
-func GetUserFromID(ctx context.Context,
-	Queries *db.Queries, id uuid.UUID) (*db.User, error) {
+func GetUserFromID(ctx context.Context, Queries *db.Queries, id uuid.UUID) (*db.User, error) {
 
 	user, err := Queries.GetUserById(ctx, id)
 
 	return &user, err
 }
 
-func SetUserToAdmin(ctx context.Context, Queries *db.Queries, id uuid.UUID) (*db.User, error) {
+// sets given user ID to admin role
+func SetUserToAdmin(ctx context.Context, Queries *db.Queries, user_id uuid.UUID) (*db.User, error) {
 	user, err := Queries.UpdateUserRole(
 		ctx,
-		db.UpdateUserRoleParams{Role: db.UserRoleADMIN, ID: id},
+		db.UpdateUserRoleParams{Role: db.UserRoleADMIN, ID: user_id},
 	)
 
 	return &user, err
+}
+
+// checks if user has admin permissions.
+func CheckAdminRole(user_role db.UserRole) bool {
+	if user_role == db.UserRoleADMIN {
+		return true
+	}
+	return false
 }

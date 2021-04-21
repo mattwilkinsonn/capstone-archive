@@ -57,3 +57,13 @@ func GetRedisAddress() (address string) {
 	}
 	return
 }
+
+const defaultOrigin = "http://localhost:3000"
+
+func GetCorsOrigin() (origin string) {
+	origin = os.Getenv("CORS_ORIGIN")
+	if origin == "" {
+		origin = defaultOrigin
+	}
+	return
+}

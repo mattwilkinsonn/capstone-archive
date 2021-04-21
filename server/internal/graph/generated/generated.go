@@ -76,7 +76,6 @@ type ComplexityRoot struct {
 		Capstones       func(childComplexity int, limit int, cursor *int) int
 		Me              func(childComplexity int) int
 		SearchCapstones func(childComplexity int, query string, limit int, offset *int) int
-		Users           func(childComplexity int) int
 	}
 
 	Todo struct {
@@ -117,7 +116,6 @@ type QueryResolver interface {
 	Capstones(ctx context.Context, limit int, cursor *int) (*model.PaginatedCapstones, error)
 	CapstoneByID(ctx context.Context, id string) (*model.Capstone, error)
 	CapstoneBySlug(ctx context.Context, slug string) (*model.Capstone, error)
-	Users(ctx context.Context) ([]*model.PublicUser, error)
 	Me(ctx context.Context) (*model.User, error)
 }
 
@@ -310,13 +308,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.SearchCapstones(childComplexity, args["query"].(string), args["limit"].(int), args["offset"].(*int)), true
-
-	case "Query.users":
-		if e.complexity.Query.Users == nil {
-			break
-		}
-
-		return e.complexity.Query.Users(childComplexity), true
 
 	case "Todo.done":
 		if e.complexity.Todo.Done == nil {
@@ -527,7 +518,6 @@ type Query {
   capstones(limit: Int!, cursor: Int): PaginatedCapstones!
   capstoneById(id: String!): Capstone
   capstoneBySlug(slug: String!): Capstone
-  users: [PublicUser!]!
   me: User
 }
 
@@ -1467,41 +1457,6 @@ func (ec *executionContext) _Query_capstoneBySlug(ctx context.Context, field gra
 	res := resTmp.(*model.Capstone)
 	fc.Result = res
 	return ec.marshalOCapstone2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐCapstone(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Users(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.PublicUser)
-	fc.Result = res
-	return ec.marshalNPublicUser2ᚕᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐPublicUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_me(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3526,20 +3481,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_capstoneBySlug(ctx, field)
 				return res
 			})
-		case "users":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_users(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "me":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -4081,53 +4022,6 @@ func (ec *executionContext) marshalNPaginatedCapstones2ᚖgithubᚗcomᚋZireael
 		return graphql.Null
 	}
 	return ec._PaginatedCapstones(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNPublicUser2ᚕᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐPublicUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PublicUser) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPublicUser2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐPublicUser(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNPublicUser2ᚖgithubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐPublicUser(ctx context.Context, sel ast.SelectionSet, v *model.PublicUser) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._PublicUser(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNRegister2githubᚗcomᚋZireael13ᚋcapstoneᚑarchiveᚋserverᚋinternalᚋgraphᚋmodelᚐRegister(ctx context.Context, v interface{}) (model.Register, error) {

@@ -72,16 +72,25 @@ func AddFakeCapstonesIfEmpty(queries *db.Queries) {
 func AddTestAdminUserIfEmpty(queries *db.Queries, argon *argon2.Config) {
 	_, err := queries.GetUserByEmail(context.Background(), "admin@test.com")
 	if err != nil {
+		fmt.Print("Root admin user not found. Adding")
 		input := resolve.CreateUserInDBInput{
 			Username: "admin",
 			Email:    "admin@test.com",
 			Password: "hunter2",
 		}
 
-		_, err := resolve.CreateUserInDB(context.Background(), queries, argon, input)
+		ctx := context.Background()
+
+		user, err := resolve.CreateUserInDB(ctx, queries, argon, input)
 
 		if err != nil {
 			panic(err)
 		}
+
+		user, err = resolve.SetUserToAdmin(ctx, queries, user.ID)
+		if err != nil {
+			panic(err)
+		}
+
 	}
 }

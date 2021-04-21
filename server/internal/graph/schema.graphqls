@@ -45,7 +45,6 @@ type Query {
   capstones(limit: Int!, cursor: Int): PaginatedCapstones!
   capstoneById(id: String!): Capstone
   capstoneBySlug(slug: String!): Capstone
-  users: [PublicUser!]!
   me: User
 }
 

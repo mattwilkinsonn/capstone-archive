@@ -1,4 +1,4 @@
-package auth
+package pack
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func GinContextToContextMiddleware() gin.HandlerFunc {
 	}
 }
 
-// Extracts the Gin context from the packed Gqlgen context.
+// Extracts the Gin context from the packed context.
 func GinContextFromContext(ctx context.Context) *gin.Context {
 	ginContext := ctx.Value(GinContextKey("gin"))
 	if ginContext == nil {

@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -19,6 +20,16 @@ func (r *mutationResolver) CreateCapstone(
 	ctx context.Context,
 	input model.NewCapstone,
 ) (*model.Capstone, error) {
+
+	session, ok := auth.GetUserSession(ctx)
+	if !ok {
+		return nil, errors.New("Not logged in")
+	}
+
+	ok = CheckAdminRole(session.Role)
+	if !ok {
+		return nil, errors.New("Not admin role")
+	}
 
 	capstone, err := CreateCapstoneInDB(
 		ctx,
@@ -81,8 +92,7 @@ func (r *mutationResolver) Login(
 
 	userResponse := CreateUserResponse(user)
 
-	ginCtx := auth.GinContextFromContext(ctx)
-	auth.CreateSessionFromUser(ginCtx, user)
+	auth.CreateSessionFromUser(ctx, user)
 
 	return userResponse, nil
 }
@@ -176,17 +186,13 @@ func (r *queryResolver) CapstoneBySlug(ctx context.Context, slug string) (*model
 	return gqlCapstone, nil
 }
 
-func (r *queryResolver) Users(ctx context.Context) ([]*model.PublicUser, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
-	id, ok := auth.GetUserIDFromSession(ctx)
+	session, ok := auth.GetUserSession(ctx)
 	if !ok {
 		return nil, nil
 	}
 
-	user, err := GetUserFromID(ctx, r.Queries, id)
+	user, err := GetUserFromID(ctx, r.Queries, session.ID)
 	if err != nil {
 		return nil, nil
 	}
