@@ -5,8 +5,22 @@ import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import { Link } from 'react-router-dom'
+import { useLogoutMutation, useMeQuery } from '../generated/graphql'
+import { createClient } from '../graphql/createClient'
+import { useQueryClient } from 'react-query'
 
 const NavBar = (): JSX.Element => {
+  const rqClient = createClient()
+  const queryClient = useQueryClient()
+
+  const { data: meData } = useMeQuery(rqClient, {}, { staleTime: 300000 })
+
+  const { mutateAsync: logout } = useLogoutMutation(rqClient, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('Me')
+    },
+  })
+
   return (
     <div>
       <AppBar position="static">
@@ -16,17 +30,28 @@ const NavBar = (): JSX.Element => {
               Capstone Archive
             </Typography>
           </Box>
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            component={Link}
-            to={{
-              pathname: '/login',
-            }}
-          >
-            Sign Out
-          </Button>
+          {meData?.me ? (
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={() => logout({})}
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              component={Link}
+              to={{
+                pathname: '/login',
+              }}
+            >
+              Login
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
     </div>

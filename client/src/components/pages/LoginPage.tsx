@@ -1,15 +1,19 @@
-import React from 'react'
-import Avatar from '@material-ui/core/Avatar'
-import Button from '@material-ui/core/Button'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import TextField from '@material-ui/core/TextField'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
-import Container from '@material-ui/core/Container'
-import { Link } from 'react-router-dom'
-import { Login, useLoginMutation } from '../../generated/graphql'
+import {
+  Avatar,
+  Button,
+  Container,
+  CssBaseline,
+  makeStyles,
+  TextField,
+  Typography,
+} from '@material-ui/core'
+import React, { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useHistory } from 'react-router'
+import { Login, useLoginMutation, useMeQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { useQueryClient } from 'react-query'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -31,49 +35,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function LoginPage(): JSX.Element {
+export const LoginPage: React.FC = () => {
   const classes = useStyles()
-
   const rqClient = createClient()
-  const { mutateAsync, data } = useLoginMutation(rqClient, {})
+  const history = useHistory()
+  const queryClient = useQueryClient()
+  const { data, isFetching } = useMeQuery(rqClient, {}, { staleTime: Infinity })
+  const { handleSubmit, control, setError } = useForm()
+  const { mutateAsync: login } = useLoginMutation(rqClient, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('Me')
+    },
+  })
 
-  const [user, setUsername] = React.useState('')
-  const [pass, setPassword] = React.useState('')
-  const [usernameValid, setUserFlag] = React.useState(false)
-  const [passwordValid, setPassFlag] = React.useState(false)
-  const [userErrorText, setUserText] = React.useState('')
-  const [passErrorText, setPassText] = React.useState('')
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.id == 'username') {
-      setUserFlag(false)
-      setUsername(event.target.value)
-      setUserText('')
-    } else if (event.target.id == 'password') {
-      setPassFlag(false)
-      setPassword(event.target.value)
-      setPassText('')
+  useEffect(() => {
+    if (!isFetching && data?.me) {
+      history.push('/')
     }
-  }
+  }, [data, isFetching, history])
 
-  const handleSubmit = async (input: Login): Promise<void> => {
-    console.log(input)
-    if (user == '') {
-      setUserFlag(true)
-      setUserText('Must enter username or email')
-    }
-    if (pass == '') {
-      setPassFlag(true)
-      setPassText('Must enter password')
-    // } else if (user !== "admin@test.com") {
-    //   setUserFlag(true)
-    //   setUserText('Invalid Username')
-    // } else if (user == "admin@test.com" && pass !== "hunter2") {
-    //   setPassFlag(true)
-    //   setPassText('Incorrect Password')
+  const onSubmit = async (input: Login): Promise<void> => {
+    const res = await login({ input })
+    if (res.login.user) {
+      history.push('/')
+    } else if (res.login.error) {
+      setError(res.login.error.field, { message: res.login.error.message })
     } else {
-      await mutateAsync({ input })
-      // want to redirect to homepage or somewhere here
+      console.error('incorrect return from server')
     }
   }
 
@@ -87,50 +75,46 @@ export default function LoginPage(): JSX.Element {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
-            error={usernameValid}
-            helperText={userErrorText}
-            onChange={handleChange}
+        <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="usernameOrEmail"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                variant="outlined"
+                fullWidth
+                required
+                margin="normal"
+                label="Username/Email"
+                autoComplete="username"
+                style={{ margin: 8 }}
+              />
+            )}
           />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
+          <Controller
             name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            error={passwordValid}
-            helperText={passErrorText}
-            onChange={handleChange}
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                variant="outlined"
+                fullWidth
+                required
+                margin="normal"
+                label="Password"
+                type="password"
+                autoComplete="current-password"
+                style={{ margin: 8 }}
+              />
+            )}
           />
           <Button
-            type="button"
+            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={() =>
-              handleSubmit({
-                usernameOrEmail: user,
-                password: pass,
-              })
-            }
-            component={Link}
-            to={{
-              pathname: '/',
-            }}
           >
             Sign In
           </Button>

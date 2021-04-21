@@ -1,13 +1,13 @@
 import React from 'react'
-import './App.css'
-import { Route } from 'react-router-dom'
-import HomePage from './components/pages/HomePage'
-import MoreviewPage from './components/pages/MoreviewPage'
-import Form from './components/pages/Form'
-import SearchPage from './components/pages/SearchPage'
-import LoginPage from './components/pages/LoginPage'
-import { QueryClientProvider, QueryClient } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
+import { Route } from 'react-router-dom'
+import './App.css'
+import { CreateCapstone } from './components/pages/CreateCapstonePage'
+import HomePage from './components/pages/HomePage'
+import { LoginPage } from './components/pages/LoginPage'
+import MoreviewPage from './components/pages/ViewPage'
+import SearchPage from './components/pages/SearchPage'
 
 function App(): JSX.Element {
   const queryClient = new QueryClient()
@@ -17,7 +17,7 @@ function App(): JSX.Element {
       <div>
         <Route path="/" exact component={HomePage} />
         <Route path="/view/:slug" exact component={MoreviewPage} />
-        <Route path="/add" exact component={Form} />
+        <Route path="/add" exact component={CreateCapstone} />
         <Route path="/search" exact component={SearchPage} />
         <Route path="/login" exact component={LoginPage} />
       </div>

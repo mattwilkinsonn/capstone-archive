@@ -8,7 +8,7 @@ import { fade, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useCapstonesQuery } from '../../generated/graphql'
+import { useCapstonesQuery, useMeQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
 import NavBar from '../NavBar'
 
@@ -55,6 +55,11 @@ export default function Homepage(): JSX.Element {
   const { data } = useCapstonesQuery(
     rqClient,
     { limit: 20 },
+    { staleTime: 300000 }
+  )
+  const { data: meData, isFetching } = useMeQuery(
+    rqClient,
+    {},
     { staleTime: 300000 }
   )
 
@@ -104,18 +109,20 @@ export default function Homepage(): JSX.Element {
                   Search for a Capstone
                 </Button>
               </Grid>
-              <Grid item>
-                <Button
-                  size="small"
-                  variant="contained"
-                  component={Link}
-                  to={{
-                    pathname: '/add',
-                  }}
-                >
-                  Add a Capstone
-                </Button>
-              </Grid>
+              {meData?.me ? (
+                <Grid item>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    component={Link}
+                    to={{
+                      pathname: '/add',
+                    }}
+                  >
+                    Add a Capstone
+                  </Button>
+                </Grid>
+              ) : null}
             </Grid>
           </div>
         </Container>

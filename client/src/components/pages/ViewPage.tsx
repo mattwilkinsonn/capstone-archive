@@ -59,10 +59,10 @@ export default function Moreviewpage(props: {
   const { data } = useCapstoneBySlugQuery(
     rqClient,
     { slug },
-    { staleTime: 300000 }
+    { staleTime: Infinity }
   )
 
-  console.log(data?.capstoneBySlug)
+  // console.log(data?.capstoneBySlug)
 
   const capstone = data?.capstoneBySlug
 
