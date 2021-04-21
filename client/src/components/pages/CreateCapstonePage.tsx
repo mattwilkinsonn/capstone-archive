@@ -57,7 +57,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
   const { data, isFetching } = useMeQuery(rqClient, {}, { staleTime: Infinity })
 
   useEffect(() => {
-    if (!isFetching && !data?.me) {
+    if (!isFetching && data?.me?.role != 'ADMIN') {
       history.push('/')
     }
   }, [data, isFetching, history])
