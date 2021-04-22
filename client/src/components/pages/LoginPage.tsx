@@ -40,8 +40,11 @@ export const LoginPage: React.FC = () => {
   const rqClient = createClient()
   const history = useHistory()
   const queryClient = useQueryClient()
+
+  const { handleSubmit, control, setError } = useForm<Login>()
+
   const { data, isFetching } = useMeQuery(rqClient, {}, { staleTime: Infinity })
-  const { handleSubmit, control, setError } = useForm()
+
   const { mutateAsync: login } = useLoginMutation(rqClient, {
     onSuccess: () => {
       queryClient.invalidateQueries('Me')
@@ -58,7 +61,10 @@ export const LoginPage: React.FC = () => {
     const res = await login({ input })
     if (res.login.user) {
       history.push('/')
-    } else if (res.login.error) {
+    } else if (
+      res.login.error?.field === 'usernameOrEmail' ||
+      res.login.error?.field === 'password'
+    ) {
       setError(res.login.error.field, { message: res.login.error.message })
     } else {
       console.error('incorrect return from server')
@@ -79,6 +85,7 @@ export const LoginPage: React.FC = () => {
           <Controller
             name="usernameOrEmail"
             control={control}
+            rules={{ required: true }}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -95,6 +102,7 @@ export const LoginPage: React.FC = () => {
           <Controller
             name="password"
             control={control}
+            rules={{ required: true }}
             render={({ field }) => (
               <TextField
                 {...field}

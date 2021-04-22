@@ -63,7 +63,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
   }, [data, isFetching, history])
 
   const { mutateAsync } = useCreateCapstoneMutation(rqClient, {})
-  const { handleSubmit, control } = useForm()
+  const { handleSubmit, control } = useForm<NewCapstone>()
 
   const onSubmit = async (input: NewCapstone): Promise<void> => {
     const res = await mutateAsync({ input })
@@ -86,6 +86,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
                     <Controller
                       name="title"
                       control={control}
+                      rules={{ required: true, minLength: 5 }}
                       render={({ field }) => (
                         <TextField
                           {...field}
@@ -99,6 +100,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
                     <Controller
                       name="description"
                       control={control}
+                      rules={{ required: true, minLength: 5 }}
                       render={({ field }) => (
                         <TextField
                           {...field}
@@ -116,6 +118,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
                     <Controller
                       name="semester"
                       control={control}
+                      rules={{ required: true }}
                       defaultValue="Spring 2021"
                       render={({ field }) => (
                         <Select
@@ -136,6 +139,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
                     <Controller
                       name="author"
                       control={control}
+                      rules={{ required: true, minLength: 3 }}
                       render={({ field }) => (
                         <TextField
                           {...field}
