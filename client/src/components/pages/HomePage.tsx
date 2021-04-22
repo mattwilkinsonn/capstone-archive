@@ -8,7 +8,11 @@ import { fade, makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useCapstonesQuery, useMeQuery } from '../../generated/graphql'
+import {
+  Capstone,
+  useCapstonesQuery,
+  useMeQuery,
+} from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
 import NavBar from '../NavBar'
 
@@ -60,11 +64,7 @@ export default function Homepage(): JSX.Element {
     { limit: 100 },
     { staleTime: 300000 }
   )
-  const { data: meData, isFetching } = useMeQuery(
-    rqClient,
-    {},
-    { staleTime: 300000 }
-  )
+  const { data: meData } = useMeQuery(rqClient, {}, { staleTime: 300000 })
 
   const truncateStr = (str: string, num: number): string => {
     if (str.length <= num) {
@@ -136,7 +136,7 @@ export default function Homepage(): JSX.Element {
   }
 
   if (data?.capstones.capstones) {
-    const cards = data?.capstones.capstones
+    const cards = data.capstones.capstones as Capstone[]
     return (
       <React.Fragment>
         <NavBar></NavBar>
@@ -149,13 +149,13 @@ export default function Homepage(): JSX.Element {
                   <Card className={classes.card}>
                     <CardContent className={classes.cardContent}>
                       <Typography gutterBottom variant="h5" component="h2">
-                        {truncateStr(card!.title, 50)}
+                        {truncateStr(card.title, 50)}
                       </Typography>
                       <Typography color="textSecondary">
                         {card?.semester}
                       </Typography>
                       <Typography className={classes.cardDescription}>
-                        {truncateStr(card!.description, 100)}
+                        {truncateStr(card.description, 100)}
                       </Typography>
                     </CardContent>
                     <CardActions>

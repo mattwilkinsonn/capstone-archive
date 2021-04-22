@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import { useSearchCapstonesQuery } from '../../generated/graphql'
+import { Capstone, useSearchCapstonesQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
 import TextField from '@material-ui/core/TextField'
 import InputAdornment from '@material-ui/core/InputAdornment'
@@ -66,7 +66,7 @@ export default function SearchPage(): JSX.Element {
   }
 
   // run the Capstones query, get the data back from that.
-  const { data, isLoading } = useSearchCapstonesQuery(
+  const { data } = useSearchCapstonesQuery(
     rqClient,
     { limit: 500, query: searchTerm },
     { enabled: queryEnabled }
@@ -147,7 +147,7 @@ export default function SearchPage(): JSX.Element {
   }
 
   if (queryEnabled && data?.searchCapstones.capstones) {
-    const cards = data?.searchCapstones.capstones
+    const cards = data.searchCapstones.capstones as Capstone[]
     if (cards.length !== 0) {
       return (
         <React.Fragment>
@@ -161,13 +161,13 @@ export default function SearchPage(): JSX.Element {
                     <Card className={classes.card}>
                       <CardContent className={classes.cardContent}>
                         <Typography gutterBottom variant="h5" component="h2">
-                          {truncateStr(card!.title, 50)}
+                          {truncateStr(card.title, 50)}
                         </Typography>
                         <Typography color="textSecondary">
                           {card?.semester}
                         </Typography>
                         <Typography className={classes.cardDescription}>
-                          {truncateStr(card!.description, 100)}
+                          {truncateStr(card.description, 100)}
                         </Typography>
                       </CardContent>
                       <CardActions>
