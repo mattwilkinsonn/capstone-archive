@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: fade(theme.palette.primary.light, 0.1),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.primary.light, 0.2),
+    },
   },
   cardContent: {
     flexGrow: 1,
@@ -68,6 +72,14 @@ export default function SearchPage(): JSX.Element {
     { limit: 500, query: searchTerm },
     { enabled: queryEnabled }
   )
+
+  const truncateStr = (str: string, num: number): string => {
+    if (str.length <= num) {
+      return str
+    } else {
+      return str.slice(0, num) + '...'
+    }
+  }
 
   // Log the array of capstones to the console
   console.log(data?.searchCapstones.capstones)
@@ -149,13 +161,13 @@ export default function SearchPage(): JSX.Element {
                     <Card className={classes.card}>
                       <CardContent className={classes.cardContent}>
                         <Typography gutterBottom variant="h5" component="h2">
-                          {card?.title}
+                          {truncateStr(card!.title, 50)}
                         </Typography>
                         <Typography color="textSecondary">
                           {card?.semester}
                         </Typography>
                         <Typography className={classes.cardDescription}>
-                          {card?.description}
+                          {truncateStr(card!.description, 100)}
                         </Typography>
                       </CardContent>
                       <CardActions>

@@ -68,6 +68,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
   const onSubmit = async (input: NewCapstone): Promise<void> => {
     const res = await mutateAsync({ input })
     console.log(res)
+    history.push('/view/' + res!.createCapstone!.capstone!.slug)
   }
 
   return (
@@ -80,7 +81,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
               <Card className={classes.card}>
                 <CardContent className={classes.cardContent}>
                   <Typography gutterBottom variant="h5" component="h2">
-                    Add New Project
+                    Add a New Project
                   </Typography>
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <Controller
@@ -156,7 +157,10 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
                       Add
                     </Button>
                     <Button
-                      color="secondary"
+                      // color="secondary"
+                      style={{
+                        backgroundColor: '#e57373',
+                      }}
                       className={classes.formButtons}
                       size="small"
                       variant="contained"
