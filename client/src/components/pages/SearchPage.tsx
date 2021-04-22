@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: fade(theme.palette.primary.light, 0.1),
     '&:hover': {
       backgroundColor: fade(theme.palette.primary.light, 0.2),
     },
@@ -130,6 +129,7 @@ export default function SearchPage(): JSX.Element {
                 <Button
                   size="small"
                   variant="contained"
+                  color="primary"
                   className={classes.heroButtons}
                   component={Link}
                   to={{

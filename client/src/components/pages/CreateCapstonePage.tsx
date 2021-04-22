@@ -157,7 +157,6 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
                       Add
                     </Button>
                     <Button
-                      // color="secondary"
                       style={{
                         backgroundColor: '#e57373',
                       }}

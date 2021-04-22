@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    // backgroundColor: fade(theme.palette.primary.light, 0.1),
     '&:hover': {
       backgroundColor: fade(theme.palette.primary.light, 0.2),
     },
