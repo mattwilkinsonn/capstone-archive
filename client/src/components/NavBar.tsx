@@ -49,7 +49,7 @@ const NavBar = (): JSX.Element => {
                 pathname: '/login',
               }}
             >
-              Login
+              Admin Login
             </Button>
           )}
         </Toolbar>

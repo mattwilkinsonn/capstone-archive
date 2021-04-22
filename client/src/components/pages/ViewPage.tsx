@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: fade(theme.palette.primary.light, 0.1),
   },
   cardContent: {
     flexGrow: 1,
@@ -100,13 +101,14 @@ export default function Moreviewpage(props: {
             <Button
               className={classes.backButton}
               size="small"
+              color="primary"
               variant="contained"
               component={Link}
               to={{
                 pathname: '/',
               }}
             >
-              Back
+              Back to Home
             </Button>
           </Grid>
         </Container>

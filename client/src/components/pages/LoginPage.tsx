@@ -10,6 +10,7 @@ import {
 import React, { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
+import { Link } from 'react-router-dom'
 import { Login, useLoginMutation, useMeQuery } from '../../generated/graphql'
 import { createClient } from '../../graphql/createClient'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
@@ -24,14 +25,14 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
   },
   form: {
     width: '100%',
     marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(3, 0, 0),
   },
 }))
 
@@ -95,7 +96,6 @@ export const LoginPage: React.FC = () => {
                 margin="normal"
                 label="Username/Email"
                 autoComplete="username"
-                style={{ margin: 8 }}
               />
             )}
           />
@@ -113,7 +113,6 @@ export const LoginPage: React.FC = () => {
                 label="Password"
                 type="password"
                 autoComplete="current-password"
-                style={{ margin: 8 }}
               />
             )}
           />
@@ -125,6 +124,21 @@ export const LoginPage: React.FC = () => {
             className={classes.submit}
           >
             Sign In
+          </Button>
+          <Button
+            type="button"
+            fullWidth
+            variant="contained"
+            style={{
+              backgroundColor: '#e57373',
+            }}
+            className={classes.submit}
+            component={Link}
+            to={{
+              pathname: '/',
+            }}
+          >
+            Back
           </Button>
         </form>
       </div>

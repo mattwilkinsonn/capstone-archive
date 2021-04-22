@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    '&:hover': {
+      backgroundColor: fade(theme.palette.primary.light, 0.2),
+    },
   },
   cardContent: {
     flexGrow: 1,
@@ -54,7 +57,7 @@ export default function Homepage(): JSX.Element {
   // run the Capstones query, get the data back from that.
   const { data } = useCapstonesQuery(
     rqClient,
-    { limit: 20 },
+    { limit: 100 },
     { staleTime: 300000 }
   )
   const { data: meData, isFetching } = useMeQuery(
@@ -101,6 +104,7 @@ export default function Homepage(): JSX.Element {
                 <Button
                   size="small"
                   variant="contained"
+                  color="primary"
                   component={Link}
                   to={{
                     pathname: '/search',
@@ -114,6 +118,7 @@ export default function Homepage(): JSX.Element {
                   <Button
                     size="small"
                     variant="contained"
+                    color="primary"
                     component={Link}
                     to={{
                       pathname: '/add',
