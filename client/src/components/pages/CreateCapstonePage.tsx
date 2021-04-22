@@ -67,8 +67,7 @@ export const CreateCapstone: React.FC = (): JSX.Element => {
 
   const onSubmit = async (input: NewCapstone): Promise<void> => {
     const res = await mutateAsync({ input })
-    console.log(res)
-    history.push('/view/' + res!.createCapstone!.capstone!.slug)
+    history.push('/view/' + res?.createCapstone?.capstone?.slug)
   }
 
   return (
