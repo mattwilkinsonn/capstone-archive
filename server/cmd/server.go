@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/Zireael13/capstone-archive/server/internal/auth"
 	"github.com/Zireael13/capstone-archive/server/internal/config"
 	"github.com/Zireael13/capstone-archive/server/internal/db"
@@ -20,7 +18,6 @@ func main() {
 	queries, err := db.CreateClient(db_url)
 
 	if err != nil {
-		fmt.Printf("%v", err)
 		panic(err)
 	}
 
