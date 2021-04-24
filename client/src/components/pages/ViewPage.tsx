@@ -25,14 +25,9 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: fade(theme.palette.primary.light, 0.1),
   },
   cardContent: {
     flexGrow: 1,
-  },
-  footer: {
-    backgroundColor: fade(theme.palette.primary.light, 0.1),
-    padding: theme.spacing(6),
   },
   divide: {
     marginBottom: theme.spacing(1),
@@ -62,8 +57,6 @@ export default function Moreviewpage(props: {
     { slug },
     { staleTime: Infinity }
   )
-
-  // console.log(data?.capstoneBySlug)
 
   const capstone = data?.capstoneBySlug
 

@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(8, 0, 6),
   },
   noProjContent: {
-    backgroundColor: fade(theme.palette.primary.light, 0.1),
     padding: theme.spacing(12),
   },
   cardGrid: {
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     '&:hover': {
-      backgroundColor: fade(theme.palette.primary.light, 0.2),
+      backgroundColor: fade(theme.palette.primary.light, 0.1),
     },
   },
   cardContent: {
@@ -74,9 +73,6 @@ export default function Homepage(): JSX.Element {
     }
   }
 
-  // Log the array of capstones to the console
-  console.log(data?.capstones.capstones)
-
   const renderHeader = (): JSX.Element => {
     return (
       <div className={classes.heroContent}>
@@ -95,8 +91,10 @@ export default function Homepage(): JSX.Element {
             align="center"
             color="textSecondary"
             paragraph
+            style={{ paddingBottom: '20px' }}
           >
-            Past projects can be seen here.
+            Projects created by CS students at American University can be found
+            here. Feel free to browse and enjoy the work done by our students.
           </Typography>
           <div className={classes.heroButtons}>
             <Grid container spacing={2} justify="center">
@@ -176,7 +174,6 @@ export default function Homepage(): JSX.Element {
             </Grid>
           </Container>
         </main>
-        {/* Footer */}
         <footer className={classes.footer}>
           <Typography variant="h6" align="center" gutterBottom>
             American University CS Capstone Project
@@ -190,7 +187,6 @@ export default function Homepage(): JSX.Element {
             By Ashlyn Levinson and Matthew Wilkinson
           </Typography>
         </footer>
-        {/* End footer */}
       </React.Fragment>
     )
   } else {
@@ -202,18 +198,16 @@ export default function Homepage(): JSX.Element {
           <div className={classes.noProjContent}>
             <Container maxWidth="sm">
               <Typography
-                component="h3"
-                variant="h4"
+                component="h4"
+                variant="h5"
                 align="center"
                 color="textPrimary"
-                gutterBottom
               >
                 Cannot load projects
               </Typography>
             </Container>
           </div>
         </main>
-        {/* Footer */}
         <footer className={classes.footer}>
           <Typography variant="h6" align="center" gutterBottom>
             American University CS Capstone Project
@@ -227,7 +221,6 @@ export default function Homepage(): JSX.Element {
             By Ashlyn Levinson and Matthew Wilkinson
           </Typography>
         </footer>
-        {/* End footer */}
       </React.Fragment>
     )
   }

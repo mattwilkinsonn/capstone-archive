@@ -40,10 +40,6 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
-  footer: {
-    backgroundColor: fade(theme.palette.primary.light, 0.1),
-    padding: theme.spacing(6),
-  },
   formButtons: {
     margin: theme.spacing(2, 0, 0, 1),
   },

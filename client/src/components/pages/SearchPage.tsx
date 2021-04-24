@@ -32,15 +32,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     '&:hover': {
-      backgroundColor: fade(theme.palette.primary.light, 0.2),
+      backgroundColor: fade(theme.palette.primary.light, 0.1),
     },
   },
   cardContent: {
     flexGrow: 1,
-  },
-  footer: {
-    backgroundColor: fade(theme.palette.primary.light, 0.1),
-    padding: theme.spacing(6),
   },
   search: {
     position: 'relative',
@@ -50,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0, 0, 0),
   },
   heroButtons: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(5),
   },
 }))
 
@@ -80,9 +76,6 @@ export default function SearchPage(): JSX.Element {
     }
   }
 
-  // Log the array of capstones to the console
-  console.log(data?.searchCapstones.capstones)
-
   const renderHeader = (): JSX.Element => {
     return (
       <div className={classes.heroContent}>
@@ -95,14 +88,6 @@ export default function SearchPage(): JSX.Element {
             gutterBottom
           >
             Search Capstones
-          </Typography>
-          <Typography
-            variant="h5"
-            align="center"
-            color="textSecondary"
-            paragraph
-          >
-            Search for Capstone Projects here.
           </Typography>
           <form noValidate autoComplete="off" className={classes.search}>
             <Grid container spacing={1} justify="center">
@@ -130,7 +115,6 @@ export default function SearchPage(): JSX.Element {
                   size="small"
                   variant="contained"
                   color="primary"
-                  className={classes.heroButtons}
                   component={Link}
                   to={{
                     pathname: '/',
