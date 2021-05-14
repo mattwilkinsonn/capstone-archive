@@ -2023,9 +2023,9 @@
   version "3.0.3"
   resolved "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.3.tgz"
 
-"@types/node@*", "@types/node@^15.0.1":
-  version "15.0.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.0.1.tgz#ef34dea0881028d11398be5bf4e856743e3dc35a"
+"@types/node@*", "@types/node@^15.3.0":
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.3.0.tgz#d6fed7d6bc6854306da3dea1af9f874b00783e26"
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -9400,9 +9400,9 @@ react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.0.9.tgz"
 
-react-hook-form@^7.3.6:
-  version "7.3.6"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.3.6.tgz#21da0f1aff834a9ae9f80a604ebbc28c5b229f79"
+react-hook-form@^7.5.3:
+  version "7.5.3"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.5.3.tgz#9a624fa14ec153b154891c5ebddae02ec5c2e40f"
 
 react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
