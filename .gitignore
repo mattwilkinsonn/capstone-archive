@@ -2,6 +2,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/go,react,vscode,windows,macos,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,react,vscode,windows,macos,node
 data
+target
 ### Go ###
 # Binaries for programs and plugins
 *.exe

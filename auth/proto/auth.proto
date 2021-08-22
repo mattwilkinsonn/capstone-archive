@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package auth;
+
+service Auth {
+    rpc Login (LoginRequest) returns (LoginReply);
+}
+
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+
+enum Role {
+    USER = 0;
+    ADMIN = 1;
+}
+
+message User {
+    string id = 1;
+    string created_at = 2;
+    string updated_at = 3;
+    optional string deleted_at = 4;
+    string username = 5;
+    string email = 6;
+    Role role = 7;
+}
+
+message LoginReply {
+   optional User user = 1;
+}
