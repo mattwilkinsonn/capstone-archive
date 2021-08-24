@@ -19,10 +19,10 @@ impl Auth for Authenticator {
     ) -> Result<tonic::Response<LoginReply>, Status> {
         let user = User {
             id: "1".to_string(),
-            created_at: "10/21".to_string(),
+            created_at: "10/21/2021".to_string(),
             email: "mattwilki17@gmail.com".to_string(),
             role: Role::Admin.into(),
-            updated_at: "10/21".to_string(),
+            updated_at: "10/21/2021".to_string(),
             username: "zireael".to_string(),
             deleted_at: None,
         };
