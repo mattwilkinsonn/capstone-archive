@@ -1,9 +1,10 @@
 syntax = "proto3";
-
+import "google/protobuf/empty.proto";
 package auth;
 
 service Auth {
     rpc Login (LoginRequest) returns (LoginReply);
+    rpc Logout (google.protobuf.Empty) returns (LogoutReply);
 }
 
 message LoginRequest {
@@ -28,4 +29,10 @@ message User {
 
 message LoginReply {
    optional User user = 1;
+}
+
+
+
+message LogoutReply {
+    bool logout = 1;
 }
