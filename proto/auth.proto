@@ -1,4 +1,7 @@
 syntax = "proto3";
+
+option go_package = "github.com/Zireael13/capstone-archive/server/internal/auth";
+
 import "google/protobuf/empty.proto";
 package auth;
 
@@ -21,14 +24,14 @@ message User {
     string id = 1;
     string created_at = 2;
     string updated_at = 3;
-    optional string deleted_at = 4;
+    string deleted_at = 4;
     string username = 5;
     string email = 6;
     Role role = 7;
 }
 
 message LoginReply {
-   optional User user = 1;
+   User user = 1;
 }
 
 

@@ -1,6 +1,14 @@
 version: "3.8"
 
 services:
+  auth:
+    build: ./auth
+    ports:
+      - 50051:50051
+    depends_on:
+      - postgres
+      - redis
+
   postgres:
     image: postgres
     volumes:
@@ -51,6 +59,7 @@ services:
       - postgres
       - redis
       - dbmate
+      - auth
     ports:
       - 4000:8080
 
