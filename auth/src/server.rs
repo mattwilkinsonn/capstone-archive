@@ -36,7 +36,8 @@ impl Auth for Authenticator {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "127.0.0.1:50051".parse()?;
+    let addr = "localhost:50051".parse()?;
+
     let authenticator = Authenticator::default();
 
     Server::builder()
