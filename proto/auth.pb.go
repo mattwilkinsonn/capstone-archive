@@ -112,6 +112,7 @@ func (x *LoginRequest) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
+
 	return ""
 }
 
@@ -119,6 +120,7 @@ func (x *LoginRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
 	}
+
 	return ""
 }
 
