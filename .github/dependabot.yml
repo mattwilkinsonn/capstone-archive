@@ -1,7 +1,23 @@
 version: 2
 updates:
-  - package-ecosystem: cargo
-    directory: "."
+  - package-ecosystem: gomod
+    directory: "/server"
     schedule:
       interval: daily
     open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/client"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "@types/node"
+        versions:
+          - 15.0.0
+      - dependency-name: react-query
+        versions:
+          - 3.13.10
+          - 3.13.7
+      - dependency-name: eslint-config-prettier
+        versions:
+          - 8.2.0
