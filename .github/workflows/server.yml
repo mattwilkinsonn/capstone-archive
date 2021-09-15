@@ -1,12 +1,12 @@
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "server/**"
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - "server/**"
 
