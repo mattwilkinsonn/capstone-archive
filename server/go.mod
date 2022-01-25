@@ -3,7 +3,7 @@ module github.com/Zireael13/capstone-archive/server
 go 1.15
 
 require (
-	github.com/99designs/gqlgen v0.14.0
+	github.com/99designs/gqlgen v0.16.0
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/adam-lavrik/go-imath v0.0.0-20200104135348-19d2b923d06c
 	github.com/alicebob/miniredis/v2 v2.15.1
