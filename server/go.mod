@@ -3,7 +3,7 @@ module github.com/Zireael13/capstone-archive/server
 go 1.15
 
 require (
-	github.com/99designs/gqlgen v0.14.0
+	github.com/99designs/gqlgen v0.17.2
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/adam-lavrik/go-imath v0.0.0-20200104135348-19d2b923d06c
 	github.com/alicebob/miniredis/v2 v2.15.1
@@ -25,7 +25,7 @@ require (
 	github.com/sethvargo/go-retry v0.1.0
 	github.com/stretchr/testify v1.7.0
 	github.com/ugorji/go v1.2.4 // indirect
-	github.com/vektah/gqlparser/v2 v2.2.0
+	github.com/vektah/gqlparser/v2 v2.4.0
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
