@@ -16,14 +16,14 @@ require (
 	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/gosimple/slug v1.10.0
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
-	github.com/jackc/pgx/v4 v4.13.0
+	github.com/jackc/pgx/v4 v4.17.0
 	github.com/joho/godotenv v1.3.0
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/matthewhartstonge/argon2 v0.1.5
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/sethvargo/go-retry v0.1.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.0
 	github.com/ugorji/go v1.2.4 // indirect
 	github.com/vektah/gqlparser/v2 v2.2.0
 	google.golang.org/protobuf v1.25.0 // indirect
