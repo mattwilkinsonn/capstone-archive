@@ -22,7 +22,7 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/matthewhartstonge/argon2 v0.1.5
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
-	github.com/sethvargo/go-retry v0.1.0
+	github.com/sethvargo/go-retry v0.2.4
 	github.com/stretchr/testify v1.7.0
 	github.com/ugorji/go v1.2.4 // indirect
 	github.com/vektah/gqlparser/v2 v2.2.0
